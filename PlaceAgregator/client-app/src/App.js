@@ -1,59 +1,32 @@
-import React, { Component } from 'react';
+import React, { Component, useState } from 'react';
+
+import HideOnScroll from './Components/HideOnScroll';
+import { Link, Outlet } from 'react-router-dom';
+import { Link as MuiLink, Stack, Toolbar, AppBar, Button } from '@mui/material';
 
 export default class App extends Component {
-    static displayName = App.name;
-
-    constructor(props) {
-        super(props);
-        this.state = { forecasts: [], loading: true };
-    }
-
-    componentDidMount() {
-        this.populateWeatherData();
-    }
-
-    static renderForecastsTable(forecasts) {
-        return (
-            <table className='table table-striped' aria-labelledby="tabelLabel">
-                <thead>
-                    <tr>
-                        <th>Date</th>
-                        <th>Temp. (C)</th>
-                        <th>Temp. (F)</th>
-                        <th>Summary</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {forecasts.map(forecast =>
-                        <tr key={forecast.date}>
-                            <td>{forecast.date}</td>
-                            <td>{forecast.temperatureC}</td>
-                            <td>{forecast.temperatureF}</td>
-                            <td>{forecast.summary}</td>
-                        </tr>
-                    )}
-                </tbody>
-            </table>
-        );
-    }
-
     render() {
-        let contents = this.state.loading
-            ? <p><em>Loading... Please refresh once the ASP.NET backend has started. See <a href="https://aka.ms/jspsintegrationreact">https://aka.ms/jspsintegrationreact</a> for more details.</em></p>
-            : App.renderForecastsTable(this.state.forecasts);
-
         return (
-            <div>
-                <h1 id="tabelLabel" >Weather forecast</h1>
-                <p>This component demonstrates fetching data from the server.</p>
-                {contents}
-            </div>
+            <>
+                <HideOnScroll>
+                    <AppBar color="secondary">
+                        <Toolbar>
+                            <MuiLink component={Link} to="/" underline="none" color='inherit' sx={{ mr: 3 }}>
+                                PlaceAgregator
+                            </MuiLink>
+                            <Stack direction="row" spacing={2}>
+                                <Button component={Link} color='white' to="places" >Площадки</Button>
+                                <Button component={Link} color='white' to="forecast" >Forecast</Button>
+                                <Button component={Link} color='white' to="text" >Text</Button>
+                                <Button component={Link} color='white' to="test" >Test</Button>
+                            </Stack>
+                        </Toolbar>
+                    </AppBar>
+                </HideOnScroll>
+                <Toolbar />
+                <Outlet />
+                <footer>Footer</footer>
+            </>
         );
-    }
-
-    async populateWeatherData() {
-        const response = await fetch('weatherforecast');
-        const data = await response.json();
-        this.setState({ forecasts: data, loading: false });
     }
 }
