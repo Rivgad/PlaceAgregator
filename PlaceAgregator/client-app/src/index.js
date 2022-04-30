@@ -9,6 +9,7 @@ import Box from '@mui/material/Box'
 import './index.css';
 import App from './App';
 import PlacesPage from './Components/Places/Places';
+import PlacePage from './Components/Pages/place-page';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
@@ -45,7 +46,10 @@ root.render(
             <BrowserRouter>
                 <Routes>
                     <Route path="/" element={<App />}>
-                        <Route path="places" element={<PlacesPage />} />
+                        <Route path="places" element={<PlacesPage />} >
+                            
+                        </Route>
+                        <Route path="places/:id" element={<PlacePage />} />
                         <Route
                             path="*"
                             element={

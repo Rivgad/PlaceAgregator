@@ -13,7 +13,7 @@ import {
 
 const PlaceCard = (props) => {
     return (
-        <CardActionArea LinkComponent={Link} to={`/place/${props.id}`}>
+        <CardActionArea LinkComponent={Link} to={`/places/${props.id}`}>
             <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
 
                 <CardMedia

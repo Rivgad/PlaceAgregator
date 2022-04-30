@@ -20,25 +20,25 @@ import { PlaceCard } from '../Places'
 
 const ItemsGrid = (props) => {
     return (
-        <Container sx={{ py: 2 }} maxWidth="lg">
-            <Grid container flexDirection="row wrap" spacing={2} displayPrint="flex-wrap" justifyContent="center" alignItems="center">
-                {props.data.map((item) => {
-                    return (
-                        <Grid item key={item.id} xs={12} md={4} lg={4} sm={6}>
-                            <PlaceCard
-                                id={item.id}
-                                image={item.imageUrl}
-                                rating={item.rating}
-                                capacity={item.capacity}
-                                area={item.area}
-                                title='Название площадки'
-                                price={item.price}
-                            />
-                        </Grid>
-                    )
-                })}
-            </Grid>
-        </Container>
+
+        <Grid container flexDirection="row wrap" spacing={2} displayPrint="flex-wrap" justifyContent="center" alignItems="center">
+            {props.data.map((item) => {
+                return (
+                    <Grid item key={item.id} xs={12} md={4} lg={4} sm={6}>
+                        <PlaceCard
+                            id={item.id}
+                            image={item.imageUrl}
+                            rating={item.rating}
+                            capacity={item.capacity}
+                            area={item.area}
+                            title='Название площадки'
+                            price={item.price}
+                        />
+                    </Grid>
+                )
+            })}
+        </Grid>
+
     );
 }
 
@@ -123,37 +123,37 @@ const SearchBarInput = (props) => {
     ]
     return (
         <>
-            <Container>
-                <Grid container spacing={2} direction='row' alignItems='center'>
-                    <Grid item xs={12} md={12} sm={12}>
-                        <Box sx={{ display: 'flex', alignItems: 'flex-end', alignItems: 'center' }}>
-                            <TextField id="input-with-sx" fullWidth label="Поиск" variant="outlined" />
-                            <IconButton>
-                                <SearchIcon />
-                            </IconButton>
-                        </Box>
-                    </Grid>
-                    <Grid item xs={12} md={3} sm={6}>
-                        <SelectFieldInput options={eventTypes} label='Ваше событие' />
-                    </Grid>
-                    <Grid item xs={12} md={3} sm={6}>
-                        <SelectFieldInput options={eventTypes} label='Ваше событие' />
-                    </Grid>
-                    <Grid item xs={12} md={3} sm={6}>
-                        <SelectFieldInput options={eventTypes} label='Ваше событие' />
-                    </Grid>
-                    <Grid item xs={12} md={3} sm={6}>
-                        <Button variant='contained' size='large' onClick={props.openDrawer}>Все фильтры</Button>
-                    </Grid>
+
+            <Grid container spacing={2} direction='row' alignItems='center'>
+                <Grid item xs={12} md={12} sm={12}>
+                    <Box sx={{ display: 'flex', alignItems: 'flex-end', alignItems: 'center' }}>
+                        <TextField id="input-with-sx" fullWidth label="Поиск" variant="outlined" />
+                        <IconButton>
+                            <SearchIcon />
+                        </IconButton>
+                    </Box>
                 </Grid>
-            </Container>
+                <Grid item xs={12} md={3} sm={6}>
+                    <SelectFieldInput options={eventTypes} label='Ваше событие' />
+                </Grid>
+                <Grid item xs={12} md={3} sm={6}>
+                    <SelectFieldInput options={eventTypes} label='Ваше событие' />
+                </Grid>
+                <Grid item xs={12} md={3} sm={6}>
+                    <SelectFieldInput options={eventTypes} label='Ваше событие' />
+                </Grid>
+                <Grid item xs={12} md={3} sm={6}>
+                    <Button variant='contained' size='large' onClick={props.openDrawer}>Все фильтры</Button>
+                </Grid>
+            </Grid>
+
         </>
     );
 }
 
 const Filters = (props) => {
     return (
-        <Box width={{ xs: window.innerWidth, md: 400, sm: 400}}>
+        <Box width={{ xs: window.innerWidth, md: 400, sm: 400 }}>
 
             <IconButton onClick={props.onClose} sx={{
                 position: 'absolute',
@@ -187,18 +187,20 @@ const PlacesPage = () => {
     const PlacesListWithData = MockPlacesData(ItemsGrid)
     return (
         <>
-            <Box sx={{ m: 5 }}>
-                <SearchBarInput openDrawer={() => toggleDrawer(true)} />
-            </Box>
-            <SwipeableDrawer
-                anchor='right'
-                disableBackdropTransition
-                onClose={() => toggleDrawer(false)}
-                onOpen={() => toggleDrawer(true)} 
-                open={state}>
-                <Filters onClose={() => toggleDrawer(false)} />
-            </SwipeableDrawer>
-            <PlacesListWithData />
+            <Container sx={{ py: 2 }} maxWidth="lg">
+                <Box sx={{ my: 5 }}>
+                    <SearchBarInput openDrawer={() => toggleDrawer(true)} />
+                </Box>
+                <SwipeableDrawer
+                    anchor='right'
+                    disableBackdropTransition
+                    onClose={() => toggleDrawer(false)}
+                    onOpen={() => toggleDrawer(true)}
+                    open={state}>
+                    <Filters onClose={() => toggleDrawer(false)} />
+                </SwipeableDrawer>
+                <PlacesListWithData />
+            </Container>
         </>
     )
 }
