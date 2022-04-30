@@ -1,96 +1,22 @@
-import StarRatings from 'react-star-ratings';
-import { Link } from 'react-router-dom';
-import PropTypes from 'prop-types';
 import { useState, useEffect } from 'react'
 
 import {
-    Link as MuiLink,
-    Card, CardMedia,
-    CardActionArea,
-    CardContent,
-    CardActions,
     Box,
     Grid,
     Container,
-    Typography,
     TextField,
-    FormControl,
     MenuItem,
     List,
-    Stack,
     Button,
     SwipeableDrawer,
     ListItem,
     ListItemIcon,
     ListItemText,
-    CircularProgress,
-    Skeleton
 } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
 import SearchIcon from '@mui/icons-material/Search';
 import { Inbox, Mail as MailIcon, Close as CloseIcon } from '@mui/icons-material';
-
-export const PlaceCard = (props) => {
-    return (
-        <CardActionArea LinkComponent={Link} to={`/place/${props.id}`}>
-            <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column', maxWidth: props.maxWidth }}>
-
-                <CardMedia
-                    component="img"
-                    height="200"
-                    image={props.image}
-                    alt="Image loading"
-                />
-
-                <CardContent sx={{ paddingBottom: 0, flexGrow: 1 }}>
-                    <Typography gutterBottom variant="h5" component="div">
-                        {props.title}
-                    </Typography>
-                    <Typography sx={{ my: 1 }} variant="body2" color="text.secondary">
-                        {props.address}
-                    </Typography>
-                    <Typography sx={{ mt: 1 }} variant="body2" color="text.secondary">
-                        {props.area} м<sup>2</sup> | {props.capacity} чел.
-                    </Typography>
-                </CardContent>
-                <CardActions sx={{ mx: 1 }} disableSpacing>
-                    <Typography component="div">
-                        от {props.price} ₽/час
-                    </Typography>
-                    <Box sx={{ marginLeft: 'auto', mt: 0.5 }}>
-                        <StarRatings
-                            rating={props.rating}
-                            starRatedColor="gold"
-                            starDimension="20px"
-                            starSpacing="1px"
-                            numberOfStars={5}
-                            name="rating"
-                        />
-                    </Box>
-                </CardActions>
-            </Card>
-        </CardActionArea>
-    );
-}
-PlaceCard.propTypes = {
-    maxWidth: PropTypes.number,
-    rating: PropTypes.number,
-    capacity: PropTypes.number,
-    area: PropTypes.number,
-    title: PropTypes.string,
-    price: PropTypes.number
-}
-PlaceCard.defaultProps = {
-    maxWidth: 1000,
-    rating: 0,
-    capacity: 0,
-    area: 0,
-    title: 'Title',
-    price: 0,
-    xs: 14,
-    sm: 8,
-    md: 4
-}
+import { PlaceCard } from '../Places'
 
 const ItemsGrid = (props) => {
     return (
@@ -217,7 +143,7 @@ const SearchBarInput = (props) => {
                         <SelectFieldInput options={eventTypes} label='Ваше событие' />
                     </Grid>
                     <Grid item xs={12} md={3} sm={6}>
-                        <Button variant='contained' size='large' onClick={props.openDrawer}>Показать все фильтры</Button>
+                        <Button variant='contained' size='large' onClick={props.openDrawer}>Все фильтры</Button>
                     </Grid>
                 </Grid>
             </Container>
@@ -225,7 +151,7 @@ const SearchBarInput = (props) => {
     );
 }
 
-const FilterStack = (props) => {
+const Filters = (props) => {
     return (
         <Box width={{ xs: window.innerWidth, md: 400, sm: 400}}>
 
@@ -270,7 +196,7 @@ const PlacesPage = () => {
                 onClose={() => toggleDrawer(false)}
                 onOpen={() => toggleDrawer(true)} 
                 open={state}>
-                <FilterStack onClose={() => toggleDrawer(false)} />
+                <Filters onClose={() => toggleDrawer(false)} />
             </SwipeableDrawer>
             <PlacesListWithData />
         </>

@@ -8,8 +8,7 @@ import Box from '@mui/material/Box'
 
 import './index.css';
 import App from './App';
-import WeatherForecastComponent from './Components/WeatherForecast';
-import PlacesContainer from './Components/Places/Places';
+import PlacesPage from './Components/Places/Places';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
@@ -46,8 +45,7 @@ root.render(
             <BrowserRouter>
                 <Routes>
                     <Route path="/" element={<App />}>
-                        <Route path="places" element={<PlacesContainer />} />
-                        <Route path="forecast" element={<WeatherForecastComponent />} />
+                        <Route path="places" element={<PlacesPage />} />
                         <Route
                             path="*"
                             element={

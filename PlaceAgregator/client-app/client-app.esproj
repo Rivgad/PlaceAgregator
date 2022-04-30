@@ -11,12 +11,17 @@
     <Script Include="**" Exclude="*.esproj;**\node_modules\**" />
   </ItemGroup>
   <ItemGroup>
+    <Script Remove="src\Components\Authentication\SignInDialog.js" />
+    <Script Remove="src\Components\Authentication\SignUpDialog.js" />
+    <Script Remove="src\Components\Authentication\SignUpPage.js" />
+    <Script Remove="src\Components\Authentication\SingInPage.js" />
     <Script Remove="src\Components\fullBorderedGrid.js" />
     <Script Remove="src\Components\fullBorderedGrid.styles.js" />
+    <Script Remove="src\Components\Places\place-card" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="src\Components\Home\" />
-    <Folder Include="src\Components\Новая папка\" />
+    <Folder Include="src\Components\Pages\" />
   </ItemGroup>
   <!-- This target is copied from the ASP.NET SPA template in order to ensure node_modules are in place. -->
   <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">
