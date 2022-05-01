@@ -77,23 +77,24 @@ const MockPlacesData = (View) => {
 }
 
 const SelectFieldInput = (props) => {
-    const [option, setOption] = useState(undefined)
+    let { options, ...other } = props;
+
+    const [selectedValue, setValue] = useState(options[0].value)
 
     const handleChange = (event) => {
-        setOption(event.target.value);
+        setValue(event.target.value);
     };
 
     return (
         <TextField
             variant='outlined'
             select
-            value={option}
             fullWidth
-            label={props.label}
+            value={selectedValue}
             onChange={handleChange}
-            helperText={props.helperText}
+            {...other}
         >
-            {props.options.map((item) => (
+            {options.map((item) => (
                 <MenuItem key={item.value} value={item.value}>
                     {item.label}
                 </MenuItem>
@@ -137,13 +138,13 @@ const SearchBarInput = (props) => {
                     <SelectFieldInput options={eventTypes} label='Ваше событие' />
                 </Grid>
                 <Grid item xs={12} md={3} sm={6}>
-                    <SelectFieldInput options={eventTypes} label='Ваше событие' />
+                    <SelectFieldInput options={eventTypes} label='Количество гостей' />
                 </Grid>
                 <Grid item xs={12} md={3} sm={6}>
-                    <SelectFieldInput options={eventTypes} label='Ваше событие' />
+                    <SelectFieldInput options={eventTypes} label='Время' />
                 </Grid>
                 <Grid item xs={12} md={3} sm={6}>
-                    <Button variant='contained' size='large' onClick={props.openDrawer}>Все фильтры</Button>
+                    <Button fullWidth variant='contained' size='large' onClick={props.openDrawer}>Все фильтры</Button>
                 </Grid>
             </Grid>
 

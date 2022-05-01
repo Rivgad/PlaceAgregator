@@ -20,6 +20,7 @@
     <Script Remove="src\Components\Places\place-card" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="src\Components\Base\Dialog\" />
     <Folder Include="src\Components\Home\" />
     <Folder Include="src\Components\Pages\" />
   </ItemGroup>

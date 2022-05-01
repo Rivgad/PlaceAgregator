@@ -17,7 +17,9 @@ import {
     ListItem,
     Link,
     Breadcrumbs,
-    Rating
+    Rating,
+    CardHeader,
+    Paper
 } from '@mui/material';
 import { Link as LinkIcon } from '@mui/icons-material'
 
@@ -153,7 +155,7 @@ const OrderCard = () => {
 }
 
 const LeftRightComponent = (props) => {
-    const {spacing = 2, children, ...others} = props
+    const { spacing = 2, children, ...others } = props
     return (
         <Stack alignItems='center' direction="row" spacing={spacing} {...others}>
             {children}
@@ -168,129 +170,192 @@ const ServiceItemRow = (props) => {
             <LinkIcon />
             <Typography >{title}</Typography>
             <Typography sx={{ flexGrow: 1 }}>{description}</Typography>
-            <Typography >{ price }</Typography>
+            <Typography >{price}</Typography>
         </Stack>);
 }
 
+const ServiceItems = (props) => {
+    return (
+        <>
+            <Typography variant='h6'>Услуги и оборудование</Typography>
+            <Stack spacing={2}>
+                {
+                    [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((value) => (
+                        <ServiceItemRow price='Цена' title='Название' description='Описание' key={value} />
+                    ))
+                }
+            </Stack>
+        </>
+    );
+}
+
 const Comment = (props) => {
+    const { login, date, text, rating } = props
     return (
         <div>
-            <Grid container alignItems='center'>
-                <Grid item xs={1}>
-                    <Avatar sx={{ mx: 'auto' }}>
-                    H
-                </Avatar>
-                    </Grid>
-                <Grid item xs={11}>
-                    <Typography variant='body1'>
-                        Логин
-                    </Typography>
-                    <Typography variant='body1'>
-                        Дата
-                    </Typography>
-                    <Rating
 
+            <Card>
+                <CardHeader
+                    sx={{ alignItems: 'center' }}
+                    avatar={
+                        <Avatar sx={{ width: 40, height: 40, mx: 'auto' }}>
+                            H
+                        </Avatar>
+                    }
+                    title={login}
+                    subheader={date}
+                    action={
+                        <Rating
+                            name='rating'
+                            size='small'
+                            defaultValue={0}
+                            precision={0.1}
+                            value={rating}
+                            readOnly />
+                    }
+                >
+
+                </CardHeader>
+                <CardContent>
+                    <Typography variant='body1' xs={12}>
+                        {text}
+                    </Typography>
+                </CardContent>
+            </Card>
+        </div>
+    )
+}
+
+const Comments = (props) => {
+    const now = new Date();
+    return (
+        <>
+            <Stack direction='row' alignItems='center'>
+                <Typography variant='h6'>Отзывы</Typography>
+                <Rating
+                    sx={{ ml: 'auto' }}
+                    name='rating'
+                    defaultValue={0}
+                    precision={0.1}
+                    value={5}
+                    readOnly />
+            </Stack>
+
+            <Stack spacing={2}>
+                <Comment text='Текст' login='Логин' date={now.toLocaleString()} rating={2} />
+                <Comment text='Текст' login='Логин' date={now.toLocaleString()} rating={2} />
+                <Comment text='Текст' login='Логин' date={now.toLocaleString()} rating={2} />
+            </Stack>
+        </>
+    );
+}
+
+const PlaceParams = (props) => {
+    return (
+        <>
+            <Typography variant='h6'>Параметры площадки</Typography>
+            <Grid container spacing={3} item xs>
+                {
+                    [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((value) => (
+                        <Grid item key={value} xs={12} md={6}>
+                            <LeftRightComponent >
+                                <LinkIcon />
+                                <Typography >revolve</Typography>
+                            </LeftRightComponent>
+                        </Grid>
+                    ))
+                }
+            </Grid>
+        </>
+    );
+}
+
+const PlaceDescription = (props) => {
+    return (
+        <>
+            <Typography variant='h6'>Описание площадки</Typography>
+            <Paper variant='outlined' sx={{ p: 2 }}>
+                <Typography>
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi lobortis odio nec ultrices lobortis. Cras finibus risus velit, ut ullamcorper tortor fringilla sit amet. Maecenas tempus mauris nisi, ut feugiat metus malesuada nec. Phasellus gravida tristique lacus vitae laoreet. Sed maximus, urna a tempus vulputate, nunc nibh facilisis turpis, interdum porttitor odio libero eget erat. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Nam auctor tortor vulputate nisl mattis eleifend. Sed consequat tellus eros, non dignissim quam finibus at. Nulla sagittis est risus, sit amet scelerisque felis gravida eu. Pellentesque in auctor nibh, dignissim lobortis ex.
+                </Typography>
+
+            </Paper>
+        </>
+    )
+}
+
+const PlaceHeader = (props) => {
+    return (
+        <>
+            <Breadcrumbs sx={{ my: 1 }} aria-label="breadcrumb">
+                <Link underline="hover" color="inherit" href="/">
+                    Площадки
+                </Link>
+                <Link
+                    underline="hover"
+                    color="inherit"
+                    href="/material-ui/getting-started/installation/"
+                >
+                    Казань
+                </Link>
+                <Typography color="text.primary">Название площадки</Typography>
+            </Breadcrumbs>
+            <Grid sx={{ background: 'gray', minHeight: 350 }} item xs={12} id='photo-container'>
+
+            </Grid>
+
+            <Typography variant='h1' fontSize='40px'>
+                Название площадки
+            </Typography>
+            <Stack alignItems='center' direction="row" spacing={2}>
+                <Rating
+                    name='rating'
+                    defaultValue={0}
+                    precision={0.1}
+                    value={5}
+                    readOnly />
+                <Typography>Кол-во отзывов</Typography>
+                <Link component='button' variant='body1'>Отзывы</Link>
+            </Stack>
+
+            <Card>
+                <CardContent component={Stack} direction='row' alignItems='center'>
+
+                    <LeftRightComponent spacing={2}>
+                        <Avatar>H</Avatar>
+                        <p>Имя Фамилия</p>
+                    </LeftRightComponent>
+                    <Rating
+                        sx={{ ml: 'auto' }}
                         name='rating'
                         defaultValue={0}
                         precision={0.1}
                         value={5}
                         readOnly />
-                    </Grid>
-                <Typography variant='body1' xs={ 12 }>
-                Текст
-            </Typography>
-            </Grid>
-            </div>
-        )
+                </CardContent>
+            </Card>
+        </>
+    );
 }
 
 const PlacePage = (props) => {
+
     return (
         <>
             <Container sx={{ py: 4 }} maxWidth="lg" direction='row'>
                 <Grid container spacing={2}>
                     <Grid order='3' item xs md lg>
-                        <Stack spacing={2}>
-                            <Breadcrumbs sx={{ my: 1 }} aria-label="breadcrumb">
-                                <Link underline="hover" color="inherit" href="/">
-                                    Площадки
-                                </Link>
-                                <Link
-                                    underline="hover"
-                                    color="inherit"
-                                    href="/material-ui/getting-started/installation/"
-                                >
-                                    Казань
-                                </Link>
-                                <Typography color="text.primary">Название площадки</Typography>
-                            </Breadcrumbs>
-                            <Grid sx={{ background: 'gray', minHeight: 350 }} item xs={12} id='photo-container'>
+                        <Stack spacing={2} divider={<Divider flexItem />}>
+                            <PlaceHeader/>
 
-                            </Grid>
+                            <PlaceParams />
 
-                            <Typography variant='h1' fontSize='40px'>
-                                Название площадки
-                            </Typography>
-                            <Stack alignItems='center' direction="row" spacing={2}>
-                                <Rating
-                                    name='rating'
-                                    defaultValue={0}
-                                    precision={0.1}
-                                    value={5}
-                                    readOnly />
-                                <Typography>Кол-во отзывов</Typography>
-                                <Link component='button' variant='body1'>Отзывы</Link>
-                            </Stack>
-                            <Card>
-                                <CardContent>
-                                    <LeftRightComponent spacing={2}>
-                                        <Avatar>H</Avatar>
-                                        <p>Имя Фамилия</p>
-                                    </LeftRightComponent>
-                                </CardContent>
-                            </Card>
-                            <Divider />
+                            <PlaceDescription/>
 
-                            <Typography variant='h6'>Параметры площадки</Typography>
-                            <Grid container spacing={3} item xs>
-                                {
-                                    [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((value) => (
-                                        <Grid item key={value} xs={12} md={6}>
-                                            <LeftRightComponent >
-                                                <LinkIcon />
-                                                <Typography >revolve</Typography>
-                                            </LeftRightComponent>
-                                        </Grid>
-                                    ))
-                                }
-                            </Grid>
-                            <Divider />
+                            <ServiceItems />
 
-                            <Typography variant='h6'>Услуги и оборудование</Typography>
-                            <Stack spacing={2} item xs >
-                                {
-                                    [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((value) => (
-                                        <ServiceItemRow price='Цена' title='Название' description='Описание' key={value} />
-                                    ))
-                                }
-                            </Stack>
-                            <Divider />
+                            <Comments />
 
-                            <Stack direction='row' alignItems='center'>
-                                <Typography variant='h6'>Отзывы</Typography>
-                                <Rating
-                                    sx={{ ml: 'auto' }}
-                                    name='rating'
-                                    defaultValue={0}
-                                    precision={0.1}
-                                    value={5}
-                                    readOnly />
-                            </Stack>
-                            <div>
-                                <Stack>
-                                    <Comment/>
-                                    </Stack>
-                                </div>
                         </Stack>
                     </Grid>
                     <Grid order='10' item xs={12} md={4} lg={4} sx={{ minWidth: 375 }}>
