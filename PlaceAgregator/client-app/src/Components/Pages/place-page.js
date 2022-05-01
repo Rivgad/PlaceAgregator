@@ -1,8 +1,9 @@
-import {useState} from 'react';
+import { useState } from 'react';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
-import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
+import { Link as RouterLink } from 'react-router-dom'
 import {
+    Avatar,
     Autocomplete,
     Button,
     Card,
@@ -11,67 +12,289 @@ import {
     Typography,
     List,
     TextField,
-    Stack
+    Stack,
+    Divider,
+    ListItem,
+    Link,
+    Breadcrumbs,
+    Rating
 } from '@mui/material';
+import { Link as LinkIcon } from '@mui/icons-material'
 
-
-const PlacePage = () => {
+const OrderCard = () => {
     const [eventType, setEventType] = useState(null);
-    const [guestsCount, setGuestsCount] = useState(1);
+    const [guestsCount, setGuestsCount] = useState(0);
+    const [startDateTime, setStartDateTime] = useState(new Date());
+    const [endDateTime, setEndDateTime] = useState(new Date());
 
     const changeGuestsCount = (value) => {
-        if (value >= 1)
+        if (value >= 0)
             setGuestsCount(value);
     }
 
     return (
-        <>
-            <Container sx={{ py: 8 }} maxWidth="lg" direction='row'>
-                <Grid container spacing={2}>
-                    <Grid sx={{ background: 'gray', minHeight: 400 }} item xs={12} id='photo-container'>
+        <Card variant="outlined">
+            <CardContent>
+                <div>
+                    <Typography variant="body1">
+                        Стоимость аренды
+                    </Typography>
+                    <Typography variant="h5">
+                        от 500 ₽/час
+                    </Typography>
+                </div>
+                <Stack sx={{ my: 2 }} spacing={2}>
+                    <Button
+                        sx={{ my: 2 }}
+                        fullWidth
+                        variant='contained'
+                        size='large'
+                    >
+                        Выбрать время
+                    </Button>
+                    <TextField
+                        id="start-date-field"
+                        type="date"
+                        placeholder='Дата и время начала'
+                        label='Дата и время начала'
+                        InputLabelProps={{
+                            shrink: true,
+                        }}
+                        fullWidth
+                    />
+                    <TextField
+                        id="end-date-field"
+                        type="date"
+                        placeholder='Дата и время окончания'
+                        label='Дата и время начала'
+                        InputLabelProps={{
+                            shrink: true,
+                        }}
+                        fullWidth
+                    />
 
+                    <Autocomplete
+                        value={eventType}
+                        onChange={(newValue) => {
+                            setEventType(newValue);
+                        }}
+                        disablePortal
+                        id="combo-box-event-type"
+                        options={top100Films}
+                        fullWidth
+                        renderInput={(params) => <TextField {...params} label="Событие" />}
+                    />
+                    <TextField
+                        id="guests-number"
+                        type="number"
+                        value={guestsCount}
+                        onChange={(event) => changeGuestsCount(event.target.value)}
+                        label='Кол-во гостей'
+                        fullWidth
+                    />
+
+                </Stack>
+                <Stack sx={{ mt: 4, mb: 4 }} spacing={1}>
+                    <ListItem>
+                        <Grid container>
+                            <Typography variant='body1'>
+                                Стоимость аренды (2 часа)
+                            </Typography>
+                            <Typography sx={{ ml: 'auto' }} variant='body1'>
+                                5 000 ₽
+                            </Typography>
+                        </Grid>
+                    </ListItem>
+                    <Divider />
+                    <ListItem>
+                        <Grid container>
+                            <Typography variant='body1'>
+                                От 20 гостей (Уборка)
+                            </Typography>
+                            <Typography sx={{ ml: 'auto' }} variant='body1'>
+                                1 000 ₽
+                            </Typography>
+                        </Grid>
+                    </ListItem>
+                    <Divider />
+                    <ListItem>
+                        <Grid container >
+                            <Typography variant='body1'>
+                                Наценка 500 ₽/час
+                            </Typography>
+                            <Typography sx={{ ml: 'auto' }} variant='body1'>
+                                1 000 ₽
+                            </Typography>
+                        </Grid>
+                    </ListItem>
+
+                    <Divider />
+                    <Box>
+                        <Button variant='contained' fullWidth>Услуги и оборудование</Button>
+                    </Box>
+                    <Box>
+                        <Divider />
+                        <Typography sx={{ mt: 1 }} variant='h6'>
+                            Итого: 5000 ₽
+                        </Typography>
+                    </Box>
+                </Stack>
+
+                <Button
+                    variant='outlined'
+                    size='large'
+                    fullWidth
+                >
+                    Посчитать
+                </Button>
+
+            </CardContent>
+        </Card>);
+}
+
+const LeftRightComponent = (props) => {
+    const {spacing = 2, children, ...others} = props
+    return (
+        <Stack alignItems='center' direction="row" spacing={spacing} {...others}>
+            {children}
+        </Stack>
+    );
+}
+
+const ServiceItemRow = (props) => {
+    const { spacing = 2, price, description, title, ...others } = props
+    return (
+        <Stack direction='row' spacing={spacing} {...others}>
+            <LinkIcon />
+            <Typography >{title}</Typography>
+            <Typography sx={{ flexGrow: 1 }}>{description}</Typography>
+            <Typography >{ price }</Typography>
+        </Stack>);
+}
+
+const Comment = (props) => {
+    return (
+        <div>
+            <Grid container alignItems='center'>
+                <Grid item xs={1}>
+                    <Avatar sx={{ mx: 'auto' }}>
+                    H
+                </Avatar>
                     </Grid>
-                    <Grid order='2' item xs={12} md>
-                        Hui
+                <Grid item xs={11}>
+                    <Typography variant='body1'>
+                        Логин
+                    </Typography>
+                    <Typography variant='body1'>
+                        Дата
+                    </Typography>
+                    <Rating
+
+                        name='rating'
+                        defaultValue={0}
+                        precision={0.1}
+                        value={5}
+                        readOnly />
                     </Grid>
-                    <Grid order='10' item xs={12} md={4}>
-                        <Card variant="outlined">
-                            <CardContent>
-                                <div>
-                                    <Typography variant="body1">
-                                        Стоимость аренды
-                                    </Typography>
-                                    <Typography variant="h5">
-                                        от 500 ₽/час
-                                    </Typography>
+                <Typography variant='body1' xs={ 12 }>
+                Текст
+            </Typography>
+            </Grid>
+            </div>
+        )
+}
+
+const PlacePage = (props) => {
+    return (
+        <>
+            <Container sx={{ py: 4 }} maxWidth="lg" direction='row'>
+                <Grid container spacing={2}>
+                    <Grid order='3' item xs md lg>
+                        <Stack spacing={2}>
+                            <Breadcrumbs sx={{ my: 1 }} aria-label="breadcrumb">
+                                <Link underline="hover" color="inherit" href="/">
+                                    Площадки
+                                </Link>
+                                <Link
+                                    underline="hover"
+                                    color="inherit"
+                                    href="/material-ui/getting-started/installation/"
+                                >
+                                    Казань
+                                </Link>
+                                <Typography color="text.primary">Название площадки</Typography>
+                            </Breadcrumbs>
+                            <Grid sx={{ background: 'gray', minHeight: 350 }} item xs={12} id='photo-container'>
+
+                            </Grid>
+
+                            <Typography variant='h1' fontSize='40px'>
+                                Название площадки
+                            </Typography>
+                            <Stack alignItems='center' direction="row" spacing={2}>
+                                <Rating
+                                    name='rating'
+                                    defaultValue={0}
+                                    precision={0.1}
+                                    value={5}
+                                    readOnly />
+                                <Typography>Кол-во отзывов</Typography>
+                                <Link component='button' variant='body1'>Отзывы</Link>
+                            </Stack>
+                            <Card>
+                                <CardContent>
+                                    <LeftRightComponent spacing={2}>
+                                        <Avatar>H</Avatar>
+                                        <p>Имя Фамилия</p>
+                                    </LeftRightComponent>
+                                </CardContent>
+                            </Card>
+                            <Divider />
+
+                            <Typography variant='h6'>Параметры площадки</Typography>
+                            <Grid container spacing={3} item xs>
+                                {
+                                    [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((value) => (
+                                        <Grid item key={value} xs={12} md={6}>
+                                            <LeftRightComponent >
+                                                <LinkIcon />
+                                                <Typography >revolve</Typography>
+                                            </LeftRightComponent>
+                                        </Grid>
+                                    ))
+                                }
+                            </Grid>
+                            <Divider />
+
+                            <Typography variant='h6'>Услуги и оборудование</Typography>
+                            <Stack spacing={2} item xs >
+                                {
+                                    [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((value) => (
+                                        <ServiceItemRow price='Цена' title='Название' description='Описание' key={value} />
+                                    ))
+                                }
+                            </Stack>
+                            <Divider />
+
+                            <Stack direction='row' alignItems='center'>
+                                <Typography variant='h6'>Отзывы</Typography>
+                                <Rating
+                                    sx={{ ml: 'auto' }}
+                                    name='rating'
+                                    defaultValue={0}
+                                    precision={0.1}
+                                    value={5}
+                                    readOnly />
+                            </Stack>
+                            <div>
+                                <Stack>
+                                    <Comment/>
+                                    </Stack>
                                 </div>
-                                <Stack sx={{ my: 2 }} spacing={2}>
-                                    <Autocomplete
-                                        value={eventType}
-                                        onChange={(newValue) => {
-                                            setEventType(newValue);
-                                        }}
-                                        disablePortal
-                                        id="combo-box-event-type"
-                                        options={top100Films}
-                                        sx={{ width: '100%' }}
-                                        renderInput={(params) => <TextField {...params} label="Событие" />}
-                                    />
-                                    <TextField
-                                        id="guests-number"
-                                        type="number"
-                                        value={guestsCount}
-                                        onChange={(event) => changeGuestsCount(event.target.value)}
-                                        placeholder='Кол-во гостей'
-                                        label='Кол-во гостей'
-                                        InputLabelProps={{
-                                            shrink: true,
-                                        }}
-                                    />
-                                </Stack>
-                                <Button variant='outlined' sx={{ width: '100%' }}>Посчитать</Button>
-                            </CardContent>
-                        </Card>
+                        </Stack>
+                    </Grid>
+                    <Grid order='10' item xs={12} md={4} lg={4} sx={{ minWidth: 375 }}>
+                        <OrderCard />
 
                     </Grid>
                 </Grid>
