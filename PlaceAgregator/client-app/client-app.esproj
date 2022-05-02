@@ -17,12 +17,17 @@
     <Script Remove="src\Components\Authentication\SingInPage.js" />
     <Script Remove="src\Components\fullBorderedGrid.js" />
     <Script Remove="src\Components\fullBorderedGrid.styles.js" />
+    <Script Remove="src\Components\Pages\place-edit-page\service-items-panel\service-items-panel - Копировать.js" />
     <Script Remove="src\Components\Places\place-card" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="src\Components\Base\Dialog\" />
     <Folder Include="src\Components\Home\" />
-    <Folder Include="src\Components\Pages\" />
+    <Folder Include="src\Components\Pages\place-edit-page\rates-panel\" />
+    <Folder Include="src\Components\Pages\place-edit-page\description-panel\" />
+    <Folder Include="src\Components\Pages\place-edit-page\main-panel\" />
+    <Folder Include="src\Components\Pages\bookings-gape\" />
+    <Folder Include="src\Components\Pages\my-profile-page\" />
   </ItemGroup>
   <!-- This target is copied from the ASP.NET SPA template in order to ensure node_modules are in place. -->
   <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">

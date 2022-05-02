@@ -81,7 +81,7 @@ const MenuButton = (props) => {
                 transformOrigin={{ horizontal: 'right', vertical: 'top' }}
                 anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
             >
-                <MenuItem component={ Link } to='/userPage'>
+                <MenuItem component={ Link } to='/myProfile'>
                     Профиль
                 </MenuItem>
                 <Divider />
