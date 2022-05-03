@@ -18,7 +18,7 @@ namespace PlaceAgregator.Entities
             [Description("Человек")]
             Person = 4
         }
-        public long PlaceId { get; private set; }
+        public int PlaceId { get; private set; }
         public Place Place { get; private set; }
 
         public string Title { get; private set; }

@@ -13,7 +13,7 @@ namespace PlaceAgregator.Entities
         /// Id of the <see cref="Entities.User"/> who owns the <see cref="Place"/>
         /// </summary>
         [Required]
-        public long UserId { get; private set; }
+        public int UserId { get; private set; }
 
         [Required]
         public User User { get; private set; }
@@ -79,7 +79,7 @@ namespace PlaceAgregator.Entities
         [Range(minimum: 0, maximum: ushort.MaxValue)]
         public ushort SharedToiletsQuantity { get; private set; }
 
-        public long BuildingTypeId { get; private set; }
+        public int BuildingTypeId { get; private set; }
         public BuildingType BuildingType { get; private set; }
 
 

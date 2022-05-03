@@ -11,6 +11,6 @@ namespace PlaceAgregator.Entities
     public abstract class Entity
     {
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public long Id { get; set; }
+        public int Id { get; set; }
     }
 }

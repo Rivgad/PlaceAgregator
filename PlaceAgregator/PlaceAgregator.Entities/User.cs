@@ -10,7 +10,7 @@ namespace PlaceAgregator.Entities
         public string PhoneNumber { get; private set; }
         public string Email { get; private set; }
 
-        public long AccountId { get; private set; }
+        public int AccountId { get; private set; }
         public Account Account { get; private set; }
         public IEnumerable<Place> Places { get; private set; }
         public IEnumerable<Comment> Comments { get; private set; }

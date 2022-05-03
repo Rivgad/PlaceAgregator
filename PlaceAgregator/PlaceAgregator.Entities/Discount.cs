@@ -15,9 +15,9 @@ namespace PlaceAgregator.Entities
             [Description("руб/день")]
             MoneyDay = 3
         }
-        public long PlaceId { get; private set; }
+        public int PlaceId { get; private set; }
         public Place Place { get; private set; }
-        public long? RateId { get; private set; }
+        public int? RateId { get; private set; }
         public Rate? Rate { get; private set; }
 
         public TimeInterval TimeInterval { get; private set; }

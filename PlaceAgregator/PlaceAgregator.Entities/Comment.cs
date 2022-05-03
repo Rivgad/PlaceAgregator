@@ -35,7 +35,7 @@ namespace PlaceAgregator.Entities
         /// The id of place for which the comment was created
         /// </summary>
         [Required]
-        public long PlaceId { get; private set; }
+        public int PlaceId { get; private set; }
 
         /// <summary>
         /// The place for which the comment was created
@@ -85,7 +85,7 @@ namespace PlaceAgregator.Entities
         /// <param name="text">Comment text</param>
         /// <param name="publicationDate">Date and time of publication of comment</param>
         /// <param name="rating"></param>
-        public Comment(long placeId, string text, DateTime publicationDate, int rating)
+        public Comment(int placeId, string text, DateTime publicationDate, int rating)
         {
             PlaceId = placeId;
             Text = text;
@@ -99,7 +99,7 @@ namespace PlaceAgregator.Entities
         /// <param name="placeId">The id of place for which the comment is created</param>
         /// <param name="text">Comment text</param>
         /// <param name="rating">Rating for place in range from 1 to 5</param>
-        public Comment(long placeId, string text, int rating)
+        public Comment(int placeId, string text, int rating)
             : this(placeId: placeId,
                   text: text,
                   publicationDate: DateTime.Now,
@@ -107,7 +107,7 @@ namespace PlaceAgregator.Entities
         { }
 
         [JsonConstructor]
-        public Comment(long id,long placeId, string text, DateTime publicationDate, int rating)
+        public Comment(int id,int placeId, string text, DateTime publicationDate, int rating)
         {
             Id = id;
             PlaceId = placeId;
