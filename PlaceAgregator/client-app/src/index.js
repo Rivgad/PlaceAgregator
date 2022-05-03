@@ -43,15 +43,14 @@ export const themeOptions = {
 
 const theme = createTheme(themeOptions);
 
-
-
-root.render(
-    <React.StrictMode>
+const Ind = ()=>{
+    return(
+        <React.StrictMode>
         <ThemeProvider theme={theme}>
             <CssBaseline />
             <BrowserRouter>
                 <Routes>
-                    <Route path="/" element={<App />}>
+                    <Route path="/" element={<App/>}>
                         <Route path="places" element={<PlacesPage />} />
                         <Route path="places/:id" element={<PlacePage />} />
                         <Route path="myPlaces" element={<MyPlacesPage />} />
@@ -78,4 +77,9 @@ root.render(
             </BrowserRouter>
         </ThemeProvider>
     </React.StrictMode>
+    );
+}
+
+root.render(
+    <Ind/>
 );

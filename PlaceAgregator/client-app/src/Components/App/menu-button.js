@@ -11,7 +11,7 @@ import {
 import { Link } from 'react-router-dom';
 
 const MenuButton = (props) => {
-    const { logOut } = props
+    const { logOut, userLogin } = props
 
     const [anchorEl, setAnchorEl] = useState(null);
     const open = Boolean(anchorEl);
@@ -33,7 +33,7 @@ const MenuButton = (props) => {
                     aria-haspopup="true"
                     aria-expanded={open ? 'true' : undefined}
                 >
-                    <Avatar sx={{ width: 32, height: 32 }}></Avatar>
+                    <Avatar sx={{ width: 32, height: 32 }}>{userLogin[0].toUpperCase()}</Avatar>
                 </IconButton>
             </Tooltip>
             <Menu

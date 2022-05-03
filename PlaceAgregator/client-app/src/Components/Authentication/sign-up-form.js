@@ -9,18 +9,18 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 
 const SignUpForm = (props) => {
-    const { openSignIn } = props;
+    const { openSignIn, signUp } = props;
 
     const handleSubmit = (event) => {
         event.preventDefault();
         const data = new FormData(event.currentTarget);
-        console.log({
-            email: data.get('login'),
+        let result = {
+            login: data.get('login'),
             password: data.get('password'),
             passwordConfirm: data.get('passwordConfirm'),
-        });
+        };
 
-        openSignIn();
+        signUp(result.login, result.password, result.passwordConfirm);
     };
 
     return (

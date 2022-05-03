@@ -12,15 +12,7 @@ import HideOnScroll from '../Base/hide-on-scroll';
 import MenuButton from './menu-button';
 
 
-const AppHeader = ({ isLoggedIn, changeIsLoggedIn }) => {
-
-    const logIn = () => {
-        changeIsLoggedIn(true);
-    }
-    const logOut = () => {
-        changeIsLoggedIn(false);
-    }
-
+const AppHeader = ({ isLoggedIn, logOut, userLogin, ...other }) => {
     return (
         <>
             <HideOnScroll>
@@ -36,9 +28,9 @@ const AppHeader = ({ isLoggedIn, changeIsLoggedIn }) => {
                         <Box sx={{ ml: 'auto' }}>
                             {
                                 isLoggedIn === true ?
-                                    <MenuButton logOut={logOut} />
+                                    <MenuButton logOut={logOut} userLogin={userLogin} />
                                     :
-                                    <AuthenticationDialogButton logIn={logIn} />
+                                    <AuthenticationDialogButton {...other}/>
                             }
                         </Box>
                     </Toolbar>

@@ -11,15 +11,13 @@ import Typography from '@mui/material/Typography';
 
 
 const SignInForm = (props) => {
-    const { openSignUp, onSubmited } = props;
-
+    const { openSignUp, logIn } = props;
     const handleSubmit = (event) => {
         event.preventDefault();
         const data = new FormData(event.currentTarget);
         const result = {login: data.get('login'), password: data.get('password')}
-        console.log(result);
 
-        onSubmited(result);
+        logIn(result.login, result.password);
     };
 
     return (
