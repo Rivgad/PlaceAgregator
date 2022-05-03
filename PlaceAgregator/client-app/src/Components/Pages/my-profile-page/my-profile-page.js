@@ -23,25 +23,60 @@ const MyProfilePage = (props) => {
     useEffect(()=>{
 
         let token = localStorage.getItem('token');
-        axios.get('/api/MyProfile/GetNumber', 
+        axios.get('/api/MyProfile', 
         {
+            params:{
+                id:localStorage.getItem('id')
+            },
             headers:{
                 'Accept': 'application/json',
                 'Authorization':`Bearer ${token}`
             }
         }
         )
-            .then(request=>{
-                console.log(request);
+            .then((request)=>{
+                let data = request.data;
+                setState((state)=>({
+                    ...state,
+                    login:data.login,
+                    familyName:data.familyName,
+                    firstName: data.firstName,
+                    email: data.email,
+                    phone:data.phone 
+                }));
             })
             .catch(error=>{
                 console.log(error);
             });
             
     }, []);
-
+    const saveChanges = ()=>{
+        let token = localStorage.getItem('token');
+        let id = localStorage.getItem('id');
+        let url = `/api/MyProfile/Update`
+        let data ={
+            id:id,
+            login:state.login,
+            firstName:state.firstName,
+            familyName:state.familyName,
+            email:state.email,
+            phone:state.phone
+        }
+        axios.post(url, 
+            data,
+            {
+                params:{...data},
+            headers:{
+                'Accept': 'application/json',
+                'Authorization':`Bearer ${token}`
+            }
+        
+        })
+        .then((response)=>console.log(response))
+        .catch(error=>console.log(error));
+    }
     useEffect(() => {
-        console.log(state);
+        //console.log(state);
     }, [state])
 
     return (
@@ -57,24 +92,25 @@ const MyProfilePage = (props) => {
                         <Avatar sx={{ width: 60, height: 60, mx: 'auto' }}>H</Avatar>
                     </Grid>
                     <Grid item xs={12} md={4}>
-                        <TextField onChange={handleChange('login')} fullWidth label='Логин' />
+                        <TextField onChange={handleChange('login')} value={state.login} fullWidth label='Логин' />
                     </Grid>
                     <Grid item xs={12} md={4}>
-                        <TextField onChange={handleChange('familyName')} fullWidth label='Фамилия' />
+                        <TextField onChange={handleChange('familyName')} value={state.familyName} fullWidth label='Фамилия' />
                     </Grid>
                     <Grid item xs={12} md={4}>
-                        <TextField onChange={handleChange('firstName')} fullWidth label='Имя' />
+                        <TextField onChange={handleChange('firstName')} value={state.firstName} fullWidth label='Имя' />
                     </Grid>
                     <Grid item xs={12} md={12}>
-                        <TextField onChange={handleChange('email')} fullWidth label='Email' type='email' />
+                        <TextField onChange={handleChange('email')} value={state.email} fullWidth label='Email' type='email' />
                     </Grid>
                     <Grid item xs={12} md={12}>
-                        <TextField onChange={handleChange('phone')} fullWidth label='Номер телефона' type='phone' />
+                        <TextField onChange={handleChange('phone')} value={state.phone} fullWidth label='Номер телефона' type='phone' />
                     </Grid>
                     <Grid item xs={4} md={4} sx={{mx:'auto'}}>
                         <Button
                             fullWidth
-                            variant='contained'                            
+                            variant='contained'         
+                            onClick={saveChanges}                   
                         >
                             Сохранить
                         </Button>

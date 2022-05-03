@@ -29,6 +29,8 @@ const App = (props) => {
             .then((response) => {
                 let result = response.data;
                 localStorage.setItem('token', result.access_token);
+                localStorage.setItem('login', result.username);
+                localStorage.setItem('id', result.id);
                 setState((state) => ({ ...state, isLoggedIn: true, userLogin: result.username, dialogOpen: false }));
             })
             .catch(
@@ -50,6 +52,9 @@ const App = (props) => {
             });
     }
     const Logout = () => {
+        localStorage.removeItem('token');
+        localStorage.removeItem('login');
+        localStorage.removeItem('id');
         setState(state => ({ ...state, isLoggedIn: false, userLogin: '' }));
     }
 

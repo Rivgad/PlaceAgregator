@@ -44,6 +44,8 @@ export const themeOptions = {
 const theme = createTheme(themeOptions);
 
 const Ind = ()=>{
+    
+
     return(
         <React.StrictMode>
         <ThemeProvider theme={theme}>

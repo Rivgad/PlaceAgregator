@@ -53,7 +53,8 @@ namespace PlaceAgregator.API.Controllers
             {
                 access_token = encodedJwt,
                 username = person.Login,
-                role = person.Role.ToString()
+                role = person.Role.ToString(),
+                id = person.Id,
             };
 
             return new JsonResult(response);
