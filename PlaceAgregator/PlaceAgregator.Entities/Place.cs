@@ -41,7 +41,7 @@ namespace PlaceAgregator.Entities
         public string City { get;  set; }
 
         [MinLength(3)]
-        public string Adress { get;  set; }
+        public string Address { get;  set; }
 
         [MinLength(3)]
         public string? MailIndex { get;  set; }
