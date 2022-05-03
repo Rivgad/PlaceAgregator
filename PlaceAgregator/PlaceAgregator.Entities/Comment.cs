@@ -13,35 +13,39 @@ namespace PlaceAgregator.Entities
     [DataContract]
     public class Comment : Entity, IValidatableObject
     {
+        [Required]
+        public int UserId { get; set; }
+        [Required]
+        public User User { get; set; }
         /// <summary>
         /// Text of comment
         /// </summary>
         [Required]
         [MinLength(1)]
-        public string Text { get; private set; }
+        public string Text { get;  set; }
 
         /// <summary>
         /// Publication date and time
         /// </summary>
-        public DateTime PublicationDate { get; private set; }
+        public DateTime PublicationDate { get;  set; }
 
         /// <summary>
         /// Comment rating in range from 1 to 5
         /// </summary>
         [Range(1, 5)]
-        public int Rating { get; private set; }
+        public int Rating { get;  set; }
 
         /// <summary>
         /// The id of place for which the comment was created
         /// </summary>
         [Required]
-        public int PlaceId { get; private set; }
+        public int PlaceId { get;  set; }
 
         /// <summary>
         /// The place for which the comment was created
         /// </summary>
         [JsonIgnore]
-        public Place? Place { get; private set; }
+        public Place? Place { get;  set; }
 
         /// <summary>
         /// Initializes a new instance of <see cref="Comment"/> class
