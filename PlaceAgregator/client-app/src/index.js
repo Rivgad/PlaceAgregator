@@ -15,7 +15,7 @@ import BookingsPage from './Components/Pages/bookings-gape/bookings-page';
 import MyProfilePage from './Components/Pages/my-profile-page/my-profile-page';
 
 import StuffApp from './Components/stuff-app/stuff-app';
-import App from './Components/App1/App';
+import App from './Components/App/App';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
