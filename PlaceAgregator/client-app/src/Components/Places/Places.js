@@ -18,9 +18,9 @@ import SearchIcon from '@mui/icons-material/Search';
 import { Inbox, Mail as MailIcon, Close as CloseIcon } from '@mui/icons-material';
 import { PlaceCard } from '../Places'
 
-const ItemsGrid = (props) => {
-    return (
 
+const PlaceCardsGrid = (props) => {
+    return (
         <Grid container flexDirection="row wrap" spacing={2} displayPrint="flex-wrap" justifyContent="center" alignItems="center">
             {props.data.map((item) => {
                 return (
@@ -51,23 +51,26 @@ const MockPlacesData = (View) => {
             .then((data) => {
                 const placesIds = [...Array(20).keys()];
                 let places = []
-                placesIds.forEach((value) => {
+                placesIds.forEach((id) => {
                     let rating = Math.random() * 5 + 0.1
                     let price = Math.round(((Math.random()) * 100)) * 15 + 150
                     let capacity = Math.round(Math.random() * 5 + 0.1)
                     let area = Math.round(Math.random() * 100)
+                    let title = `Площадка №${id}`
                     let place = {
-                        id: value,
+                        id: id,
                         rating: rating,
                         price: price,
                         capacity: capacity,
                         area: area,
-                        //imageUrl: data[value].download_url
+                        title: title,
+                        //imageUrl: data[id].download_url
                     };
                     places.push(place);
                 })
                 setData(places)
             })
+            .catch((id)=>{console.log(id)})
 
     }, []);
 
@@ -79,10 +82,10 @@ const MockPlacesData = (View) => {
 const SelectFieldInput = (props) => {
     let { options, ...other } = props;
 
-    const [selectedValue, setValue] = useState(options[0].value)
+    const [selectedValue, setValue] = useState('')
 
     const handleChange = (event) => {
-        setValue(event.target.value);
+        setValue(event.target.id);
     };
 
     return (
@@ -90,12 +93,12 @@ const SelectFieldInput = (props) => {
             variant='outlined'
             select
             fullWidth
-            value={selectedValue}
+            id={selectedValue}
             onChange={handleChange}
             {...other}
         >
             {options.map((item) => (
-                <MenuItem key={item.value} value={item.value}>
+                <MenuItem key={item.id} id={item.id}>
                     {item.label}
                 </MenuItem>
             ))}
@@ -103,22 +106,22 @@ const SelectFieldInput = (props) => {
     );
 }
 
-const SearchBarInput = (props) => {
+const SearchBarPanel = (props) => {
     const eventTypes = [
         {
-            value: 'USD',
+            id: 'USD',
             label: '$',
         },
         {
-            value: 'EUR',
+            id: 'EUR',
             label: '€',
         },
         {
-            value: 'BTC',
+            id: 'BTC',
             label: '฿',
         },
         {
-            value: 'JPY',
+            id: 'JPY',
             label: '¥',
         },
     ]
@@ -127,7 +130,7 @@ const SearchBarInput = (props) => {
 
             <Grid container spacing={2} direction='row' alignItems='center'>
                 <Grid item xs={12} md={12} sm={12}>
-                    <Box sx={{ display: 'flex', alignItems: 'flex-end', alignItems: 'center' }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
                         <TextField id="input-with-sx" fullWidth label="Поиск" variant="outlined" />
                         <IconButton>
                             <SearchIcon />
@@ -185,12 +188,12 @@ const PlacesPage = () => {
     const toggleDrawer = (isOpen) => {
         setState(isOpen)
     }
-    const PlacesListWithData = MockPlacesData(ItemsGrid)
+    const PlacesListWithData = MockPlacesData(PlaceCardsGrid)
     return (
         <>
             <Container sx={{ py: 2 }} maxWidth="lg">
                 <Box sx={{ my: 5 }}>
-                    <SearchBarInput openDrawer={() => toggleDrawer(true)} />
+                    <SearchBarPanel openDrawer={() => toggleDrawer(true)} />
                 </Box>
                 <SwipeableDrawer
                     anchor='right'

@@ -10,7 +10,7 @@ import {
 const MyProfilePage = (props) => {
     return (
         <>
-            <Container sx={{ py: 2 }} maxWidth="lg">
+            <Container sx={{ py: 2 }} maxWidth="md">
                 <Grid sx={{ py: 4 }} container spacing={4}>
                     <Grid item xs={12} >
                         <Typography variant='h5'>

@@ -21,8 +21,9 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 
-import DialogTitleCloseButton from '../Base/Dialog/dialog-title-close-button'
-import CustomDialog from '../Base/Dialog/custom-dialog'
+
+import CustomDialog from '../Base/dialog/custom-dialog';
+import DialogTitleCloseButton from '../Base/dialog/dialog-title-close-button';
 
 function createData(id, name, raiting) {
     return { id, name, raiting };

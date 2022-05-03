@@ -4,10 +4,10 @@ import DialogContent from '@mui/material/DialogContent';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 
-import DialogTitleCloseButton from '../Base/Dialog/dialog-title-close-button'
-import CustomDialog from '../Base/Dialog/custom-dialog'
-import SignInForm from './SignInForm';
-import SignUpForm from './SignUpForm';
+import DialogTitleCloseButton from '../Base/dialog/dialog-title-close-button'
+import CustomDialog from '../Base/dialog/custom-dialog'
+import SignInForm from './sign-in-form';
+import SignUpForm from './sign-up-form';
 
 import { useNavigate } from "react-router-dom";
 
@@ -28,9 +28,14 @@ const AuthenticationDialogButton = (props) => {
     const handleClose = () => {
         setOpen(false);
     };
-    const onSubmited = () => {
+    const onSubmited = (data) => {
         handleClose();
         logIn();
+        if(data.login === 'moderator')
+        {
+            navigate('/staff')
+            return;
+        }
         navigate('/places')
     }
     return (

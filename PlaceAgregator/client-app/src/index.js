@@ -1,19 +1,20 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { BrowserRouter, Route, Routes, Navigate } from 'react-router-dom';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import Box from '@mui/material/Box'
 
 import './index.css';
-import App from './App';
 import PlacesPage from './Components/Places/Places';
 import PlacePage from './Components/Pages/place-page';
 import MyPlacesPage from './Components/Pages/my-places-page';
 import PlaceEditPage from './Components/Pages/place-edit-page/place-edit-page';
 import BookingsPage from './Components/Pages/bookings-gape/bookings-page';
 import MyProfilePage from './Components/Pages/my-profile-page/my-profile-page';
+import App from './Components/app/App';
+import StuffApp from './Components/stuff-app/stuff-app';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
@@ -73,6 +74,7 @@ root.render(
                             }
                         />
                     </Route>
+                    <Route path='/staff/*' element={ <StuffApp/> }/>
                 </Routes>
             </BrowserRouter>
         </ThemeProvider>

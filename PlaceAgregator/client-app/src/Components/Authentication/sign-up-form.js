@@ -9,7 +9,7 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 
 const SignUpForm = (props) => {
-    const { openSignIn, onSubmited } = props;
+    const { openSignIn } = props;
 
     const handleSubmit = (event) => {
         event.preventDefault();

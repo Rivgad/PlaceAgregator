@@ -16,12 +16,10 @@ const SignInForm = (props) => {
     const handleSubmit = (event) => {
         event.preventDefault();
         const data = new FormData(event.currentTarget);
-        console.log({
-            email: data.get('email'),
-            password: data.get('password'),
-        });
+        const result = {login: data.get('login'), password: data.get('password')}
+        console.log(result);
 
-        onSubmited();
+        onSubmited(result);
     };
 
     return (
@@ -37,10 +35,10 @@ const SignInForm = (props) => {
                     margin="normal"
                     required
                     fullWidth
-                    id="email"
-                    label="Email/Логин"
-                    name="email"
-                    autoComplete="email"
+                    id="login"
+                    label="Логин"
+                    name="login"
+                    autoComplete="login"
                     autoFocus
                 />
                 <TextField

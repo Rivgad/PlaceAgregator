@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
-import { Link as RouterLink } from 'react-router-dom'
 import {
     Avatar,
     Autocomplete,
@@ -10,7 +9,6 @@ import {
     CardContent,
     Container,
     Typography,
-    List,
     TextField,
     Stack,
     Divider,
@@ -26,8 +24,6 @@ import { Link as LinkIcon } from '@mui/icons-material'
 const OrderCard = () => {
     const [eventType, setEventType] = useState(null);
     const [guestsCount, setGuestsCount] = useState(0);
-    const [startDateTime, setStartDateTime] = useState(new Date());
-    const [endDateTime, setEndDateTime] = useState(new Date());
 
     const changeGuestsCount = (value) => {
         if (value >= 0)

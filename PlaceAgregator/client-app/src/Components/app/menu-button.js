@@ -1,23 +1,14 @@
-import React, { Component, useState, useEffect } from 'react';
-
-import { Link, Outlet } from 'react-router-dom';
-import {
-    Link as MuiLink,
-    Stack,
-    Toolbar,
-    AppBar,
-    Button,
-    Box,
-    Menu,
-    Avatar
-} from '@mui/material';
 import MenuItem from '@mui/material/MenuItem';
 import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import Tooltip from '@mui/material/Tooltip';
-import AuthenticationDialogButton from './Components/Authentication/AuthenticationDialogButton';
-import HideOnScroll from './Components/Base/HideOnScroll';
+import { useState } from 'react';
+import {
+    Menu,
+    Avatar
+} from '@mui/material';
+import { Link } from 'react-router-dom';
 
 const MenuButton = (props) => {
     const { logOut } = props
@@ -81,7 +72,7 @@ const MenuButton = (props) => {
                 transformOrigin={{ horizontal: 'right', vertical: 'top' }}
                 anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
             >
-                <MenuItem component={ Link } to='/myProfile'>
+                <MenuItem component={Link} to='/myProfile'>
                     Профиль
                 </MenuItem>
                 <Divider />
@@ -101,57 +92,4 @@ const MenuButton = (props) => {
     );
 }
 
-const AppHeader = ({ isLoggedIn, changeIsLoggedIn }) => {
-
-    const logIn = () => {
-        changeIsLoggedIn(true);
-    }
-    const logOut = () => {
-        changeIsLoggedIn(false);
-    }
-
-    return (
-        <>
-            <HideOnScroll>
-                <AppBar color="secondary">
-                    <Toolbar>
-                        <MuiLink component={Link} to="/" underline="none" color='inherit' sx={{ mr: 3 }}>
-                            PlaceAgregator
-                        </MuiLink>
-                        <Stack direction="row" spacing={2}>
-                            <Button component={Link} color='white' to="places" >Площадки</Button>
-                        </Stack>
-
-                        <Box sx={{ ml: 'auto' }}>
-                            {
-                                isLoggedIn === true ?
-                                    <MenuButton logOut={logOut} />
-                                    :
-                                    <AuthenticationDialogButton logIn={logIn} />
-                            }
-                        </Box>
-                    </Toolbar>
-                </AppBar>
-            </HideOnScroll>
-            <Toolbar />
-        </>
-    );
-}
-
-const App = () => {
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
-
-    const changeIsLoggedIn = (value) => {
-        setIsLoggedIn(value)
-    }
-
-    return (
-        <>
-            <AppHeader isLoggedIn={isLoggedIn} changeIsLoggedIn={changeIsLoggedIn} />
-            <Outlet />
-            <footer>Footer</footer>
-        </>
-    );
-}
-
-export default App;
+export default MenuButton;
