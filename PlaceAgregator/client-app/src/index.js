@@ -13,8 +13,9 @@ import MyPlacesPage from './Components/Pages/my-places-page';
 import PlaceEditPage from './Components/Pages/place-edit-page/place-edit-page';
 import BookingsPage from './Components/Pages/bookings-gape/bookings-page';
 import MyProfilePage from './Components/Pages/my-profile-page/my-profile-page';
-import App from './Components/app/App';
+
 import StuffApp from './Components/stuff-app/stuff-app';
+import App from './Components/App1/App';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
@@ -51,9 +52,7 @@ root.render(
             <BrowserRouter>
                 <Routes>
                     <Route path="/" element={<App />}>
-                        <Route path="places" element={<PlacesPage />} >
-                            
-                        </Route>
+                        <Route path="places" element={<PlacesPage />} />
                         <Route path="places/:id" element={<PlacePage />} />
                         <Route path="myPlaces" element={<MyPlacesPage />} />
                         <Route path="places/:id/edit" element={<PlaceEditPage />} />
