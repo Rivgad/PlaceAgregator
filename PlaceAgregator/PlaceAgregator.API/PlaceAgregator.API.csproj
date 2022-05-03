@@ -11,4 +11,9 @@
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\PlaceAgregator.Entities\PlaceAgregator.Entities.csproj" />
+    <ProjectReference Include="..\PlaceAgregator.EntityFramework\PlaceAgregator.EntityFramework.csproj" />
+  </ItemGroup>
+
 </Project>
