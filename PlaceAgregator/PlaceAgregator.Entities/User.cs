@@ -9,7 +9,6 @@ namespace PlaceAgregator.Entities
         public string FamilyName { get; private set; }
         public string PhoneNumber { get; private set; }
         public string Email { get; private set; }
-        public float Rating { get; private set; }
 
         public long AccountId { get; private set; }
         public Account Account { get; private set; }
