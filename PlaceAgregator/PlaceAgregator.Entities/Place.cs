@@ -110,6 +110,9 @@ namespace PlaceAgregator.Entities
 
         #endregion
 
+        public SmokingRuleType? SmokingRule { get; set; }
+        public AdministratorRuleType? AdministratorRule { get; set; }
+
         public int BookingHorizonInDays { get;  set; }
 
         public IEnumerable<ServiceItem>? ServiceItems { get;  set; } = new List<ServiceItem>();
