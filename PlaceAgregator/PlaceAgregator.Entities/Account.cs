@@ -8,9 +8,9 @@ namespace PlaceAgregator.Entities
         public string PasswordHash { get; set; }
         public Role Role { get; private set; }
 
-        public User? User { get; private set; }
-        public Manager? Manager { get; private set; }
-        public Admin? Admin { get; private set; }
+        public User? User { get; set; }
+        public Manager? Manager { get; set; }
+        public Admin? Admin { get; set; }
 
         private Account() { }
         public Account(string login, string passwordHash, Role role)
