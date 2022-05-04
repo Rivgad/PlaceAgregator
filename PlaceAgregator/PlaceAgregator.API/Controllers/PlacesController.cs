@@ -117,7 +117,6 @@ namespace PlaceAgregator.API.Controllers
         }
         public struct PlaceCreateData
         {
-            public int UserId { get; set; }
             public string Title { get; set; }
             public string City { get; set; }
             public string Address { get; set; }
@@ -131,13 +130,18 @@ namespace PlaceAgregator.API.Controllers
             {
                 return BadRequest();
             }
-            var account = await _context.Users.FirstOrDefaultAsync(item => item.Id == data.UserId);
+            
+
+            var account = await _context.Accounts
+                .Include(item=>item.User)
+                .FirstOrDefaultAsync(item => item.Login == User.Identity.Name);
+
             if(account == null)
             {
                 return BadRequest();
             }
 
-            var place = new Place() { UserId=data.UserId, Address = data.Address, Title = data.Title, City = data.City };
+            var place = new Place() { UserId= account.User.Id, Address = data.Address, Title = data.Title, City = data.City };
 
 
             try

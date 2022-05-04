@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import {
     Typography,
@@ -7,11 +7,7 @@ import {
     Stack,
     DialogContent,
     TextField,
-    Select,
-    MenuItem,
-    InputLabel,
-    FormControl,
-    OutlinedInput
+    IconButton,
 } from "@mui/material"
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -24,29 +20,11 @@ import Paper from '@mui/material/Paper';
 
 import CustomDialog from '../Base/dialog/custom-dialog';
 import DialogTitleCloseButton from '../Base/dialog/dialog-title-close-button';
-
-function createData(id, name, raiting) {
-    return { id, name, raiting };
-}
-
-const rows = [
-    createData(159, 'Дизайнерский лофт с лаунж-зоной', 4.0),
-    createData(237, 'Лофт Пятый Элемент', 4.3),
-    createData(262, 'Панорамный лофт с выходом на крышу', 3.0),
-    createData(305, 'Лофт с верандой в сёрф-стиле', 4.3),
-    createData(356, 'Хорошо оборудованный лофт для праздника', 3.9),
-];
-
-const cities = [
-    { name: 'Казань' },
-    { name: 'Москва' },
-    { name: 'Санкт-Петербург' },
-    { name: 'Волгоград' },
-    { name: 'Пенза' }
-]
+import { Delete as DeleteIcon, Edit as EditIcon } from '@mui/icons-material';
+const axios = require('axios').default;
 
 function PlacesTable(props) {
-    let { places } = props
+    let { places, handleClickDelete } = props
     return (
         <TableContainer component={Paper}>
             <Table aria-label="simple table">
@@ -54,25 +32,28 @@ function PlacesTable(props) {
                     <TableRow>
                         <TableCell>ID</TableCell>
                         <TableCell align="left">Название</TableCell>
-                        <TableCell align="center">Рейтинг</TableCell>
-                        <TableCell align="right"></TableCell>
+                        <TableCell align="right">Рейтинг</TableCell>
+                        <TableCell align="center"></TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
                     {places.map((row) => (
                         <TableRow
-                            key={row.name}
+                            key={row.id}
                             sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                         >
                             <TableCell component="th" scope="row">
                                 {row.id}
                             </TableCell>
-                            <TableCell align="left">{row.name}</TableCell>
-                            <TableCell align="center">{row.raiting}</TableCell>
-                            <TableCell align="right">
-                                <Button component={Link} to={`/places/${row.id}/edit` } variant='contained'>
-                                    Редактировать
-                                </Button>
+                            <TableCell align="left">{row.title}</TableCell>
+                            <TableCell align="right">{row.rating}</TableCell>
+                            <TableCell align="center">
+                                <IconButton component={Link} to={`/places/${row.id}/edit`} variant='contained'>
+                                    <EditIcon />
+                                </IconButton>
+                                <IconButton onClick={() => handleClickDelete(row.id)} variant='contained' color='error'>
+                                    <DeleteIcon />
+                                </IconButton>
                             </TableCell>
                         </TableRow>
                     ))}
@@ -82,28 +63,24 @@ function PlacesTable(props) {
     );
 }
 
-const CreatePlaceDialog = () => {
-    const [dialogOpen, setDialogOpen] = useState(false);
-
-    const handleClickOpen = () => {
-        setDialogOpen(true);
-    }
-    const handleClose = () => {
-        setDialogOpen(false);
-    }
-    const [city, setCity] = useState('');
-
-    const handleChange = (event) => {
-        setCity(event.target.value);
+const CreatePlaceDialog = ({ createPlace, openDialog, closeDialog, dialogOpen }) => {
+    const [state, setState] = useState({
+        city: '',
+        title: '',
+        address: ''
+    });
+    const handleChange = (prop) => (event) => {
+        setState((state) => ({ ...state, [prop]: event.target.value }));
+        console.log(state);
     };
 
     return (
         <>
-            <Button onClick={handleClickOpen} sx={{ ml: 'auto' }} variant='contained' size='large'>
+            <Button onClick={openDialog} sx={{ ml: 'auto' }} variant='contained' size='large'>
                 Добавить новую площадку
             </Button>
-            <CustomDialog open={dialogOpen} onClose={handleClose}>
-                <DialogTitleCloseButton onClose={handleClose} />
+            <CustomDialog open={dialogOpen} onClose={closeDialog}>
+                <DialogTitleCloseButton onClose={closeDialog} />
                 <DialogContent>
                     <Container component="main" maxWidth="lg" sx={{
                         my: 4,
@@ -112,26 +89,12 @@ const CreatePlaceDialog = () => {
                         alignItems: 'center',
                     }}>
                         <Stack spacing={4} sx={{ width: 500 }}>
-                            <TextField placeholder='Название' />
-                            <FormControl sx={{ m: 1 }}>
-                                <InputLabel >Город</InputLabel>
-                                <Select
-                                    value={city}
-                                    input={<OutlinedInput label="Name" />}
-                                    onChange={handleChange}
-                                >
-                                    {cities.map(({ name }) => (
-                                        <MenuItem
-                                            key={name}
-                                            value={name}
-                                        >
-                                            {name}
-                                        </MenuItem>
-                                    ))}
-                                </Select>
-                            </FormControl>
-                            <TextField placeholder='Адрес площадки' />
-                            <Button size='large' variant='contained'>
+                            <TextField placeholder='Название' value={state.title} onChange={handleChange('title')} />
+                            <TextField placeholder='Город' value={state.city} onChange={handleChange('city')} />
+                            <TextField value={state.address} onChange={handleChange('address')} placeholder='Адрес площадки' />
+                            <Button size='large' variant='contained' onClick={() => {
+                                createPlace(state.title, state.city, state.address);
+                            }}>
                                 Добавить площадку
                             </Button>
                         </Stack>
@@ -143,7 +106,71 @@ const CreatePlaceDialog = () => {
 }
 
 const MyPlacesPage = () => {
+    const [state, setState] = useState([]);
+    const [dialogOpen, setDialogOpen] = useState(false);
 
+    const openDialog = () => {
+        setDialogOpen(true)
+    }
+    const closeDialog = () => {
+        setDialogOpen(false)
+    }
+
+    useEffect(() => {
+        downloadData();
+    }, []);
+
+    const downloadData = () => {
+        let token = localStorage.getItem('token');
+
+        axios.get('/api/MyPlaces', {
+            headers: {
+                'Accept': 'application/json',
+                'Authorization': `Bearer ${token}`
+            }
+        })
+            .then(response => {
+                setState(response.data);
+            })
+            .catch(error => console.log(error));
+    }
+
+    const createPlace = (title, city, address) => {
+        let token = localStorage.getItem('token');
+        let data = { title, city, address };
+        axios.post('/api/places/create',
+            data,
+            {
+                params: { ...data },
+                headers: {
+                    'Accept': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                }
+            })
+            .then(response => {
+                closeDialog();
+                downloadData();
+            })
+            .catch(error => console.log(error));
+    }
+    const deletePlace = (id) =>{
+        let token = localStorage.getItem('token');
+
+        let data={ id:id }
+        axios.post('/api/places/delete',
+            data,
+            {
+                params: { ...data },
+                headers: {
+                    'Accept': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                }
+            })
+            .then(response => {
+                downloadData();
+            })
+            .catch(error => console.log(error));
+    }
     return (
         <>
             <Container sx={{ py: 2 }} maxWidth="lg">
@@ -152,9 +179,14 @@ const MyPlacesPage = () => {
                         Мои площадки
                     </Typography>
 
-                    <CreatePlaceDialog />
+                    <CreatePlaceDialog
+                        createPlace={createPlace}
+                        dialogOpen={dialogOpen}
+                        openDialog={openDialog}
+                        closeDialog={closeDialog}
+                    />
                 </Stack>
-                <PlacesTable places={rows} />
+                <PlacesTable places={state} handleClickDelete={deletePlace}/>
             </Container>
         </>
     );

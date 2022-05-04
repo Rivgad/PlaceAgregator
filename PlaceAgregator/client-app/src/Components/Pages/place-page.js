@@ -21,11 +21,11 @@ import {
     CardMedia
 } from '@mui/material';
 import { Link as LinkIcon } from '@mui/icons-material'
-import { useLocation, useSearchParams } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 const axios = require('axios').default;
 
 const OrderCard = (props) => {
-    const {baseRate} = props
+    const { baseRate } = props
     const [eventType, setEventType] = useState(null);
     const [guestsCount, setGuestsCount] = useState(0);
 
@@ -175,18 +175,18 @@ const ServiceItemRow = (props) => {
 }
 
 const ServiceItems = (props) => {
-    const {serviceItems} = props
+    const { serviceItems } = props
     return (
         <>
             <Typography variant='h6'>Услуги и оборудование</Typography>
             <Stack spacing={2}>
                 {
                     serviceItems.length === 0 ?
-                    <>У площадки нет услуг или оборудования</>
-                    :
-                    serviceItems.map((value) => (
-                        <ServiceItemRow price={value.price} title={value.title} comment={value.comment} key={value.id} />
-                    ))
+                        <>У площадки нет услуг или оборудования</>
+                        :
+                        serviceItems.map((value) => (
+                            <ServiceItemRow price={value.price} title={value.title} comment={value.comment} key={value.id} />
+                        ))
                 }
             </Stack>
         </>
@@ -231,8 +231,7 @@ const Comment = (props) => {
 }
 
 const Comments = (props) => {
-    const {comments, rating } = props;
-    const now = new Date();
+    const { comments, rating } = props;
     return (
         <>
             <Stack direction='row' alignItems='center'>
@@ -248,8 +247,8 @@ const Comments = (props) => {
 
             <Stack spacing={2}>
                 {
-                    comments.map((item)=>{
-                        return(
+                    comments.map((item) => {
+                        return (
                             <Comment text={item.text} login={item.login} date={item.publicationDate} rating={item.rating} />
                         );
                     })
@@ -260,26 +259,26 @@ const Comments = (props) => {
 }
 
 const PlaceParams = (props) => {
-    const {parameters} = props;
+    const { parameters } = props;
 
     return (
         <>
             <Typography variant='h6'>Параметры площадки</Typography>
             <Grid container spacing={3} item xs>
                 {
-                    parameters.map((item) =>{ 
-                        if(item.value !==null)
-                        {
-                            return(
+                    parameters.map((item) => {
+                        if (item.value !== null) {
+                            return (
                                 <Grid item key={item.type} xs={12} md={6}>
-                            <LeftRightComponent >
-                                <LinkIcon />
-                                <Typography >{item.title} : {item.value}</Typography>
-                            </LeftRightComponent>
-                        </Grid>
+                                    <LeftRightComponent >
+                                        <LinkIcon />
+                                        <Typography >{item.title} : {item.value}</Typography>
+                                    </LeftRightComponent>
+                                </Grid>
                             );
                         }
-                })
+                        return null;
+                    })
                 }
             </Grid>
         </>
@@ -302,18 +301,18 @@ const PlaceDesciption = (props) => {
 }
 
 const PlaceHeader = (props) => {
-    const 
-    {
-        city, 
-        title, 
-        address, 
-        rating, 
-        commentsCount,
-        firstName,
-        familyName,
-        login,
-        photo
-    } = props
+    const
+        {
+            city,
+            title,
+            address,
+            rating,
+            commentsCount,
+            firstName,
+            familyName,
+            login,
+            photo
+        } = props
     return (
         <>
             <Breadcrumbs sx={{ my: 1 }} aria-label="breadcrumb">
@@ -330,7 +329,7 @@ const PlaceHeader = (props) => {
                 <Typography color="text.primary">{title}</Typography>
             </Breadcrumbs>
             <Grid sx={{ minHeight: 350 }} item xs={12} id='photo-container'>
-                <CardMedia component='img' src={photo} alt='Фото площадки'/>
+                <CardMedia component='img' src={photo} alt='Фото площадки' />
             </Grid>
 
             <Typography variant='h1' fontSize='40px'>
@@ -354,7 +353,7 @@ const PlaceHeader = (props) => {
                 <CardContent component={Stack} direction='row' alignItems='center'>
 
                     <LeftRightComponent spacing={2}>
-                        <Avatar>{login.slice(0,1)}</Avatar>
+                        <Avatar>{login.slice(0, 1)}</Avatar>
                         <p>{firstName} {familyName}</p>
                     </LeftRightComponent>
                 </CardContent>
@@ -373,7 +372,7 @@ const PlacePage = (props) => {
                 address: '',
                 commentsCount: 0,
                 rating: 0,
-                parameters:[],
+                parameters: [],
                 serviceItems: [],
                 comment: '',
                 baseRate: 0,
@@ -388,52 +387,51 @@ const PlacePage = (props) => {
         }
     );
 
-const location = useLocation();
+    const location = useLocation();
 
-useEffect(() => {
+    useEffect(() => {
 
-    let id = location.pathname.slice(8);
-    console.log(id);
-    axios.get(`/api/Places`, {
-        params: {
-            id: id
-        }
-    })
-        .then(response => 
-            { 
-                let data = response.data; 
+        let id = location.pathname.slice(8);
+        console.log(id);
+        axios.get(`/api/Places`, {
+            params: {
+                id: id
+            }
+        })
+            .then(response => {
+                let data = response.data;
                 console.log(data)
                 setState(data);
             })
-        .catch(error => { console.log(error) });
-}, []);
+            .catch(error => { console.log(error) });
+    }, []);
 
-return (
-    <>
-        <Container sx={{ py: 4 }} maxWidth="lg" direction='row'>
-            <Grid container spacing={2}>
-                <Grid order='3' item xs md lg>
-                    <Stack spacing={2} divider={<Divider flexItem />}>
-                        <PlaceHeader {...state.landlord} {...state.place}/>
+    return (
+        <>
+            <Container sx={{ py: 4 }} maxWidth="lg" direction='row'>
+                <Grid container spacing={2}>
+                    <Grid order='3' item xs md lg>
+                        <Stack spacing={2} divider={<Divider flexItem />}>
+                            <PlaceHeader {...state.landlord} {...state.place} />
 
-                        <PlaceParams parameters={state.place.parameters}/>
+                            {state.place.parameters & <PlaceParams parameters={state.place.parameters} />}
 
-                        {state.place.description & <PlaceDesciption description={state.place.description}/>}
+                            {state.place.description & <PlaceDesciption description={state.place.description} />}
 
-                        {state.place.serviceItems & <ServiceItems serviceItems={state.place.serviceItems}/>}
+                            {state.place.serviceItems & <ServiceItems serviceItems={state.place.serviceItems} />}
 
-                        <Comments comments={state.place.comments} rating={state.place.rating}/>
+                            <Comments comments={state.place.comments} rating={state.place.rating} />
 
-                    </Stack>
+                        </Stack>
+                    </Grid>
+                    <Grid order='10' item xs={12} md={4} lg={4} sx={{ minWidth: 375 }}>
+                        <OrderCard baseRate={state.place.baseRate} />
+
+                    </Grid>
                 </Grid>
-                <Grid order='10' item xs={12} md={4} lg={4} sx={{ minWidth: 375 }}>
-                    <OrderCard baseRate={state.place.baseRate}/>
-
-                </Grid>
-            </Grid>
-        </Container>
-    </>
-)
+            </Container>
+        </>
+    )
 }
 const top100Films = [
     { label: 'The Shawshank Redemption', year: 1994 },
