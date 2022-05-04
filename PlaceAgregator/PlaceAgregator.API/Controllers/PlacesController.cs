@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlaceAgregator.Entities;
@@ -37,12 +38,13 @@ namespace PlaceAgregator.API.Controllers
             return new JsonResult(places);
         }
 
-        [HttpGet("[Action]")]
+        [HttpGet]
         public async Task<IActionResult> GetPlace(int id)
         {
             var place = await _context.Places
                 .Include(item => item.Comments)
                 .ThenInclude(item => item.User)
+                .ThenInclude(item=>item.Account)
                 .Include(item => item.User)
                 .ThenInclude(item => item.Account)
                 .Include(item => item.ServiceItems)
@@ -55,7 +57,10 @@ namespace PlaceAgregator.API.Controllers
             }
             var serviceItems = place.ServiceItems?
                 .Where(item => item.IsActive == true)
-                .Select(item => new { title = item.Title });
+                .Select(item => new { title = item.Title, item.Price, item.Comment, item.Id });
+
+            var comments = place.Comments?
+                .Select(item => new { item.Id, item.PublicationDate, item.Rating, login = item.User.Account.Login, item.Text });
 
             return new JsonResult(new
             {
@@ -67,29 +72,24 @@ namespace PlaceAgregator.API.Controllers
                     address = place.Address,
                     commentsCount = place.Comments.Count(),
                     rating = place.Rating,
-
-                    parameters = new
+                    parameters = new object[]
                     {
-                        buildingType = place.BuildingType?.Title,
-                        area = place.Area,
-                        capacity = place.Capacity,
-                        height = place.CellingHeight,
-                        parkingType = place.ParkingType?.ToString(),
-                        toiletsCount = (
-                            place.SharedToiletsQuantity +
-                            place.MaleToiletsQuantity,
-                            place.FemaleToiletsQuantity
-                            ),
-                        smokingRule = place.SmokingRule?.ToString(),
-                        administratorRule = place.AdministratorRule?.ToString(),
-                        water = place.WaterType?.ToString(),
+                        new { title = "Тип здания", value = place.BuildingType?.Title, type = "buildingType" },
+                        new { title = "Площадь", value = place.Area, type = "area" },
+                        new { title = "Вместимость", value = place.Capacity, type = "capacity" },
+                        new { title = "Высота потолков", value = place.CellingHeight, type = "height" },
+                        new { title = "Парковка", value = place.ParkingType?.ToString(), type = "parkingType" },
+                        new { title = "Количество туалетов", value = place.SharedToiletsQuantity, type = "toiletsCount" },
+                        new { title = "Курение", value = place.SmokingRule?.ToString(), type = "smokingRule" },
+                        new { title = "Присутствие администратора", value = place.AdministratorRule?.ToString(), type = "administratorRule" },
+                        new { title = "Вода", value = place.WaterType?.ToString(), type = "water" }
                     },
                     serviceItems = serviceItems,
                     description = place.Description,
 
                     baseRate = place.BaseRate,
 
-                    comments = place.Comments,
+                    comments = comments,
                 },
                 landlord = new
                 {
@@ -100,6 +100,7 @@ namespace PlaceAgregator.API.Controllers
             });
         }
 
+        [Authorize]
         [HttpPost("[Action]")]
         public async Task<IActionResult> Update([FromBody] Place place)
         { 
@@ -121,6 +122,8 @@ namespace PlaceAgregator.API.Controllers
             public string City { get; set; }
             public string Address { get; set; }
         }
+
+        [Authorize]
         [HttpPost("[Action]")]
         public async Task<IActionResult> Create([FromBody] PlaceCreateData data)
         {
@@ -152,6 +155,7 @@ namespace PlaceAgregator.API.Controllers
 
         }
 
+        [Authorize]
         [HttpPost("[Action]")]
         public async Task<IActionResult> Delete(int id)
         {

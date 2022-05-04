@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import {
@@ -17,11 +17,15 @@ import {
     Breadcrumbs,
     Rating,
     CardHeader,
-    Paper
+    Paper,
+    CardMedia
 } from '@mui/material';
 import { Link as LinkIcon } from '@mui/icons-material'
+import { useLocation, useSearchParams } from 'react-router-dom';
+const axios = require('axios').default;
 
-const OrderCard = () => {
+const OrderCard = (props) => {
+    const {baseRate} = props
     const [eventType, setEventType] = useState(null);
     const [guestsCount, setGuestsCount] = useState(0);
 
@@ -38,7 +42,7 @@ const OrderCard = () => {
                         Стоимость аренды
                     </Typography>
                     <Typography variant="h5">
-                        от 500 ₽/час
+                        от {baseRate} ₽/час
                     </Typography>
                 </div>
                 <Stack sx={{ my: 2 }} spacing={2}>
@@ -160,24 +164,28 @@ const LeftRightComponent = (props) => {
 }
 
 const ServiceItemRow = (props) => {
-    const { spacing = 2, price, description, title, ...others } = props
+    const { spacing = 2, price, comment, title, ...others } = props
     return (
         <Stack direction='row' spacing={spacing} {...others}>
             <LinkIcon />
             <Typography >{title}</Typography>
-            <Typography sx={{ flexGrow: 1 }}>{description}</Typography>
+            <Typography sx={{ flexGrow: 1 }}>{comment}</Typography>
             <Typography >{price}</Typography>
         </Stack>);
 }
 
 const ServiceItems = (props) => {
+    const {serviceItems} = props
     return (
         <>
             <Typography variant='h6'>Услуги и оборудование</Typography>
             <Stack spacing={2}>
                 {
-                    [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((value) => (
-                        <ServiceItemRow price='Цена' title='Название' description='Описание' key={value} />
+                    serviceItems.length === 0 ?
+                    <>У площадки нет услуг или оборудования</>
+                    :
+                    serviceItems.map((value) => (
+                        <ServiceItemRow price={value.price} title={value.title} comment={value.comment} key={value.id} />
                     ))
                 }
             </Stack>
@@ -223,6 +231,7 @@ const Comment = (props) => {
 }
 
 const Comments = (props) => {
+    const {comments, rating } = props;
     const now = new Date();
     return (
         <>
@@ -233,46 +242,58 @@ const Comments = (props) => {
                     name='rating'
                     defaultValue={0}
                     precision={0.1}
-                    value={5}
+                    value={rating}
                     readOnly />
             </Stack>
 
             <Stack spacing={2}>
-                <Comment text='Текст' login='Логин' date={now.toLocaleString()} rating={2} />
-                <Comment text='Текст' login='Логин' date={now.toLocaleString()} rating={2} />
-                <Comment text='Текст' login='Логин' date={now.toLocaleString()} rating={2} />
+                {
+                    comments.map((item)=>{
+                        return(
+                            <Comment text={item.text} login={item.login} date={item.publicationDate} rating={item.rating} />
+                        );
+                    })
+                }
             </Stack>
         </>
     );
 }
 
 const PlaceParams = (props) => {
+    const {parameters} = props;
+
     return (
         <>
             <Typography variant='h6'>Параметры площадки</Typography>
             <Grid container spacing={3} item xs>
                 {
-                    [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((value) => (
-                        <Grid item key={value} xs={12} md={6}>
+                    parameters.map((item) =>{ 
+                        if(item.value !==null)
+                        {
+                            return(
+                                <Grid item key={item.type} xs={12} md={6}>
                             <LeftRightComponent >
                                 <LinkIcon />
-                                <Typography >revolve</Typography>
+                                <Typography >{item.title} : {item.value}</Typography>
                             </LeftRightComponent>
                         </Grid>
-                    ))
+                            );
+                        }
+                })
                 }
             </Grid>
         </>
     );
 }
 
-const PlaceDescription = (props) => {
+const PlaceDesciption = (props) => {
+    const { description } = props;
     return (
         <>
             <Typography variant='h6'>Описание площадки</Typography>
             <Paper variant='outlined' sx={{ p: 2 }}>
                 <Typography>
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi lobortis odio nec ultrices lobortis. Cras finibus risus velit, ut ullamcorper tortor fringilla sit amet. Maecenas tempus mauris nisi, ut feugiat metus malesuada nec. Phasellus gravida tristique lacus vitae laoreet. Sed maximus, urna a tempus vulputate, nunc nibh facilisis turpis, interdum porttitor odio libero eget erat. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Nam auctor tortor vulputate nisl mattis eleifend. Sed consequat tellus eros, non dignissim quam finibus at. Nulla sagittis est risus, sit amet scelerisque felis gravida eu. Pellentesque in auctor nibh, dignissim lobortis ex.
+                    {description}
                 </Typography>
 
             </Paper>
@@ -281,6 +302,18 @@ const PlaceDescription = (props) => {
 }
 
 const PlaceHeader = (props) => {
+    const 
+    {
+        city, 
+        title, 
+        address, 
+        rating, 
+        commentsCount,
+        firstName,
+        familyName,
+        login,
+        photo
+    } = props
     return (
         <>
             <Breadcrumbs sx={{ my: 1 }} aria-label="breadcrumb">
@@ -290,30 +323,30 @@ const PlaceHeader = (props) => {
                 <Link
                     underline="hover"
                     color="inherit"
-                    href="/material-ui/getting-started/installation/"
+                    href="/places"
                 >
-                    Казань
+                    {city}
                 </Link>
-                <Typography color="text.primary">Название площадки</Typography>
+                <Typography color="text.primary">{title}</Typography>
             </Breadcrumbs>
-            <Grid sx={{ background: 'gray', minHeight: 350 }} item xs={12} id='photo-container'>
-
+            <Grid sx={{ minHeight: 350 }} item xs={12} id='photo-container'>
+                <CardMedia component='img' src={photo} alt='Фото площадки'/>
             </Grid>
 
             <Typography variant='h1' fontSize='40px'>
-                Название площадки
+                {title}
             </Typography>
             <Typography variant='body1'>
-                Адрес площадки: 
+                Адрес площадки: {address}
             </Typography>
             <Stack alignItems='center' direction="row" spacing={2}>
                 <Rating
                     name='rating'
                     defaultValue={0}
                     precision={0.1}
-                    value={5}
+                    value={rating}
                     readOnly />
-                <Typography>Кол-во отзывов</Typography>
+                <Typography>Кол-во отзывов: {commentsCount}</Typography>
                 <Link component='button' variant='body1'>Отзывы</Link>
             </Stack>
 
@@ -321,8 +354,8 @@ const PlaceHeader = (props) => {
                 <CardContent component={Stack} direction='row' alignItems='center'>
 
                     <LeftRightComponent spacing={2}>
-                        <Avatar>H</Avatar>
-                        <p>Имя Фамилия</p>
+                        <Avatar>{login.slice(0,1)}</Avatar>
+                        <p>{firstName} {familyName}</p>
                     </LeftRightComponent>
                 </CardContent>
             </Card>
@@ -331,33 +364,76 @@ const PlaceHeader = (props) => {
 }
 
 const PlacePage = (props) => {
+    const [state, setState] = useState(
+        {
+            place: {
+                city: '',
+                title: '',
+                photo: '',
+                address: '',
+                commentsCount: 0,
+                rating: 0,
+                parameters:[],
+                serviceItems: [],
+                comment: '',
+                baseRate: 0,
+                comments: []
+            },
+            landlord:
+            {
+                login: '',
+                firstName: '',
+                familyName: ''
+            }
+        }
+    );
 
-    return (
-        <>
-            <Container sx={{ py: 4 }} maxWidth="lg" direction='row'>
-                <Grid container spacing={2}>
-                    <Grid order='3' item xs md lg>
-                        <Stack spacing={2} divider={<Divider flexItem />}>
-                            <PlaceHeader/>
+const location = useLocation();
 
-                            <PlaceParams />
+useEffect(() => {
 
-                            <PlaceDescription/>
+    let id = location.pathname.slice(8);
+    console.log(id);
+    axios.get(`/api/Places`, {
+        params: {
+            id: id
+        }
+    })
+        .then(response => 
+            { 
+                let data = response.data; 
+                console.log(data)
+                setState(data);
+            })
+        .catch(error => { console.log(error) });
+}, []);
 
-                            <ServiceItems />
+return (
+    <>
+        <Container sx={{ py: 4 }} maxWidth="lg" direction='row'>
+            <Grid container spacing={2}>
+                <Grid order='3' item xs md lg>
+                    <Stack spacing={2} divider={<Divider flexItem />}>
+                        <PlaceHeader {...state.landlord} {...state.place}/>
 
-                            <Comments />
+                        <PlaceParams parameters={state.place.parameters}/>
 
-                        </Stack>
-                    </Grid>
-                    <Grid order='10' item xs={12} md={4} lg={4} sx={{ minWidth: 375 }}>
-                        <OrderCard />
+                        {state.place.description & <PlaceDesciption description={state.place.description}/>}
 
-                    </Grid>
+                        {state.place.serviceItems & <ServiceItems serviceItems={state.place.serviceItems}/>}
+
+                        <Comments comments={state.place.comments} rating={state.place.rating}/>
+
+                    </Stack>
                 </Grid>
-            </Container>
-        </>
-    )
+                <Grid order='10' item xs={12} md={4} lg={4} sx={{ minWidth: 375 }}>
+                    <OrderCard baseRate={state.place.baseRate}/>
+
+                </Grid>
+            </Grid>
+        </Container>
+    </>
+)
 }
 const top100Films = [
     { label: 'The Shawshank Redemption', year: 1994 },
