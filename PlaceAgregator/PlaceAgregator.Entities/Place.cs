@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace PlaceAgregator.Entities
 {
@@ -15,6 +16,7 @@ namespace PlaceAgregator.Entities
         [Required]
         public int UserId { get;  set; }
 
+        [JsonIgnore]
         public User? User { get;  set; }
 
         public bool IsActive { get;  set; } = false;

@@ -13,6 +13,8 @@ import DescriptionPanel from './description-panel/description-panel';
 import ServiceItemsPanel from './service-items-panel/service-items-panel';
 import RatesPanel from './rates-panel/rates-panel';
 
+const axios = require('axios').default;
+
 
 function a11yProps(index) {
     return {
@@ -97,6 +99,48 @@ const panels = [
 ]
 
 const PlaceEditPage = () => {
+    const [state, setState] = useState({
+        place:{
+            isActive: true,
+            title: '',
+            baseRate: 0,
+            photo: '',
+            city: '',
+            address: '',
+            mailIndex: '',
+            description: '',
+            capacity: 0,
+            area: 0,
+            cellingHeight: 0,
+            waterType: 0,
+            socketsQuantity: 0,
+            maleToiletsQuantity: 0,
+            femaleToiletsQuantity: 0,
+            sharedToiletsQuantity: 0,
+            buildingTypeId:'',
+            parkingType:'',
+            parkingSpace: 0,
+            floor: 0,
+            floorsQuantity: 0,
+            hasElevator: false,
+            hasFreightElevator: false,
+            hasDisabledEntrance: false,
+            smokingRule: 0,
+            administratorRule: 0,
+            bookingHorizonInDays: 0,
+            serviceItems:[],
+            photos:[],
+            availableEvents:[],
+            prohibitions:[],
+            permissions:[],
+            
+        }
+    });
+
+    const handleChange = (prop) => (event) => {
+        setState((state) => ({ ...state, [prop]: event.target.value }));
+        console.log(state);
+    };
     const [panelIndex, setPanelIndex] = useState(0);
     const [smokeRule, setSmokeRule] = useState('')
     const [administratorPresence, setAdministratorPresence] = useState('')
