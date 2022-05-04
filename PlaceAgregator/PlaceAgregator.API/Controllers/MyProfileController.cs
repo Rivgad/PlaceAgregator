@@ -12,13 +12,18 @@ namespace PlaceAgregator.API.Controllers
     [ApiController]
     public class MyProfileController : ControllerBase
     {
+        private readonly ApplicationContext _context;
+
+        public MyProfileController(ApplicationContext context)
+        {
+            _context = context;
+        }
+
         [Authorize(Roles = "User")]
         [HttpGet]
         public IActionResult Index(int id)
         {
-            using var context = new ApplicationContext();
-
-            var account = context.Accounts
+            var account = _context.Accounts
                 .Include(acc => acc.User)
                 .FirstOrDefault(acc => acc.Id == id);
 
@@ -37,14 +42,14 @@ namespace PlaceAgregator.API.Controllers
 
         [Authorize(Roles = "User")]
         [HttpPost("[Action]")]
-        public IActionResult Update(int id, string login, string firstName, string familyName, string email, string phone)
+        public async Task<IActionResult> Update(int id, string login, string firstName, string familyName, string email, string phone)
         {
-            using var context = new ApplicationContext();
 
 
-            var account = context.Accounts
+
+            var account = await _context.Accounts
                 .Include(acc => acc.User)
-                .FirstOrDefault(acc => acc.Id == id);
+                .FirstOrDefaultAsync(acc => acc.Id == id);
 
             if (account == null || account.User == null)
             {
@@ -57,7 +62,7 @@ namespace PlaceAgregator.API.Controllers
             account.User.Email = email;
             account.User.PhoneNumber = phone;
 
-            context.SaveChanges();
+            await _context.SaveChangesAsync();
 
             return Ok();
         }

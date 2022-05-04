@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using PlaceAgregator.API.Services.Interfaces;
 using PlaceAgregator.Entities;
@@ -14,18 +15,20 @@ namespace PlaceAgregator.API.Controllers
     public class AuthController : ControllerBase
     {
         private IAuthService _authService;
-
-        public AuthController(IAuthService authService)
+        private ApplicationContext _context;
+        public AuthController(IAuthService authService, ApplicationContext context)
         {
             _authService = authService;
+            _context = context;
         }
 
 
         [HttpPost("[action]")]
         public IActionResult Login(string login, string password)
         {
-            using var context = new ApplicationContext();
-            var person = context.Accounts.FirstOrDefault(x => x.Login.ToLower() == login.ToLower());
+            var person = _context.Accounts
+                .Include(item=>item.User)
+                .FirstOrDefault(x => x.Login.ToLower() == login.ToLower());
             
             if (person == null)
             {
@@ -55,6 +58,7 @@ namespace PlaceAgregator.API.Controllers
                 username = person.Login,
                 role = person.Role.ToString(),
                 id = person.Id,
+                userId = person.User?.Id
             };
 
             return new JsonResult(response);
@@ -63,9 +67,8 @@ namespace PlaceAgregator.API.Controllers
         [HttpPost("[action]")]
         public async Task<IActionResult> RegistrationAsync(string login, string password)
         {
-            using var context = new ApplicationContext();
 
-            var person = context.Accounts.FirstOrDefault(x => x.Login.ToLower() == login.ToLower());
+            var person = _context.Accounts.FirstOrDefault(x => x.Login.ToLower() == login.ToLower());
             if (person != null)
             {
                 return BadRequest(new { errorText = "User with this email already exists." });
@@ -73,8 +76,8 @@ namespace PlaceAgregator.API.Controllers
 
             var newAccount = new Account(login, password, Role.User);
             newAccount.User = new User();
-            await context.Accounts.AddAsync(newAccount);
-            await context.SaveChangesAsync();
+            await _context.Accounts.AddAsync(newAccount);
+            await _context.SaveChangesAsync();
 
             return new OkResult();
         }

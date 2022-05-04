@@ -15,20 +15,17 @@ namespace PlaceAgregator.Entities
         [Required]
         public int UserId { get;  set; }
 
-        [Required]
-        public User User { get;  set; }
+        public User? User { get;  set; }
 
         public bool IsActive { get;  set; } = false;
 
         [Required]
-        [StringLength(maximumLength: 250, MinimumLength = 20)]
+        [StringLength(maximumLength: 250, MinimumLength = 10)]
         public string? Title { get;  set; }
 
-        [Required]
         [Range(minimum: 0.0, maximum: double.PositiveInfinity)]
         public decimal? BaseRate { get;  set; } = decimal.Zero;
 
-        [Required]
         [Range(minimum: 0, maximum: 5)]
         public float? Rating { get;  set; } = 0;
 
@@ -40,6 +37,7 @@ namespace PlaceAgregator.Entities
         [MinLength(1)]
         public string City { get;  set; }
 
+        [Required]
         [MinLength(3)]
         public string Address { get;  set; }
 
@@ -99,13 +97,10 @@ namespace PlaceAgregator.Entities
         public ushort? FloorsQuantity { get;  set; }
 
 
-        [Required]
         public bool HasElevator { get;  set; } = false;
 
-        [Required]
         public bool HasFreightElevator { get;  set; } = false;
 
-        [Required]
         public bool HasDisabledEntrance { get;  set; } = false;
 
         #endregion

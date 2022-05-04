@@ -18,6 +18,8 @@ import SearchIcon from '@mui/icons-material/Search';
 import { Inbox, Mail as MailIcon, Close as CloseIcon } from '@mui/icons-material';
 import { PlaceCard } from '../Places'
 
+const axios = require('axios').default;
+
 
 const PlaceCardsGrid = (props) => {
     return (
@@ -27,12 +29,13 @@ const PlaceCardsGrid = (props) => {
                     <Grid item key={item.id} xs={12} md={4} lg={4} sm={6}>
                         <PlaceCard
                             id={item.id}
-                            image={item.imageUrl}
+                            image={item.photo}
                             rating={item.rating}
                             capacity={item.capacity}
                             area={item.area}
-                            title='Название площадки'
-                            price={item.price}
+                            title={item.title}
+                            price={item.baseRate}
+                            address={item.address}
                         />
                     </Grid>
                 )
@@ -45,30 +48,10 @@ const PlaceCardsGrid = (props) => {
 const MockPlacesData = (View) => {
     const [data, setData] = useState([]);
     useEffect(() => {
-        let randomPage = (Math.round(Math.random() * (40)));
-        fetch(`https://picsum.photos/v2/list?page=${randomPage}&limit=20`)
-            .then((responce) => responce.json())
-            .then((data) => {
-                const placesIds = [...Array(20).keys()];
-                let places = []
-                placesIds.forEach((id) => {
-                    let rating = Math.random() * 5 + 0.1
-                    let price = Math.round(((Math.random()) * 100)) * 15 + 150
-                    let capacity = Math.round(Math.random() * 5 + 0.1)
-                    let area = Math.round(Math.random() * 100)
-                    let title = `Площадка №${id}`
-                    let place = {
-                        id: id,
-                        rating: rating,
-                        price: price,
-                        capacity: capacity,
-                        area: area,
-                        title: title,
-                        //imageUrl: data[id].download_url
-                    };
-                    places.push(place);
-                })
-                setData(places)
+        axios(`/api/Places/GetAllPlaces`)
+            .then((responce) => {
+                const data = responce.data;
+                setData(data);
             })
             .catch((id)=>{console.log(id)})
 

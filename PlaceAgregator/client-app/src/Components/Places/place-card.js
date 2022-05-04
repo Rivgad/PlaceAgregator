@@ -12,38 +12,43 @@ import {
 } from '@mui/material';
 
 const PlaceCard = (props) => {
+    const {id, image, rating, capacity, area, title, price, address} = props;
     return (
-        <CardActionArea LinkComponent={Link} to={`/places/${props.id}`}>
+        <CardActionArea LinkComponent={Link} to={`/places/${id}`}>
             <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
 
-                <CardMedia
-                    component="img"
-                    height="200"
-                    image={props.image}
-                    alt="Image loading"
-                />
+                <CardMedia 
+                component='img'
+                height={200}
+                src={image}
+                alt="Фото площадки"
+                    sx={{ height: 200, alignItems: 'center', alignContent: 'center' }}
+                >
+                    
+                </CardMedia>
+
 
                 <CardContent sx={{ paddingBottom: 0, flexGrow: 1 }}>
                     <Typography gutterBottom variant="h5" component="div">
-                        {props.title}
+                        {title}
                     </Typography>
                     <Typography sx={{ my: 1 }} variant="body2" color="text.secondary">
-                        {props.address}
+                        {address}
                     </Typography>
                     <Typography sx={{ mt: 1 }} variant="body2" color="text.secondary">
-                        {props.area} м<sup>2</sup> | {props.capacity} чел.
+                        {area} м<sup>2</sup> | {capacity} чел.
                     </Typography>
                 </CardContent>
                 <CardActions sx={{ mx: 1 }} disableSpacing>
                     <Typography component="div">
-                        от {props.price} ₽/час
+                        от {price} ₽/час
                     </Typography>
                     <Box sx={{ marginLeft: 'auto', mt: 0.5 }}>
                         <Rating
                             name="size-medium"
                             defaultValue={0}
                             precision={0.1}
-                            value={props.rating}
+                            value={rating}
                             readOnly />
                     </Box>
                 </CardActions>

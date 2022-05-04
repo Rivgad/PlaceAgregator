@@ -303,6 +303,9 @@ const PlaceHeader = (props) => {
             <Typography variant='h1' fontSize='40px'>
                 Название площадки
             </Typography>
+            <Typography variant='body1'>
+                Адрес площадки: 
+            </Typography>
             <Stack alignItems='center' direction="row" spacing={2}>
                 <Rating
                     name='rating'
@@ -321,13 +324,6 @@ const PlaceHeader = (props) => {
                         <Avatar>H</Avatar>
                         <p>Имя Фамилия</p>
                     </LeftRightComponent>
-                    <Rating
-                        sx={{ ml: 'auto' }}
-                        name='rating'
-                        defaultValue={0}
-                        precision={0.1}
-                        value={5}
-                        readOnly />
                 </CardContent>
             </Card>
         </>
