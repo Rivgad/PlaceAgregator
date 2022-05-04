@@ -62,6 +62,10 @@ namespace PlaceAgregator.EntityFramework
                 .HasForeignKey<User>(item => item.AccountId)
                 .OnDelete(DeleteBehavior.Cascade);
 
+            modelBuilder.Entity<Account>()
+                .HasIndex(item => item.Login)
+                .IsUnique();
+
             modelBuilder.Entity<BookingRequestServiceItem>(
                 j =>
                 {
