@@ -38,15 +38,15 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateLifetime = false,
 
             IssuerSigningKey = new SymmetricSecurityKey(
-                            Encoding.UTF8.GetBytes(Configuration.GetValue<string>("JWTSecretKey"))
+                            Encoding.UTF8.GetBytes(Configuration.GetValue<string>("JWT:Secret"))
                         ),
         };
     });
 
 builder.Services.AddSingleton<IAuthService>(
     new AuthService(
-            Configuration.GetValue<string>("JWTSecretKey"),
-            Configuration.GetValue<int>("JWTLifespan")
+            jwtSecret: Configuration.GetValue<string>("JWT:Secret"),
+            jwtLifespan: Configuration.GetValue<int>("Jwt:Lifespan")
         )
     );
 
