@@ -13,35 +13,39 @@ namespace PlaceAgregator.Entities
     [DataContract]
     public class Comment : Entity, IValidatableObject
     {
+        [Required]
+        public int UserId { get; set; }
+        [Required]
+        public User User { get; set; }
         /// <summary>
         /// Text of comment
         /// </summary>
         [Required]
         [MinLength(1)]
-        public string Text { get; private set; }
+        public string Text { get;  set; }
 
         /// <summary>
         /// Publication date and time
         /// </summary>
-        public DateTime PublicationDate { get; private set; }
+        public DateTime PublicationDate { get;  set; }
 
         /// <summary>
         /// Comment rating in range from 1 to 5
         /// </summary>
         [Range(1, 5)]
-        public int Rating { get; private set; }
+        public int Rating { get;  set; }
 
         /// <summary>
         /// The id of place for which the comment was created
         /// </summary>
         [Required]
-        public long PlaceId { get; private set; }
+        public int PlaceId { get;  set; }
 
         /// <summary>
         /// The place for which the comment was created
         /// </summary>
         [JsonIgnore]
-        public Place? Place { get; private set; }
+        public Place? Place { get;  set; }
 
         /// <summary>
         /// Initializes a new instance of <see cref="Comment"/> class
@@ -85,7 +89,7 @@ namespace PlaceAgregator.Entities
         /// <param name="text">Comment text</param>
         /// <param name="publicationDate">Date and time of publication of comment</param>
         /// <param name="rating"></param>
-        public Comment(long placeId, string text, DateTime publicationDate, int rating)
+        public Comment(int placeId, string text, DateTime publicationDate, int rating)
         {
             PlaceId = placeId;
             Text = text;
@@ -99,7 +103,7 @@ namespace PlaceAgregator.Entities
         /// <param name="placeId">The id of place for which the comment is created</param>
         /// <param name="text">Comment text</param>
         /// <param name="rating">Rating for place in range from 1 to 5</param>
-        public Comment(long placeId, string text, int rating)
+        public Comment(int placeId, string text, int rating)
             : this(placeId: placeId,
                   text: text,
                   publicationDate: DateTime.Now,
@@ -107,7 +111,7 @@ namespace PlaceAgregator.Entities
         { }
 
         [JsonConstructor]
-        public Comment(long id,long placeId, string text, DateTime publicationDate, int rating)
+        public Comment(int id,int placeId, string text, DateTime publicationDate, int rating)
         {
             Id = id;
             PlaceId = placeId;

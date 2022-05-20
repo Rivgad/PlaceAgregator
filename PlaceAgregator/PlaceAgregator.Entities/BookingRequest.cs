@@ -18,10 +18,10 @@ namespace PlaceAgregator.Entities
             Rejected = 2
         }
 
-        public long UserId { get; private set; }
+        public int UserId { get; private set; }
         public User User { get; set; }
 
-        public long PlaceId { get; private set; }
+        public int PlaceId { get; private set; }
         public Place Place { get; private set; }
 
         public RequestStatus Status { get; set; }

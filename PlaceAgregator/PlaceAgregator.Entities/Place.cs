@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace PlaceAgregator.Entities
 {
@@ -13,116 +14,116 @@ namespace PlaceAgregator.Entities
         /// Id of the <see cref="Entities.User"/> who owns the <see cref="Place"/>
         /// </summary>
         [Required]
-        public long UserId { get; private set; }
+        public int UserId { get;  set; }
+
+        [JsonIgnore]
+        public User? User { get;  set; }
+
+        public bool IsActive { get;  set; } = false;
 
         [Required]
-        public User User { get; private set; }
+        [StringLength(maximumLength: 250, MinimumLength = 10)]
+        public string? Title { get;  set; }
 
-        public bool IsActive { get; private set; }
-
-        [Required]
-        [StringLength(maximumLength: 250, MinimumLength = 20)]
-        public string Title { get; private set; }
-
-        [Required]
         [Range(minimum: 0.0, maximum: double.PositiveInfinity)]
-        public decimal BaseRate { get; private set; } = decimal.Zero;
+        public decimal? BaseRate { get;  set; } = decimal.Zero;
 
-        [Required]
         [Range(minimum: 0, maximum: 5)]
-        public float Rating { get; private set; } = 0;
+        public float? Rating { get;  set; } = 0;
 
+        public byte[]? Photo { get;  set; }
 
         #region Place location
 
         [Required]
         [MinLength(1)]
-        public string City { get; private set; }
+        public string City { get;  set; }
+
+        [Required]
+        [MinLength(3)]
+        public string Address { get;  set; }
 
         [MinLength(3)]
-        public string Adress { get; private set; }
-
-        [MinLength(3)]
-        public string? MailIndex { get; private set; }
+        public string? MailIndex { get;  set; }
 
         #endregion
 
         #region Building description
 
         [MinLength(2)]
-        public string Description { get; private set; }
+        public string? Description { get;  set; }
 
         [Range(minimum: 0, maximum: int.MaxValue)]
-        public int Capacity { get; private set; }
+        public int? Capacity { get;  set; }
 
         [Range(minimum: 0, maximum: float.PositiveInfinity)]
-        public float Area { get; private set; }
+        public float? Area { get;  set; }
 
         [Range(minimum: 0, maximum: float.PositiveInfinity)]
-        public float CellingHeight { get; private set; }
+        public float? CellingHeight { get;  set; }
 
-        public WaterType? WaterType { get; private set; }
-
-
-        [Range(minimum: 0, maximum: ushort.MaxValue)]
-        public ushort SocketsQuantity { get; private set; }
+        public WaterType? WaterType { get;  set; }
 
 
         [Range(minimum: 0, maximum: ushort.MaxValue)]
-        public ushort MaleToiletsQuantity { get; private set; }
+        public ushort SocketsQuantity { get;  set; } = 0;
 
 
         [Range(minimum: 0, maximum: ushort.MaxValue)]
-        public ushort FemaleToiletsQuantity { get; private set; }
+        public ushort MaleToiletsQuantity { get;  set; } = 0;
 
 
         [Range(minimum: 0, maximum: ushort.MaxValue)]
-        public ushort SharedToiletsQuantity { get; private set; }
-
-        public long BuildingTypeId { get; private set; }
-        public BuildingType BuildingType { get; private set; }
-
-
-        public ParkingType ParkingType { get; private set; }
+        public ushort FemaleToiletsQuantity { get;  set; } = 0;
 
 
         [Range(minimum: 0, maximum: ushort.MaxValue)]
-        public ushort ParkingSpace { get; private set; }
+        public ushort SharedToiletsQuantity { get;  set; } = 0;
+
+        public int? BuildingTypeId { get;  set; }
+        public BuildingType? BuildingType { get;  set; }
+
+
+        public ParkingType? ParkingType { get;  set; }
 
 
         [Range(minimum: 0, maximum: ushort.MaxValue)]
-        public ushort Floor { get; private set; }
+        public ushort? ParkingSpace { get;  set; }
 
 
         [Range(minimum: 0, maximum: ushort.MaxValue)]
-        public ushort FloorsQuantity { get; private set; }
+        public ushort? Floor { get;  set; }
 
 
-        [Required]
-        public bool HasElevator { get; private set; } = false;
+        [Range(minimum: 0, maximum: ushort.MaxValue)]
+        public ushort? FloorsQuantity { get;  set; }
 
-        [Required]
-        public bool HasFreightElevator { get; private set; } = false;
 
-        [Required]
-        public bool HasDisabledEntrance { get; private set; } = false;
+        public bool HasElevator { get;  set; } = false;
+
+        public bool HasFreightElevator { get;  set; } = false;
+
+        public bool HasDisabledEntrance { get;  set; } = false;
 
         #endregion
 
-        public int BookingHorizonInDays { get; private set; }
+        public SmokingRuleType? SmokingRule { get; set; }
+        public AdministratorRuleType? AdministratorRule { get; set; }
 
-        public IEnumerable<ServiceItem>? ServiceItems { get; private set; }
-        public IEnumerable<BookingRequest>? BookingRequests { get; private set; }
-        public IEnumerable<PlacePhoto>? Photos { get; private set; }
-        public IEnumerable<EventType>? AvailableEvents { get; private set; }
+        public int BookingHorizonInDays { get;  set; }
 
-        public IEnumerable<Prohibition>? Prohibitions { get; private set; }
-        public IEnumerable<Permission>? Permissions { get; private set; }
-        public IEnumerable<Rule>? Rules { get; private set; }
+        public IEnumerable<ServiceItem>? ServiceItems { get;  set; } = new List<ServiceItem>();
+        public IEnumerable<BookingRequest>? BookingRequests { get;  set; } = new List<BookingRequest>();
+        public IEnumerable<PlacePhoto>? Photos { get;  set; } = new List<PlacePhoto>();
+        public IEnumerable<EventType>? AvailableEvents { get; set; } = new List<EventType>();
 
-        public IEnumerable<Rate>? Rates { get; private set; }
-        public IEnumerable<Charge>? Charges { get; private set; }
-        public IEnumerable<Discount>? Discounts { get; private set; }
-        public IEnumerable<Comment>? Comments { get; private set; }
+        public IEnumerable<Prohibition>? Prohibitions { get; set; } = new List<Prohibition>();
+        public IEnumerable<Permission>? Permissions { get;  set; } = new List<Permission>();
+        public IEnumerable<Rule>? Rules { get; set; } = new List<Rule>();
+
+        public IEnumerable<Rate>? Rates { get; set; } = new List<Rate>();
+        public IEnumerable<Charge>? Charges { get; set; } = new List<Charge>();
+        public IEnumerable<Discount>? Discounts { get; set; } = new List<Discount>();
+        public IEnumerable<Comment> Comments { get; set; } = new List<Comment>();
     }
 }

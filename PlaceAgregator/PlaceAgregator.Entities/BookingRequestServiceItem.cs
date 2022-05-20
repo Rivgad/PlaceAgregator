@@ -2,8 +2,8 @@
 {
     public class BookingRequestServiceItem
     {
-        public long BookingRequestId { get; private set; }
-        public long ServiceItemId { get; private set; }
+        public int BookingRequestId { get; private set; }
+        public int ServiceItemId { get; private set; }
         public int Quantity { get; private set; }
 
         public BookingRequest BookingRequest { get; private set; }

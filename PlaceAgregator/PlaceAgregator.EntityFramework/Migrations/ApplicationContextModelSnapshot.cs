@@ -24,11 +24,11 @@ namespace PlaceAgregator.EntityFramework.Migrations
 
             modelBuilder.Entity("EventTypePlace", b =>
                 {
-                    b.Property<long>("AvailableEventsId")
-                        .HasColumnType("bigint");
+                    b.Property<int>("AvailableEventsId")
+                        .HasColumnType("integer");
 
-                    b.Property<long>("PlacesId")
-                        .HasColumnType("bigint");
+                    b.Property<int>("PlacesId")
+                        .HasColumnType("integer");
 
                     b.HasKey("AvailableEventsId", "PlacesId");
 
@@ -39,11 +39,11 @@ namespace PlaceAgregator.EntityFramework.Migrations
 
             modelBuilder.Entity("PermissionPlace", b =>
                 {
-                    b.Property<long>("PermissionsId")
-                        .HasColumnType("bigint");
+                    b.Property<int>("PermissionsId")
+                        .HasColumnType("integer");
 
-                    b.Property<long>("PlacesId")
-                        .HasColumnType("bigint");
+                    b.Property<int>("PlacesId")
+                        .HasColumnType("integer");
 
                     b.HasKey("PermissionsId", "PlacesId");
 
@@ -54,11 +54,11 @@ namespace PlaceAgregator.EntityFramework.Migrations
 
             modelBuilder.Entity("PlaceAgregator.Entities.Account", b =>
                 {
-                    b.Property<long>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
+                        .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Login")
                         .IsRequired()
@@ -73,19 +73,22 @@ namespace PlaceAgregator.EntityFramework.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Login")
+                        .IsUnique();
+
                     b.ToTable("Accounts");
                 });
 
             modelBuilder.Entity("PlaceAgregator.Entities.Admin", b =>
                 {
-                    b.Property<long>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
+                        .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<long>("AccountId")
-                        .HasColumnType("bigint");
+                    b.Property<int>("AccountId")
+                        .HasColumnType("integer");
 
                     b.Property<string>("FamilyName")
                         .IsRequired()
@@ -109,11 +112,11 @@ namespace PlaceAgregator.EntityFramework.Migrations
 
             modelBuilder.Entity("PlaceAgregator.Entities.BookingRequest", b =>
                 {
-                    b.Property<long>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
+                        .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Comment")
                         .HasColumnType("text");
@@ -130,8 +133,8 @@ namespace PlaceAgregator.EntityFramework.Migrations
                     b.Property<int>("GuestsQuantity")
                         .HasColumnType("integer");
 
-                    b.Property<long>("PlaceId")
-                        .HasColumnType("bigint");
+                    b.Property<int>("PlaceId")
+                        .HasColumnType("integer");
 
                     b.Property<DateTime>("StartDateTime")
                         .HasColumnType("timestamp with time zone");
@@ -139,8 +142,8 @@ namespace PlaceAgregator.EntityFramework.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("integer");
 
-                    b.Property<long>("UserId")
-                        .HasColumnType("bigint");
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -153,11 +156,11 @@ namespace PlaceAgregator.EntityFramework.Migrations
 
             modelBuilder.Entity("PlaceAgregator.Entities.BookingRequestServiceItem", b =>
                 {
-                    b.Property<long>("ServiceItemId")
-                        .HasColumnType("bigint");
+                    b.Property<int>("ServiceItemId")
+                        .HasColumnType("integer");
 
-                    b.Property<long>("BookingRequestId")
-                        .HasColumnType("bigint");
+                    b.Property<int>("BookingRequestId")
+                        .HasColumnType("integer");
 
                     b.Property<int>("Quantity")
                         .HasColumnType("integer");
@@ -171,11 +174,11 @@ namespace PlaceAgregator.EntityFramework.Migrations
 
             modelBuilder.Entity("PlaceAgregator.Entities.BuildingType", b =>
                 {
-                    b.Property<long>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
+                        .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -188,11 +191,11 @@ namespace PlaceAgregator.EntityFramework.Migrations
 
             modelBuilder.Entity("PlaceAgregator.Entities.Charge", b =>
                 {
-                    b.Property<long>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
+                        .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Comment")
                         .HasColumnType("text");
@@ -203,11 +206,11 @@ namespace PlaceAgregator.EntityFramework.Migrations
                     b.Property<int>("Per")
                         .HasColumnType("integer");
 
-                    b.Property<long>("PlaceId")
-                        .HasColumnType("bigint");
+                    b.Property<int>("PlaceId")
+                        .HasColumnType("integer");
 
-                    b.Property<long?>("RateId")
-                        .HasColumnType("bigint");
+                    b.Property<int?>("RateId")
+                        .HasColumnType("integer");
 
                     b.Property<float>("Value")
                         .HasColumnType("real");
@@ -223,14 +226,14 @@ namespace PlaceAgregator.EntityFramework.Migrations
 
             modelBuilder.Entity("PlaceAgregator.Entities.Comment", b =>
                 {
-                    b.Property<long>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
+                        .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<long>("PlaceId")
-                        .HasColumnType("bigint");
+                    b.Property<int>("PlaceId")
+                        .HasColumnType("integer");
 
                     b.Property<DateTime>("PublicationDate")
                         .HasColumnType("timestamp with time zone");
@@ -242,8 +245,8 @@ namespace PlaceAgregator.EntityFramework.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<long?>("UserId")
-                        .HasColumnType("bigint");
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -256,11 +259,11 @@ namespace PlaceAgregator.EntityFramework.Migrations
 
             modelBuilder.Entity("PlaceAgregator.Entities.Discount", b =>
                 {
-                    b.Property<long>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
+                        .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Comment")
                         .HasColumnType("text");
@@ -271,11 +274,11 @@ namespace PlaceAgregator.EntityFramework.Migrations
                     b.Property<int>("Per")
                         .HasColumnType("integer");
 
-                    b.Property<long>("PlaceId")
-                        .HasColumnType("bigint");
+                    b.Property<int>("PlaceId")
+                        .HasColumnType("integer");
 
-                    b.Property<long?>("RateId")
-                        .HasColumnType("bigint");
+                    b.Property<int?>("RateId")
+                        .HasColumnType("integer");
 
                     b.Property<float>("Value")
                         .HasColumnType("real");
@@ -291,11 +294,11 @@ namespace PlaceAgregator.EntityFramework.Migrations
 
             modelBuilder.Entity("PlaceAgregator.Entities.EventType", b =>
                 {
-                    b.Property<long>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
+                        .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -308,14 +311,14 @@ namespace PlaceAgregator.EntityFramework.Migrations
 
             modelBuilder.Entity("PlaceAgregator.Entities.Manager", b =>
                 {
-                    b.Property<long>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
+                        .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<long>("AccountId")
-                        .HasColumnType("bigint");
+                    b.Property<int>("AccountId")
+                        .HasColumnType("integer");
 
                     b.Property<string>("FamilyName")
                         .IsRequired()
@@ -339,11 +342,11 @@ namespace PlaceAgregator.EntityFramework.Migrations
 
             modelBuilder.Entity("PlaceAgregator.Entities.Permission", b =>
                 {
-                    b.Property<long>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
+                        .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -356,11 +359,11 @@ namespace PlaceAgregator.EntityFramework.Migrations
 
             modelBuilder.Entity("PlaceAgregator.Entities.Photo", b =>
                 {
-                    b.Property<long>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
+                        .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<byte[]>("Bytes")
                         .IsRequired()
@@ -381,32 +384,35 @@ namespace PlaceAgregator.EntityFramework.Migrations
 
             modelBuilder.Entity("PlaceAgregator.Entities.Place", b =>
                 {
-                    b.Property<long>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
+                        .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Adress")
+                    b.Property<string>("Address")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<float>("Area")
+                    b.Property<int?>("AdministratorRule")
+                        .HasColumnType("integer");
+
+                    b.Property<float?>("Area")
                         .HasColumnType("real");
 
-                    b.Property<decimal>("BaseRate")
+                    b.Property<decimal?>("BaseRate")
                         .HasColumnType("numeric");
 
                     b.Property<int>("BookingHorizonInDays")
                         .HasColumnType("integer");
 
-                    b.Property<long>("BuildingTypeId")
-                        .HasColumnType("bigint");
-
-                    b.Property<int>("Capacity")
+                    b.Property<int?>("BuildingTypeId")
                         .HasColumnType("integer");
 
-                    b.Property<float>("CellingHeight")
+                    b.Property<int?>("Capacity")
+                        .HasColumnType("integer");
+
+                    b.Property<float?>("CellingHeight")
                         .HasColumnType("real");
 
                     b.Property<string>("City")
@@ -414,16 +420,15 @@ namespace PlaceAgregator.EntityFramework.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<int>("FemaleToiletsQuantity")
                         .HasColumnType("integer");
 
-                    b.Property<int>("Floor")
+                    b.Property<int?>("Floor")
                         .HasColumnType("integer");
 
-                    b.Property<int>("FloorsQuantity")
+                    b.Property<int?>("FloorsQuantity")
                         .HasColumnType("integer");
 
                     b.Property<bool>("HasDisabledEntrance")
@@ -444,16 +449,22 @@ namespace PlaceAgregator.EntityFramework.Migrations
                     b.Property<int>("MaleToiletsQuantity")
                         .HasColumnType("integer");
 
-                    b.Property<int>("ParkingSpace")
+                    b.Property<int?>("ParkingSpace")
                         .HasColumnType("integer");
 
-                    b.Property<int>("ParkingType")
+                    b.Property<int?>("ParkingType")
                         .HasColumnType("integer");
 
-                    b.Property<float>("Rating")
+                    b.Property<byte[]>("Photo")
+                        .HasColumnType("bytea");
+
+                    b.Property<float?>("Rating")
                         .HasColumnType("real");
 
                     b.Property<int>("SharedToiletsQuantity")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("SmokingRule")
                         .HasColumnType("integer");
 
                     b.Property<int>("SocketsQuantity")
@@ -464,8 +475,8 @@ namespace PlaceAgregator.EntityFramework.Migrations
                         .HasMaxLength(250)
                         .HasColumnType("character varying(250)");
 
-                    b.Property<long>("UserId")
-                        .HasColumnType("bigint");
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer");
 
                     b.Property<int?>("WaterType")
                         .HasColumnType("integer");
@@ -481,11 +492,11 @@ namespace PlaceAgregator.EntityFramework.Migrations
 
             modelBuilder.Entity("PlaceAgregator.Entities.PlacePhoto", b =>
                 {
-                    b.Property<long>("PlaceId")
-                        .HasColumnType("bigint");
+                    b.Property<int>("PlaceId")
+                        .HasColumnType("integer");
 
-                    b.Property<long>("PhotoId")
-                        .HasColumnType("bigint");
+                    b.Property<int>("PhotoId")
+                        .HasColumnType("integer");
 
                     b.Property<int>("Position")
                         .HasColumnType("integer");
@@ -499,11 +510,11 @@ namespace PlaceAgregator.EntityFramework.Migrations
 
             modelBuilder.Entity("PlaceAgregator.Entities.Prohibition", b =>
                 {
-                    b.Property<long>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
+                        .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -516,14 +527,14 @@ namespace PlaceAgregator.EntityFramework.Migrations
 
             modelBuilder.Entity("PlaceAgregator.Entities.Rate", b =>
                 {
-                    b.Property<long>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
+                        .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<long>("PlaceId")
-                        .HasColumnType("bigint");
+                    b.Property<int>("PlaceId")
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -534,11 +545,11 @@ namespace PlaceAgregator.EntityFramework.Migrations
 
             modelBuilder.Entity("PlaceAgregator.Entities.Rule", b =>
                 {
-                    b.Property<long>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
+                        .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -551,11 +562,11 @@ namespace PlaceAgregator.EntityFramework.Migrations
 
             modelBuilder.Entity("PlaceAgregator.Entities.ServiceItem", b =>
                 {
-                    b.Property<long>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
+                        .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Comment")
                         .HasColumnType("text");
@@ -572,8 +583,8 @@ namespace PlaceAgregator.EntityFramework.Migrations
                     b.Property<int>("Per")
                         .HasColumnType("integer");
 
-                    b.Property<long>("PlaceId")
-                        .HasColumnType("bigint");
+                    b.Property<int>("PlaceId")
+                        .HasColumnType("integer");
 
                     b.Property<decimal>("Price")
                         .HasColumnType("numeric");
@@ -591,37 +602,29 @@ namespace PlaceAgregator.EntityFramework.Migrations
 
             modelBuilder.Entity("PlaceAgregator.Entities.User", b =>
                 {
-                    b.Property<long>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
+                        .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<long>("AccountId")
-                        .HasColumnType("bigint");
+                    b.Property<int>("AccountId")
+                        .HasColumnType("integer");
 
                     b.Property<string>("Email")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("FamilyName")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("FirstName")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("LastName")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("PhoneNumber")
-                        .IsRequired()
                         .HasColumnType("text");
-
-                    b.Property<float>("Rating")
-                        .HasColumnType("real");
 
                     b.HasKey("Id");
 
@@ -633,11 +636,11 @@ namespace PlaceAgregator.EntityFramework.Migrations
 
             modelBuilder.Entity("PlaceProhibition", b =>
                 {
-                    b.Property<long>("PlacesId")
-                        .HasColumnType("bigint");
+                    b.Property<int>("PlacesId")
+                        .HasColumnType("integer");
 
-                    b.Property<long>("ProhibitionsId")
-                        .HasColumnType("bigint");
+                    b.Property<int>("ProhibitionsId")
+                        .HasColumnType("integer");
 
                     b.HasKey("PlacesId", "ProhibitionsId");
 
@@ -648,11 +651,11 @@ namespace PlaceAgregator.EntityFramework.Migrations
 
             modelBuilder.Entity("PlaceRule", b =>
                 {
-                    b.Property<long>("PlacesId")
-                        .HasColumnType("bigint");
+                    b.Property<int>("PlacesId")
+                        .HasColumnType("integer");
 
-                    b.Property<long>("RulesId")
-                        .HasColumnType("bigint");
+                    b.Property<int>("RulesId")
+                        .HasColumnType("integer");
 
                     b.HasKey("PlacesId", "RulesId");
 
@@ -754,8 +757,8 @@ namespace PlaceAgregator.EntityFramework.Migrations
 
                     b.OwnsOne("PlaceAgregator.Entities.TimeInterval", "TimeInterval", b1 =>
                         {
-                            b1.Property<long>("ChargeId")
-                                .HasColumnType("bigint");
+                            b1.Property<int>("ChargeId")
+                                .HasColumnType("integer");
 
                             b1.Property<DateTime>("EndDate")
                                 .HasColumnType("timestamp with time zone");
@@ -814,11 +817,15 @@ namespace PlaceAgregator.EntityFramework.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("PlaceAgregator.Entities.User", null)
+                    b.HasOne("PlaceAgregator.Entities.User", "User")
                         .WithMany("Comments")
-                        .HasForeignKey("UserId");
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Place");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("PlaceAgregator.Entities.Discount", b =>
@@ -835,8 +842,8 @@ namespace PlaceAgregator.EntityFramework.Migrations
 
                     b.OwnsOne("PlaceAgregator.Entities.TimeInterval", "TimeInterval", b1 =>
                         {
-                            b1.Property<long>("DiscountId")
-                                .HasColumnType("bigint");
+                            b1.Property<int>("DiscountId")
+                                .HasColumnType("integer");
 
                             b1.Property<DateTime>("EndDate")
                                 .HasColumnType("timestamp with time zone");
@@ -902,9 +909,7 @@ namespace PlaceAgregator.EntityFramework.Migrations
                 {
                     b.HasOne("PlaceAgregator.Entities.BuildingType", "BuildingType")
                         .WithMany()
-                        .HasForeignKey("BuildingTypeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("BuildingTypeId");
 
                     b.HasOne("PlaceAgregator.Entities.User", "User")
                         .WithMany("Places")
@@ -946,8 +951,8 @@ namespace PlaceAgregator.EntityFramework.Migrations
 
                     b.OwnsOne("PlaceAgregator.Entities.TimeInterval", "TimeInterval", b1 =>
                         {
-                            b1.Property<long>("RateId")
-                                .HasColumnType("bigint");
+                            b1.Property<int>("RateId")
+                                .HasColumnType("integer");
 
                             b1.Property<DateTime>("EndDate")
                                 .HasColumnType("timestamp with time zone");

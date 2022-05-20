@@ -25,6 +25,9 @@ namespace PlaceAgregator.EntityFramework
         public DbSet<ServiceItem> ServiceItems{ get; set; }
         public DbSet<User> Users{ get; set; }
 
+        public ApplicationContext(DbContextOptions<ApplicationContext> options) : base(options)
+        {
+        }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseNpgsql("Host=localhost;Port=5432;Database=PlaceAgregator;Username=postgres;Password=13lu@if3r08");
@@ -58,6 +61,10 @@ namespace PlaceAgregator.EntityFramework
                 .WithOne(item => item.Account)
                 .HasForeignKey<User>(item => item.AccountId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Account>()
+                .HasIndex(item => item.Login)
+                .IsUnique();
 
             modelBuilder.Entity<BookingRequestServiceItem>(
                 j =>
