@@ -18,8 +18,8 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 
 
-import CustomDialog from '../Base/dialog/custom-dialog';
-import DialogTitleCloseButton from '../Base/dialog/dialog-title-close-button';
+import CustomDialog from '../Base/Dialog/custom-dialog';
+import DialogTitleCloseButton from '../Base/Dialog/dialog-title-close-button';
 import { Delete as DeleteIcon, Edit as EditIcon } from '@mui/icons-material';
 const axios = require('axios').default;
 

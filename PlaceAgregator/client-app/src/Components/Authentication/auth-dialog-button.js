@@ -3,8 +3,8 @@ import DialogContent from '@mui/material/DialogContent';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 
-import DialogTitleCloseButton from '../Base/dialog/dialog-title-close-button'
-import CustomDialog from '../Base/dialog/custom-dialog'
+import DialogTitleCloseButton from '../Base/Dialog/dialog-title-close-button'
+import CustomDialog from '../Base/Dialog/custom-dialog'
 import SignInForm from './sign-in-form';
 import SignUpForm from './sign-up-form';
 
