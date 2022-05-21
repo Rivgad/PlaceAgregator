@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
+using PlaceAgregator.API.AppBuilders;
 using PlaceAgregator.API.Services;
 using PlaceAgregator.API.Services.Interfaces;
 using PlaceAgregator.EntityFramework;
@@ -20,6 +22,31 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
     options.CustomSchemaIds(type => type.ToString());
+    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
+    {
+        Name = "Authorization",
+        Type = SecuritySchemeType.ApiKey,
+        Scheme = "Bearer",
+        BearerFormat = "JWT",
+        In = ParameterLocation.Header,
+        Description = "JWT Authorization header using the Bearer scheme.\r\n\r\n" +
+        "Enter 'Bearer' [space] and then your token in the text input below.\r\n\r\n" +
+        "Example: \"Bearer 1safsfsdfdfd\"",
+    });
+    options.AddSecurityRequirement(new OpenApiSecurityRequirement()
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                 Reference = new OpenApiReference()
+                 {
+                     Type = ReferenceType.SecurityScheme,
+                     Id = "Bearer"
+                 }
+             },
+            new string[] {}
+        }
+    });
 });
 
 builder.Services.AddDbContext<ApplicationDbContext>(
@@ -75,6 +102,10 @@ builder.Services.AddSingleton<IAuthService>(
     );
 
 var app = builder.Build();
+
+app.SeedDatabase(recreate: false)
+    .GetAwaiter()
+    .GetResult();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
