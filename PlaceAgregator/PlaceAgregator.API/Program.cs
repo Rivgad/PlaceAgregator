@@ -27,24 +27,33 @@ builder.Services.AddDbContext<ApplicationContext>(
     options => options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection"))
 );
 
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+builder.Services.AddAuthentication(options =>
+    {
+        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+        options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+    })
     .AddJwtBearer(options =>
     {
+        options.SaveToken = true;
         options.RequireHttpsMetadata = true;
         options.TokenValidationParameters = new TokenValidationParameters
         {
-            ValidateIssuer = false,
-            ValidateAudience = false,
+            ValidateIssuer = true,
+            ValidateAudience = true,
             ValidateLifetime = false,
 
+            ValidAudience = Configuration.GetValue<string>("JWT:Audience"),
+            ValidIssuer = Configuration.GetValue<string>("JWT:Issuer"),
             IssuerSigningKey = new SymmetricSecurityKey(
-                            Encoding.UTF8.GetBytes(Configuration.GetValue<string>("JWT:Secret"))
-                        ),
+                Encoding.UTF8.GetBytes(Configuration["JWT:Secret"]))
         };
     });
 
 builder.Services.AddSingleton<IAuthService>(
     new AuthService(
+            jwtIssuer: Configuration.GetValue<string>("JWT:Issuer"),
+            jwtAudience: Configuration.GetValue<string>("JWT:Audience"),
             jwtSecret: Configuration.GetValue<string>("JWT:Secret"),
             jwtLifespan: Configuration.GetValue<int>("Jwt:Lifespan")
         )
