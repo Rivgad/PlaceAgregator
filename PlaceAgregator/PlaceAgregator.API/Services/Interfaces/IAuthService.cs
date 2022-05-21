@@ -1,5 +1,4 @@
-﻿using PlaceAgregator.Entities;
-using System.Security.Claims;
+﻿using System.Security.Claims;
 
 namespace PlaceAgregator.API.Services.Interfaces
 {

@@ -1,17 +1,16 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using PlaceAgregator.API.Services;
 using PlaceAgregator.API.Services.Interfaces;
 using PlaceAgregator.EntityFramework;
+using PlaceAgregator.Shared.Models;
 using System.Text;
 
-IConfiguration Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
-Configuration = builder.Configuration;
+IConfiguration Configuration = builder.Configuration;
 
 // Add services to the container.
 builder.Services.AddControllers();
@@ -23,9 +22,25 @@ builder.Services.AddSwaggerGen(options =>
     options.CustomSchemaIds(type => type.ToString());
 });
 
-builder.Services.AddDbContext<ApplicationContext>(
-    options => options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection"))
-);
+builder.Services.AddDbContext<ApplicationDbContext>(
+    options => options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services.AddIdentity<AppUser, IdentityRole>(
+    options =>
+    {
+        options.User.RequireUniqueEmail = true;
+
+        options.Password.RequiredLength = 8;
+        options.Password.RequireUppercase = true;
+        options.Password.RequireLowercase = true;
+        options.Password.RequireDigit = true;
+        options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    })
+    .AddEntityFrameworkStores<ApplicationDbContext>()
+    .AddUserManager<UserManager<AppUser>>()
+    .AddRoleManager<RoleManager<IdentityRole>>()
+    .AddSignInManager<SignInManager<AppUser>>()
+    .AddDefaultTokenProviders();
 
 builder.Services.AddAuthentication(options =>
     {

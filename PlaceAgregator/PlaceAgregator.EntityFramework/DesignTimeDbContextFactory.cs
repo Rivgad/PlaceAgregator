@@ -8,14 +8,14 @@ using System.Threading.Tasks;
 
 namespace PlaceAgregator.EntityFramework
 {
-    public class BloggingContextFactory : IDesignTimeDbContextFactory<ApplicationContext>
+    public class DesignTimeDbContextFactory : IDesignTimeDbContextFactory<ApplicationDbContext>
     {
-        public ApplicationContext CreateDbContext(string[] args)
+        public ApplicationDbContext CreateDbContext(string[] args)
         {
-            var optionsBuilder = new DbContextOptionsBuilder<ApplicationContext>();
+            var optionsBuilder = new DbContextOptionsBuilder<ApplicationDbContext>();
             optionsBuilder.UseNpgsql("Host=localhost;Port=5432;Database=PlaceAgregator;Username=postgres;Password=13lu@if3r08");
 
-            return new ApplicationContext(optionsBuilder.Options);
+            return new ApplicationDbContext(optionsBuilder.Options);
         }
     }
 }

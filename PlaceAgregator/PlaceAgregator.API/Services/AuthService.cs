@@ -1,10 +1,7 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.IdentityModel.Tokens;
+﻿using Microsoft.IdentityModel.Tokens;
 using PlaceAgregator.API.Services.Interfaces;
-using PlaceAgregator.Entities;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using Microsoft.Extensions.Options;
 using System.Text;
 
 namespace PlaceAgregator.API.Services
