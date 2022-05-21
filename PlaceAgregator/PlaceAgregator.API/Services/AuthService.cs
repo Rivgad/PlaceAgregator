@@ -20,11 +20,11 @@ namespace PlaceAgregator.API.Services
             _jwtAudience = jwtAudience;
             _jwtIssuer = jwtIssuer;
         }
-        public string GetToken(int id, ClaimsIdentity claimsIdentity)
+        public string GetToken(IEnumerable<Claim> claims)
         {
             var expirationTime = DateTime.UtcNow.AddSeconds(_jwtLifespan);
             var jwt = new JwtSecurityToken(
-                claims: claimsIdentity.Claims,
+                claims: claims,
                 notBefore: DateTime.UtcNow,
                 expires: expirationTime,
                 issuer: _jwtIssuer,
