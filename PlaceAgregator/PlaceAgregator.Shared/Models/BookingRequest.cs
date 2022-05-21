@@ -25,18 +25,18 @@ namespace PlaceAgregator.Shared.Models
 
         [Required]
         public RequestStatus Status { get; set; } = 0;
-        
+
         [Required]
         public DateTime CreationDateTime { get; set; }
 
         [Required]
         public DateTime StartDateTime { get; set; }
-        
+
         [Required]
         public DateTime EndDateTime { get; set; }
-        
+
         public DateTime? EnrollDateTime { get; set; }
-        
+
         [Required]
         public int GuestsQuantity { get; set; }
         public string? Comment { get; set; }

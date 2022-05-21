@@ -24,10 +24,10 @@ namespace PlaceAgregator.Shared.Models
 
         [Required]
         public string Title { get; set; }
-        
+
         [Required]
         public decimal Price { get; set; }
-        
+
         [Required]
         public bool IsCountable { get; set; } = true;
         public int? MaxCount { get; set; }

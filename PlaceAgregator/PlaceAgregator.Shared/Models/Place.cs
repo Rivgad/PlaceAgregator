@@ -23,7 +23,7 @@ namespace PlaceAgregator.Shared.Models
 
         #region Relations
 
-        public IEnumerable<BookingRequest>? BookingRequests { get; set; } 
+        public IEnumerable<BookingRequest>? BookingRequests { get; set; }
         public IEnumerable<ServiceItem>? ServiceItems { get; set; }
         public IEnumerable<Comment>? Comments { get; set; }
         public IEnumerable<PlacePhoto>? Photos { get; set; }
@@ -85,7 +85,7 @@ namespace PlaceAgregator.Shared.Models
         [Required]
         public bool HasDisabledEntrance { get; set; } = false;
 
-        public int BookingHorizonInDays { get; set; } 
+        public int BookingHorizonInDays { get; set; }
 
         #endregion
 

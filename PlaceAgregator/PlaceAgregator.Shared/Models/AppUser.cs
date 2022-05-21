@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using System.Reflection.Metadata;
 
 namespace PlaceAgregator.Shared.Models
 {
