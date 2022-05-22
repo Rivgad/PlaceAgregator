@@ -7,6 +7,7 @@ import CssBaseline from '@mui/material/CssBaseline';
 import Box from '@mui/material/Box'
 
 import './index.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
 import PlacesPage from './Components/Places/Places';
 import PlacePage from './Components/Pages/place-page';
 import MyPlacesPage from './Components/Pages/my-places-page';
