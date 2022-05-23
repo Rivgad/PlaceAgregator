@@ -54,8 +54,12 @@ namespace PlaceAgregator.EntityFramework
             modelBuilder.Entity<BookingRequestServiceItem>()
                 .HasKey(item => new { item.ServiceItemId, item.BookingRequestId });
 
-            modelBuilder.Entity<Comment>()
-                .HasKey(item => new { item.PlaceId, item.UserId });
+            modelBuilder.Entity<Comment>(
+                j =>
+                {
+                    j.HasKey(item => new { item.PlaceId, item.UserId });
+                    j.Property(item => item.IsBlocked).HasDefaultValue(false);
+                });
 
             base.OnModelCreating(modelBuilder);
         }

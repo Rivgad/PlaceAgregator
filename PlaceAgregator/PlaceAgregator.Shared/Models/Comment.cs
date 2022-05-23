@@ -20,5 +20,8 @@ namespace PlaceAgregator.Shared.Models
 
         [Required]
         public int Rating { get; set; } = 1;
+
+        [Required]
+        public bool IsBlocked { get; set; }
     }
 }
