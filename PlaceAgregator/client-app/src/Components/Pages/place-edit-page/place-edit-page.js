@@ -13,8 +13,6 @@ import DescriptionPanel from './description-panel/description-panel';
 import ServiceItemsPanel from './service-items-panel/service-items-panel';
 import RatesPanel from './rates-panel/rates-panel';
 
-const axios = require('axios').default;
-
 
 function a11yProps(index) {
     return {
@@ -137,6 +135,7 @@ const PlaceEditPage = () => {
         }
     });
 
+    // eslint-disable-next-line no-unused-vars
     const handleChange = (prop) => (event) => {
         setState((state) => ({ ...state, [prop]: event.target.value }));
         console.log(state);

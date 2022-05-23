@@ -404,7 +404,7 @@ const PlacePage = (props) => {
                 setState(data);
             })
             .catch(error => { console.log(error) });
-    }, []);
+    }, [location]);
 
     return (
         <>
