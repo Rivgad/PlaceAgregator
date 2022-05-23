@@ -1,12 +1,7 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
 using PlaceAgregator.API.Services.Interfaces;
-using PlaceAgregator.Entities;
-using PlaceAgregator.EntityFramework;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
+using PlaceAgregator.Shared.Models;
 
 namespace PlaceAgregator.API.Controllers
 {
@@ -14,72 +9,38 @@ namespace PlaceAgregator.API.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
-        private IAuthService _authService;
-        private ApplicationContext _context;
-        public AuthController(IAuthService authService, ApplicationContext context)
+        private readonly UserManager<AppUser> _userManager;
+        private readonly IAuthService _authService;
+        public AuthController(UserManager<AppUser> userManager, IAuthService authService)
         {
+            _userManager = userManager;
             _authService = authService;
-            _context = context;
         }
 
-
-        [HttpPost("[action]")]
-        public IActionResult Login(string login, string password)
+        [HttpGet("[Action]")]
+        public async Task<IActionResult> LoginAsync(string userName, string password)
         {
-            var person = _context.Accounts
-                .Include(item=>item.User)
-                .FirstOrDefault(x => x.Login.ToLower() == login.ToLower());
-            
-            if (person == null)
+            var user = await _userManager.FindByNameAsync(userName) ?? await _userManager.FindByEmailAsync(userName);
+            var isPasswordValid = await _userManager.CheckPasswordAsync(user, password);
+            if (!isPasswordValid)
             {
-                return BadRequest(new { errorText = "Invalid username or password." });
+                return BadRequest();
             }
-            if (person.PasswordHash != password)
-            {
-                return BadRequest(new { errorText = "Invalid username or password." });
-            }
+            var claims = await _userManager.GetClaimsAsync(user);
+            var token = _authService.GetToken(claims);
 
-
-            var encodedJwt = _authService.GetToken(
-                person.Id,
-                new ClaimsIdentity(new List<Claim>()
-                {
-                    new Claim(ClaimsIdentity.DefaultNameClaimType, person.Login),
-                    new Claim(ClaimsIdentity.DefaultRoleClaimType, person.Role.ToString())
-                },
-                "Token",
-                ClaimsIdentity.DefaultNameClaimType,
-                ClaimsIdentity.DefaultRoleClaimType)
-            );
-
-            var response = new
-            {
-                access_token = encodedJwt,
-                username = person.Login,
-                role = person.Role.ToString(),
-                id = person.Id,
-                userId = person.User?.Id
-            };
-
-            return new JsonResult(response);
+            return Ok(new { token = token });
         }
 
-        [HttpPost("[action]")]
-        public async Task<IActionResult> RegistrationAsync(string login, string password)
+        [HttpPost("Action")]
+        public async Task<IActionResult> Registration(string userName, string email, string password)
         {
+            var newUser = new AppUser() { Email = email, UserName=userName };
+            var result = await _userManager.CreateAsync(newUser, password);
+            if(result.Succeeded)
+                return Ok(result);
 
-            var person = _context.Accounts.FirstOrDefault(x => x.Login.ToLower() == login.ToLower());
-            if (person != null)
-            {
-                return BadRequest(new { errorText = "User with this email already exists." });
-            }
-
-            var newAccount = new Account(login, password, Role.User);
-            newAccount.User = new User();
-            await _context.Accounts.AddAsync(newAccount);
-            await _context.SaveChangesAsync();
-
-            return new OkResult();
+            return BadRequest(result.Errors);
         }
     }
 }
