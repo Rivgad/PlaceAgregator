@@ -1,7 +1,7 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using PlaceAgregator.API.Services.Interfaces;
-using PlaceAgregator.Shared.Models;
+using PlaceAgregator.Shared.DTOs;
+using PlaceAgregator.Shared.DTOs.Authentication;
 
 namespace PlaceAgregator.API.Controllers
 {
@@ -9,38 +9,41 @@ namespace PlaceAgregator.API.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
-        private readonly UserManager<AppUser> _userManager;
         private readonly IAuthService _authService;
-        public AuthController(UserManager<AppUser> userManager, IAuthService authService)
+        public AuthController(IAuthService authService)
         {
-            _userManager = userManager;
             _authService = authService;
         }
 
-        [HttpGet("[Action]")]
-        public async Task<IActionResult> LoginAsync(string userName, string password)
+        [HttpPost("[Action]")]
+        public async Task<IActionResult> LoginAsync([FromForm]LoginRequest loginRequest)
         {
-            var user = await _userManager.FindByNameAsync(userName) ?? await _userManager.FindByEmailAsync(userName);
-            var isPasswordValid = await _userManager.CheckPasswordAsync(user, password);
-            if (!isPasswordValid)
-            {
-                return BadRequest();
-            }
-            var claims = await _userManager.GetClaimsAsync(user);
-            var token = _authService.GetToken(claims);
+            var userNameOrEmail = loginRequest.UserNameOrEmail;
 
-            return Ok(new { token = token });
+            if (string.IsNullOrEmpty(userNameOrEmail))
+                return BadRequest();
+
+            var result = await _authService.LoginAsync(userNameOrEmail, loginRequest.Password);
+
+            if (result.Succeeded)
+                return Ok(result.Message);
+            else
+                return BadRequest(result);
         }
 
-        [HttpPost("Action")]
-        public async Task<IActionResult> Registration(string userName, string email, string password)
+        [HttpPost("[Action]")]
+        [Produces(typeof(Response))]
+        public async Task<IActionResult> Registration([FromForm] RegistrationRequest request)
         {
-            var newUser = new AppUser() { Email = email, UserName=userName };
-            var result = await _userManager.CreateAsync(newUser, password);
+            var result = await _authService.RegistrationAsync(
+                email: request.Email,
+                userName: request.UserName,
+                password: request.Password);
+                
             if(result.Succeeded)
                 return Ok(result);
 
-            return BadRequest(result.Errors);
+            return BadRequest(result);
         }
     }
 }

@@ -61,7 +61,7 @@ builder.Services.AddIdentity<AppUser, IdentityRole>(
         options.Password.RequireUppercase = true;
         options.Password.RequireLowercase = true;
         options.Password.RequireDigit = true;
-        options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_";
     })
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddUserManager<UserManager<AppUser>>()
@@ -91,15 +91,8 @@ builder.Services.AddAuthentication(options =>
                 Encoding.UTF8.GetBytes(Configuration["JWT:Secret"]))
         };
     });
-
-builder.Services.AddSingleton<IAuthService>(
-    new AuthService(
-            jwtIssuer: Configuration.GetValue<string>("JWT:Issuer"),
-            jwtAudience: Configuration.GetValue<string>("JWT:Audience"),
-            jwtSecret: Configuration.GetValue<string>("JWT:Secret"),
-            jwtLifespan: Configuration.GetValue<int>("Jwt:Lifespan")
-        )
-    );
+builder.Services.AddSingleton<IConfiguration>((services) => Configuration);
+builder.Services.AddScoped<IAuthService, AuthService>();
 
 var app = builder.Build();
 
@@ -115,6 +108,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseExceptionHandler("/error");
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();

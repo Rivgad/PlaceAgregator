@@ -15,8 +15,4 @@
     <ProjectReference Include="..\PlaceAgregator.EntityFramework\PlaceAgregator.EntityFramework.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Controllers\" />
-  </ItemGroup>
-
 </Project>
