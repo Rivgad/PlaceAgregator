@@ -1,25 +1,37 @@
-import { BrowserRouter, Route, Routes } from "react-router-dom";
-import App from "./Components/App/App";
-import BookingsPage from "./Components/Pages/bookings-gape/bookings-page";
-import MyPlacesPage from "./Components/Pages/my-places-page";
-import MyProfilePage from "./Components/Pages/my-profile-page/my-profile-page";
-import PlaceEditPage from "./Components/Pages/place-edit-page/place-edit-page";
-import PlacePage from "./Components/Pages/place-page";
-import PlacesPage from "./Components/Places/Places";
+import { BrowserRouter, Outlet, Route, Routes } from "react-router-dom";
 
-const Appp =()=>{
+import BookingsPage from "./features/bookings/BookingsPage";
+import AppFooter from "./features/footer/AppFooter";
+import AppHeader from "./features/header/AppHeader";
+import PlaceEditPage from "./features/places/edit/Page";
+import MyPlacesPage from "./features/places/MyPlacesPage";
+import PlacePage from "./features/places/placePage/PlacePage";
+import PlacesPage from "./features/places/PlacesPage";
+import MyProfilePage from "./features/profile/MyProfilePage";
+import UserProfile from "./features/profile/UserProfile";
+
+const App = () => {
     return (
         <>
+
             <BrowserRouter>
                 <Routes>
-                    <Route path="/" element={<App/>}>
+                    <Route path='/'
+                        element={
+                            <>
+                                <AppHeader />
+                                <Outlet />
+                                <AppFooter />
+                            </>
+                        }
+                    >
                         <Route path="places" element={<PlacesPage />} />
                         <Route path="places/:id" element={<PlacePage />} />
                         <Route path="myPlaces" element={<MyPlacesPage />} />
                         <Route path="places/:id/edit" element={<PlaceEditPage />} />
                         <Route path="bookings" element={<BookingsPage />} />
-                        <Route path="myProfile" element={<MyProfilePage />} />
-                        <Route path="profile/:id" element={<MyProfilePage />} />
+                        <Route path="profile" element={<MyProfilePage />} />
+                        <Route path="profile/:id" element={<UserProfile />} />
                     </Route>
                 </Routes>
             </BrowserRouter>
@@ -27,4 +39,4 @@ const Appp =()=>{
     );
 }
 
-export default Appp;
+export default App;

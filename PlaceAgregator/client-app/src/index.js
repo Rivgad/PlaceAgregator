@@ -6,7 +6,7 @@ import CssBaseline from '@mui/material/CssBaseline';
 
 import './index.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import Appp from './App';
+import App from './App';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
@@ -41,7 +41,7 @@ const Ind = ()=>{
         <React.StrictMode>
         <ThemeProvider theme={theme}>
             <CssBaseline />
-            <Appp/>
+            <App/>
         </ThemeProvider>
     </React.StrictMode>
     );
