@@ -1,6 +1,5 @@
 ﻿using PlaceAgregator.Shared.DTOs;
 using PlaceAgregator.Shared.DTOs.Authentication;
-using System.Security.Claims;
 
 namespace PlaceAgregator.API.Services.Interfaces
 {
