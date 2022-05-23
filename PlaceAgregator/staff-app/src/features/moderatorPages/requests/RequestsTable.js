@@ -1,7 +1,7 @@
 import { Check as CheckIcon, Close as CloseIcon } from '@mui/icons-material';
 import { IconButton, Link, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material';
 import { Link as RouterLink } from 'react-router-dom';
-import RequestStatus from '../../../../_helpers/request-status'
+import { RequestStatusType } from '../../../helpers';
 
 const RequestsTable = (props) => {
     let { requests, handleClickReject, handleClickAccept } = props;
@@ -35,7 +35,7 @@ const RequestsTable = (props) => {
                                 <TableCell>{row.creationTime}</TableCell>
                                 <TableCell align='center'>
                                     {
-                                        row.status === RequestStatus.Pending ?
+                                        row.status === RequestStatusType.Pending ?
                                             <>
                                                 <IconButton size='small' sx={{mr:3}} onClick={() => handleClickAccept(row.id)} variant='contained'>
                                                     <CheckIcon />
@@ -47,7 +47,7 @@ const RequestsTable = (props) => {
                                             :
                                             <>
                                                 {
-                                                    row.status === RequestStatus.Accepted ?
+                                                    row.status === RequestStatusType.Accepted ?
                                                         <Typography sx={{fontWeight:'500'}} color='green'>Принята</Typography>
                                                         :
                                                         <Typography sx={{fontWeight:'500'}} color='error'>Отклонена</Typography>

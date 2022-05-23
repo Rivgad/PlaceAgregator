@@ -1,22 +1,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
-import Box from '@mui/material/Box'
 
 import './index.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import PlacesPage from './Components/Places/Places';
-import PlacePage from './Components/Pages/place-page';
-import MyPlacesPage from './Components/Pages/my-places-page';
-import PlaceEditPage from './Components/Pages/place-edit-page/place-edit-page';
-import BookingsPage from './Components/Pages/bookings-gape/bookings-page';
-import MyProfilePage from './Components/Pages/my-profile-page/my-profile-page';
-
-import StuffApp from './Components/stuff-app/stuff-app';
-import App from './Components/App/App';
+import Appp from './App';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
@@ -51,33 +41,7 @@ const Ind = ()=>{
         <React.StrictMode>
         <ThemeProvider theme={theme}>
             <CssBaseline />
-            <BrowserRouter>
-                <Routes>
-                    <Route path="/" element={<App/>}>
-                        <Route path="places" element={<PlacesPage />} />
-                        <Route path="places/:id" element={<PlacePage />} />
-                        <Route path="myPlaces" element={<MyPlacesPage />} />
-                        <Route path="places/:id/edit" element={<PlaceEditPage />} />
-                        <Route path="bookings" element={<BookingsPage />} />
-                        <Route path="myProfile" element={<MyProfilePage />} />
-                        <Route path="profile/:id" element={<MyProfilePage />} />
-                        <Route
-                            path="*"
-                            element={
-                                <Box
-                                    display="flex"
-                                    justifyContent="center"
-                                    alignItems="center"
-                                    minHeight="100vh"
-                                >
-                                    Здесь ничего нет!
-                                </Box>
-                            }
-                        />
-                    </Route>
-                    <Route path='/staff/*' element={ <StuffApp/> }/>
-                </Routes>
-            </BrowserRouter>
+            <Appp/>
         </ThemeProvider>
     </React.StrictMode>
     );

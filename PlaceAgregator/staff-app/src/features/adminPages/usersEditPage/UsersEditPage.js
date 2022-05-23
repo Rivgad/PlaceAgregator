@@ -1,6 +1,6 @@
 import { Grid, Typography } from '@mui/material';
 import { useState } from 'react';
-import UsersTable from './users-table';
+import UsersTable from './UsersTable';
 
 const createUser = (id, login, firstName, familyName, patronimyc, isBlocked) =>{
     return {id, login, firstName, familyName, patronimyc, isBlocked}

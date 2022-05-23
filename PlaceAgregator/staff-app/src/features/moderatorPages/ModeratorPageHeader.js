@@ -1,4 +1,3 @@
-import React from 'react';
 import { Button, Paper, Toolbar } from '@mui/material';
 import {Link} from 'react-router-dom'
 
@@ -15,6 +14,5 @@ const ModeratorPageHeader = (props) => {
         </>
     );
 };
-
 
 export default ModeratorPageHeader;

@@ -1,10 +1,10 @@
 import React from 'react';
 import { Box, Container } from '@mui/material';
 import { Route, Routes } from 'react-router-dom';
-import ModeratorPageHeader from './moderator-page-header';
-import PlacesEditPage from './places-edit-page/places-edit-page';
-import RequestsPage from './requests-page/requests-page';
-import CommentsPage from './comments-page/comments-page';
+import ModeratorPageHeader from './ModeratorPageHeader';
+import PlacesEditPage from './places/PlacesEditPage';
+import RequestsPage from './requests/RequestsPage';
+import CommentsPage from './comments/CommentsPage';
 
 
 const ModeratorPage = () => {

@@ -1,6 +1,6 @@
 import { Grid, Typography } from "@mui/material";
 import { useState } from "react";
-import CommentsTable from "./comments-table";
+import CommentsTable from "./CommentsTable";
 
 const createComment = (id, userId, placeId, text, creationDateTime) =>{
     return {id, userId, placeId, text, creationDateTime}

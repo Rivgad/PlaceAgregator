@@ -1,9 +1,9 @@
 import React from 'react';
 import { Container } from '@mui/material';
 import { Route, Routes } from 'react-router-dom';
-import AdminPageHeader from './admin-page-header';
-import ModeratorEditPage from './moderator-edit-page/moderator-edit-page';
-import UsersEditPage from './users-edit-page/users-edit-page';
+import AdminPageHeader from './AdminPageHeader';
+import ModeratorEditPage from './moderatorsEditPage/ModeratorsEditPage';
+import UsersEditPage from './usersEditPage/UsersEditPage';
 
 
 const AdminPage = () => {

@@ -1,17 +1,18 @@
 import { Grid, Typography } from "@mui/material";
 import { useState } from "react";
-import RequestStatus from "../../../../_helpers/request-status";
-import RequestsTable from "./requests-table";
+import { RequestStatusType } from "../../../helpers";
+
+import RequestsTable from "./RequestsTable";
 
 const createRequest = (id, placeId, userId, creationTime, status) =>{
     return {id, placeId, userId, creationTime, status}
 }
 const requestsData= [
-    createRequest(1, 4, 3, '02.05.2022', RequestStatus.Pending),
-    createRequest(2, 5, 3, '02.05.2022', RequestStatus.Pending),
-    createRequest(3, 6, 4, '02.05.2022', RequestStatus.Accepted),
-    createRequest(4, 7, 5, '02.05.2022', RequestStatus.Rejected),
-    createRequest(5, 8, 5, '02.05.2022', RequestStatus.Accepted),
+    createRequest(1, 4, 3, '02.05.2022', RequestStatusType.Pending),
+    createRequest(2, 5, 3, '02.05.2022', RequestStatusType.Pending),
+    createRequest(3, 6, 4, '02.05.2022', RequestStatusType.Accepted),
+    createRequest(4, 7, 5, '02.05.2022', RequestStatusType.Rejected),
+    createRequest(5, 8, 5, '02.05.2022', RequestStatusType.Accepted),
 ]
 
 const RequestsPage = (props) => {
@@ -25,10 +26,10 @@ const RequestsPage = (props) => {
     }
     
     const handleClickReject = (id)=>{
-        setRequestStatus(id, RequestStatus.Rejected);
+        setRequestStatus(id, RequestStatusType.Rejected);
     } 
     const handleClickAccept = (id)=>{
-        setRequestStatus(id, RequestStatus.Accepted);
+        setRequestStatus(id, RequestStatusType.Accepted);
     } 
 
     return (

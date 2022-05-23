@@ -1,6 +1,6 @@
 import { Grid, Typography } from "@mui/material";
 import { useState } from "react";
-import PlacesTable from "./places-table";
+import PlacesTable from "./PlacesTable";
 
 const createPlace = (id, title, isBlocked) =>{
     return {id, title, isBlocked}

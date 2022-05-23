@@ -1,6 +1,6 @@
 import { AppBar, Button, Toolbar, Typography } from "@mui/material"
 
-const StuffAppHeader = (props) => {
+const AppHeader = (props) => {
     const { onClose } = props;
 
     return (
@@ -25,4 +25,4 @@ const StuffAppHeader = (props) => {
     )
 }
 
-export default StuffAppHeader;
+export default AppHeader;

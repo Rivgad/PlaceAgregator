@@ -1,6 +1,6 @@
 import { Button, Grid, Typography } from '@mui/material';
 import React from 'react';
-import ModeratorsTable from './moderators-table';
+import ModeratorsTable from './ModeratorsTable'
 
 const createModerator = (id, login, firstName, familyName, patronimyc, isBlocked) =>{
     return {id, login, firstName, familyName, patronimyc, isBlocked}
