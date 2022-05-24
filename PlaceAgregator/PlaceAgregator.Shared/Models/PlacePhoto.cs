@@ -13,8 +13,5 @@ namespace PlaceAgregator.Shared.Models
 
         [Required]
         public byte[] Value { get; set; }
-
-        [Required]
-        public int Order { get; set; } = 0;
     }
 }

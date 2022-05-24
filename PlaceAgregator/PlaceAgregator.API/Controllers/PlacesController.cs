@@ -8,6 +8,7 @@ using PlaceAgregator.Shared.DTOs.Places;
 using PlaceAgregator.Shared.Models;
 using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
+using System.Text;
 
 namespace PlaceAgregator.API.Controllers
 {
@@ -36,7 +37,44 @@ namespace PlaceAgregator.API.Controllers
             return Ok(new PagesQuantityResponse((int)pagesCount));
         }
 
+        [HttpPost("{id?}/Photos")]
+        public async Task<IActionResult> AddPhoto(int id, [FromBody] byte[] base64Code)
+        {
+            var place = await _context.Places.FirstOrDefaultAsync(item => item.Id == id && item.IsBlocked == false);
 
+            if (place == null)
+                return NotFound();
+
+            var photo = _context.PlacePhotos.Add(new PlacePhoto()
+            {
+                PlaceId = place.Id,
+                Value = base64Code
+            });
+            await _context.SaveChangesAsync();
+
+            return Ok(photo.Entity);
+        }
+
+        [HttpDelete("{id?}/Photos/{photoId?}")]
+        public async Task<IActionResult> DeletePhoto(int id, int photoId)
+        {
+            var place = await _context.Places
+                .Include(item=>item.Photos)
+                .FirstOrDefaultAsync(item => item.Id == id && item.IsBlocked == false);
+
+            if (place == null)
+                return NotFound();
+
+            var photo = place.Photos?.FirstOrDefault(item => item.Id == photoId);
+            if (photo == null)
+                return BadRequest();
+
+            _context.PlacePhotos.Remove(photo);
+
+            await _context.SaveChangesAsync();
+
+            return Ok(new { id = photoId });
+        }
 
         [Authorize(Roles ="manager, admin")]
         [HttpPost("{id?}/[Action]")]
@@ -88,7 +126,13 @@ namespace PlaceAgregator.API.Controllers
         [ProducesResponseType(400)]
         public async Task<IActionResult> GetPlaceAsync(int id)
         {
-            var place = await _context.Places.FirstOrDefaultAsync(item => item.Id == id && item.IsBlocked == false);
+            var place = await _context.Places
+                .Include(item=>item.Photos)
+                .Include(item=>item.EventTypes)
+                .Include(item=>item.Prohibitions)
+                .Include(item=>item.Rules)
+                .Include(item=>item.ServiceItems)
+                .FirstOrDefaultAsync(item => item.Id == id && item.IsBlocked == false);
 
             if (place == null)
                 return NotFound();
