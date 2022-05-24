@@ -16,7 +16,7 @@ namespace PlaceAgregator.API.Controllers
         }
 
         [HttpPost("[Action]")]
-        public async Task<IActionResult> LoginAsync([FromForm]LoginRequest loginRequest)
+        public async Task<IActionResult> LoginAsync([FromForm] LoginRequest loginRequest)
         {
             var userNameOrEmail = loginRequest.UserNameOrEmail;
 
@@ -39,8 +39,8 @@ namespace PlaceAgregator.API.Controllers
                 email: request.Email,
                 userName: request.UserName,
                 password: request.Password);
-                
-            if(result.Succeeded)
+
+            if (result.Succeeded)
                 return Ok(result);
 
             return BadRequest(result);

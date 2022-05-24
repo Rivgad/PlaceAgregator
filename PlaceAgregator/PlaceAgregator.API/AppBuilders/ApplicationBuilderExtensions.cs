@@ -1,5 +1,4 @@
-﻿
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using PlaceAgregator.EntityFramework;
 using PlaceAgregator.Shared.Models;
 
@@ -24,8 +23,8 @@ namespace PlaceAgregator.API.AppBuilders
                     var appDbContext = scopedProvider.GetRequiredService<ApplicationDbContext>();
 
                     await ApplicationDbContextSeed.SeedAsync(
-                        appDbContext: appDbContext, 
-                        userManager: userManager, 
+                        appDbContext: appDbContext,
+                        userManager: userManager,
                         roleManager: roleManager,
                         recreate: recreate);
 

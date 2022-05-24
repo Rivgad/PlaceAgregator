@@ -10,8 +10,8 @@ namespace PlaceAgregator.EntityFramework
     public static class ApplicationDbContextSeed
     {
         public static async Task SeedAsync(
-            ApplicationDbContext appDbContext, 
-            UserManager<AppUser> userManager, 
+            ApplicationDbContext appDbContext,
+            UserManager<AppUser> userManager,
             RoleManager<IdentityRole> roleManager,
             bool recreate
             )
@@ -61,30 +61,30 @@ namespace PlaceAgregator.EntityFramework
             string defaultManagerUserName = "Manager";
 
             Dictionary<Role, AppUser> defaultUsersDict = new Dictionary<Role, AppUser>();
-            defaultUsersDict.Add(Role.User, 
-                new AppUser 
+            defaultUsersDict.Add(Role.User,
+                new AppUser
                 {
                     UserName = defaultUserName,
                     Email = defaultUserEmail,
-                    EmailConfirmed = true 
+                    EmailConfirmed = true
                 });
-            defaultUsersDict.Add(Role.Manager, 
-                new AppUser 
-                { 
-                    UserName = defaultManagerUserName, 
+            defaultUsersDict.Add(Role.Manager,
+                new AppUser
+                {
+                    UserName = defaultManagerUserName,
                     Email = defaultManagerEmail,
-                    EmailConfirmed = true 
+                    EmailConfirmed = true
                 });
             defaultUsersDict.Add(
-                Role.Admin, 
-                new AppUser 
-                { 
+                Role.Admin,
+                new AppUser
+                {
                     UserName = defaultAdminUserName,
-                    Email = defaultAdminEmail, 
-                    EmailConfirmed = true 
+                    Email = defaultAdminEmail,
+                    EmailConfirmed = true
                 });
 
-            foreach(var roleUserPair in defaultUsersDict)
+            foreach (var roleUserPair in defaultUsersDict)
             {
                 var existedUser = await userManager.FindByNameAsync(roleUserPair.Value.UserName);
                 if (existedUser != null)
