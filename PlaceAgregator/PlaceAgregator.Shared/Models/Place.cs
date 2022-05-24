@@ -6,6 +6,9 @@ namespace PlaceAgregator.Shared.Models
 {
     public class Place : Entity
     {
+        [JsonIgnore]
+        public bool IsBlocked { get; set; } = false;
+
         #region FK
 
         public string UserId { get; set; }

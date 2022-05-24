@@ -1,15 +1,11 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlaceAgregator.API.Services.Interfaces;
 using PlaceAgregator.EntityFramework;
 using PlaceAgregator.Shared.DTOs.Places;
-using PlaceAgregator.Shared.Extensions;
 using PlaceAgregator.Shared.Models;
-using PlaceAgregator.Shared.Models.Enums;
-using PlaceAgregator.Shared.Models.Types;
 using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
 
@@ -34,10 +30,44 @@ namespace PlaceAgregator.API.Controllers
         [Produces(typeof(PagesQuantityResponse))]
         public async Task<IActionResult> PagesQuantity()
         {
-            decimal placesCount = await _context.Places.CountAsync();
+            decimal placesCount = await _context.Places.CountAsync(item => item.IsBlocked == false);
             var pagesCount = Math.Ceiling(placesCount / (decimal)pageSize);
 
             return Ok(new PagesQuantityResponse((int)pagesCount));
+        }
+
+
+
+        [Authorize(Roles ="manager, admin")]
+        [HttpPost("{id?}/[Action]")]
+        public async Task<IActionResult> BlockPlace(int id)
+        {
+            var place = await _context.Places.FirstOrDefaultAsync(item => item.Id == id);
+
+            if (place == null)
+                return NotFound();
+
+            place.IsBlocked = true;
+            _context.Update(place);
+            await _context.SaveChangesAsync();
+
+            return Ok(new { id = id });
+        }
+
+        [Authorize(Roles = "manager, admin")]
+        [HttpPost("{id?}/[Action]")]
+        public async Task<IActionResult> UnblockPlace(int id)
+        {
+            var place = await _context.Places.FirstOrDefaultAsync(item => item.Id == id);
+
+            if (place == null)
+                return NotFound();
+
+            place.IsBlocked = false;
+            _context.Update(place);
+            await _context.SaveChangesAsync();
+
+            return Ok(new { id = id });
         }
 
         [HttpGet]
@@ -46,6 +76,7 @@ namespace PlaceAgregator.API.Controllers
         {
             page = page - 1;
             var result = _context.Places
+                .Where(item => item.IsBlocked == false)
                 .Skip(page * pageSize)
                 .Take(pageSize);
 
@@ -57,9 +88,10 @@ namespace PlaceAgregator.API.Controllers
         [ProducesResponseType(400)]
         public async Task<IActionResult> GetPlaceAsync(int id)
         {
-            var place = await _context.Places.FirstOrDefaultAsync(item => item.Id == id);
+            var place = await _context.Places.FirstOrDefaultAsync(item => item.Id == id && item.IsBlocked == false);
+
             if (place == null)
-                return BadRequest();
+                return NotFound();
 
             return Ok(_mapper.Map<GetPlaceDTO>(place));
         }
@@ -71,9 +103,9 @@ namespace PlaceAgregator.API.Controllers
             if (accountId == null)
                 return BadRequest();
 
-            var places = await _context.Places.Where(item=>item.UserId == accountId).ToListAsync();
+            var places = await _context.Places.Where(item => item.UserId == accountId).ToListAsync();
 
-            return Ok(places.Select(item=> new { id=item.Id, title=item.Title, rating=item.Rating }));
+            return Ok(places.Select(item => new { id = item.Id, title = item.Title, rating = item.Rating, isBlocked = item.IsBlocked }));
         }
 
         [HttpDelete("{id?}")]
@@ -94,7 +126,7 @@ namespace PlaceAgregator.API.Controllers
             _context.Places.Remove(place);
             await _context.SaveChangesAsync();
 
-            return Ok(new { id=id });
+            return Ok(new { id = id });
         }
 
         [Authorize(Roles = "user")]
@@ -116,7 +148,7 @@ namespace PlaceAgregator.API.Controllers
             var result = await _context.Places.AddAsync(newPlace);
             await _context.SaveChangesAsync();
             newPlace = result.Entity;
-            
+
             GetPlaceDTO dto = _mapper.Map<GetPlaceDTO>(newPlace);
             return Ok(dto);
         }
@@ -126,9 +158,9 @@ namespace PlaceAgregator.API.Controllers
         [Produces(typeof(GetPlaceDTO))]
         public async Task<IActionResult> UpdatePlaceAsync(int placeId, [FromForm] PlaceUpdateDTO placeDTO)
         {
-            var place = await _context.Places.FirstOrDefaultAsync(item => item.Id == placeId);
+            var place = await _context.Places.FirstOrDefaultAsync(item => item.Id == placeId && item.IsBlocked == false);
             if (place == null)
-                return BadRequest();
+                return NotFound();
 
             string? accountId = User.FindFirst(ClaimTypes.Sid)?.Value;
             if (accountId == null)

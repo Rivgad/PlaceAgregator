@@ -95,6 +95,7 @@ builder.Services.AddAuthentication(options =>
     });
 builder.Services.AddSingleton<IConfiguration>((services) => Configuration);
 builder.Services.AddScoped<IAuthService, AuthService>();
+
 builder.Services.AddAutoMapper(cfg =>
 {
     cfg.CreateMap<PlaceUpdateDTO, Place>()
@@ -103,17 +104,18 @@ builder.Services.AddAutoMapper(cfg =>
         .ForMember(dest => dest.Rules, opt => opt.MapFrom(src => src.RuleIds.Select(item => new Rule() { Id = item })));
     cfg.CreateMap<SheduleDTO, Shedule>();
     cfg.CreateMap<Place, GetPlaceDTO>()
-        .ForMember(dest=>dest.EventTypeIds, opt=>opt.MapFrom(src=>src.EventTypes.Select(item=> item.Id)))
-        .ForMember(dest=>dest.ProhibitionIds, opt=>opt.MapFrom(src=>src.Prohibitions.Select(item=> item.Id)))
-        .ForMember(dest=>dest.RuleIds, opt=>opt.MapFrom(src=>src.Rules.Select(item=> item.Id)));
+        .ForMember(dest => dest.EventTypeIds, opt => opt.MapFrom(src => src.EventTypes.Select(item => item.Id)))
+        .ForMember(dest => dest.ProhibitionIds, opt => opt.MapFrom(src => src.Prohibitions.Select(item => item.Id)))
+        .ForMember(dest => dest.RuleIds, opt => opt.MapFrom(src => src.Rules.Select(item => item.Id)));
     cfg.CreateMap<Shedule, SheduleDTO>();
     cfg.CreateMap<Place, PlaceCardInfo>();
-    cfg.CreateMap<ServiceItem,ServiceItemGetDTO>();
+    cfg.CreateMap<ServiceItem, ServiceItemGetDTO>();
     cfg.CreateMap<Charge, ChargeGetDTO>();
     cfg.CreateMap<Rate, RateGetDTO>();
     cfg.CreateMap<Discount, DiscountGetDTO>();
-    
+
 });
+
 var app = builder.Build();
 
 app.SeedDatabase(recreate: false)
