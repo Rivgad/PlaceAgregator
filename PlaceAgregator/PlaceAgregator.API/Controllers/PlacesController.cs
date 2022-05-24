@@ -27,21 +27,14 @@ namespace PlaceAgregator.API.Controllers
             _mapper = mapper;
         }
 
-        [HttpGet("[Action]")]
-        [Produces(typeof(PagesQuantityResponse))]
-        public async Task<IActionResult> PagesQuantity()
-        {
-            decimal placesCount = await _context.Places.CountAsync(item => item.IsBlocked == false);
-            var pagesCount = Math.Ceiling(placesCount / (decimal)pageSize);
 
-            return Ok(new PagesQuantityResponse((int)pagesCount));
-        }
+        #region ServiceItems
 
         [Authorize(Roles = "user")]
-        [HttpPost("{id?}/ServiceItems")]
-        public async Task<IActionResult> CreateServiceItem(int id, [FromForm] ServiceItemCreateDTO serviceItem)
+        [HttpPost("{placeId?}/ServiceItems")]
+        public async Task<IActionResult> CreateServiceItem(int placeId, [FromForm] ServiceItemCreateDTO serviceItem)
         {
-            var place = await _context.Places.FirstOrDefaultAsync(item => item.Id == id && item.IsBlocked == false);
+            var place = await _context.Places.FirstOrDefaultAsync(item => item.Id == placeId && item.IsBlocked == false);
             if (place == null)
                 return NotFound();
 
@@ -62,12 +55,12 @@ namespace PlaceAgregator.API.Controllers
         }
 
         [Authorize(Roles = "user")]
-        [HttpPatch("{id?}/ServiceItems/{itemId?}")]
-        public async Task<IActionResult> UpdateServiceItem(int id, int itemId, [FromForm] ServiceItemUpdateDTO serviceItem)
+        [HttpPatch("{placeId?}/ServiceItems/{itemId?}")]
+        public async Task<IActionResult> UpdateServiceItem(int placeId, int itemId, [FromForm] ServiceItemUpdateDTO serviceItem)
         {
             var place = await _context.Places
                 .Include(item => item.ServiceItems)
-                .FirstOrDefaultAsync(item => item.Id == id && item.IsBlocked == false);
+                .FirstOrDefaultAsync(item => item.Id == placeId && item.IsBlocked == false);
             if (place == null)
                 return NotFound();
 
@@ -91,12 +84,12 @@ namespace PlaceAgregator.API.Controllers
         }
 
         [Authorize(Roles = "user")]
-        [HttpDelete("{id?}/ServiceItems/{itemId?}")]
-        public async Task<IActionResult> DeleteServiceItem(int id, int itemId)
+        [HttpDelete("{placeId?}/ServiceItems/{itemId?}")]
+        public async Task<IActionResult> DeleteServiceItem(int placeId, int itemId)
         {
             var place = await _context.Places
                 .Include(item => item.ServiceItems)
-                .FirstOrDefaultAsync(item => item.Id == id && item.IsBlocked == false);
+                .FirstOrDefaultAsync(item => item.Id == placeId && item.IsBlocked == false);
             if (place == null)
                 return NotFound();
 
@@ -116,6 +109,12 @@ namespace PlaceAgregator.API.Controllers
 
             return Ok(new { id = serviceItem.Id });
         }
+
+        #endregion
+
+
+
+        #region Photo
 
         [Authorize(Roles = "user")]
         [HttpPost("{id?}/Photos")]
@@ -168,7 +167,11 @@ namespace PlaceAgregator.API.Controllers
             return Ok(new { id = photoId });
         }
 
-        [Authorize(Roles ="manager, admin")]
+        #endregion
+
+        #region Blocking
+
+        [Authorize(Roles = "manager, admin")]
         [HttpPost("{id?}/[Action]")]
         public async Task<IActionResult> BlockPlace(int id)
         {
@@ -198,6 +201,18 @@ namespace PlaceAgregator.API.Controllers
             await _context.SaveChangesAsync();
 
             return Ok(new { id = id });
+        }
+
+        #endregion
+
+        [HttpGet("[Action]")]
+        [Produces(typeof(PagesQuantityResponse))]
+        public async Task<IActionResult> PagesQuantity()
+        {
+            decimal placesCount = await _context.Places.CountAsync(item => item.IsBlocked == false);
+            var pagesCount = Math.Ceiling(placesCount / (decimal)pageSize);
+
+            return Ok(new PagesQuantityResponse((int)pagesCount));
         }
 
         [HttpGet]
