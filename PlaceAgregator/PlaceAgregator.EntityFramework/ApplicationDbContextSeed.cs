@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using PlaceAgregator.Shared.Extensions;
 using PlaceAgregator.Shared.Models;
 using PlaceAgregator.Shared.Models.Enums;
+using PlaceAgregator.Shared.Models.Types;
 
 namespace PlaceAgregator.EntityFramework
 {
@@ -23,6 +24,8 @@ namespace PlaceAgregator.EntityFramework
 
             await SeedRolesAsync(roleManager);
             await SeedUsersAsync(userManager, recreate: recreate);
+            await SeedEventTypes(appDbContext);
+            await SeedProhibitionTypes(appDbContext);
         }
         public static async Task SeedRolesAsync(RoleManager<IdentityRole> roleManager)
         {
@@ -103,7 +106,42 @@ namespace PlaceAgregator.EntityFramework
                 }
             }
         }
+        public static async Task SeedEventTypes(ApplicationDbContext context)
+        {
+            var eventTypes = new List<string>()
+            {
+                "Корпоратив", "День рождения", "Банкет", "Вечеринка", "Квартирник", "Презентация"
+            };
 
+            foreach (var eventType in eventTypes)
+            {
+                if (!context.EventTypes.Any(item => item.Title == eventType))
+                    await context.EventTypes.AddAsync(new EventType() { Title = eventType });
+            }
 
+            await context.SaveChangesAsync();
+        }
+        public static async Task SeedProhibitionTypes(ApplicationDbContext context)
+        {
+            var prohibionTypes = new List<string>()
+            {
+                "шуметь, включать громко музыку, петь, кричать",
+                "употреблять алкоголь",
+                "курить в помещении",
+                "шуметь после 23:00",
+                "использовать пачкающие материалы (вода, краска, химикаты и прочее)",
+                "употреблять еду",
+                "приносить свою еду",
+                "употреблять чай, кофе и печеньки",
+                "приводить детей 4-10 лет",
+                "приносить свои напитки (включая алкоголь)"
+            };
+            foreach (var type in prohibionTypes)
+            {
+                if (!context.Prohibitions.Any(item => item.Title == type))
+                    await context.Prohibitions.AddAsync(new() { Title = type });
+            }
+            await context.SaveChangesAsync();
+        }
     }
 }

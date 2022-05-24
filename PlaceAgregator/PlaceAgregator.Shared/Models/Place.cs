@@ -1,5 +1,6 @@
 ﻿using PlaceAgregator.Shared.Models.Types;
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace PlaceAgregator.Shared.Models
 {
@@ -8,15 +9,23 @@ namespace PlaceAgregator.Shared.Models
         #region FK
 
         public string UserId { get; set; }
+        
+        [JsonIgnore]
         public AppUser User { get; set; }
 
         public int? WaterTypeId { get; set; }
+        
+        [JsonIgnore]
         public WaterType? WaterType { get; set; }
 
         public int? BuildingTypeId { get; set; }
+        
+        [JsonIgnore]
         public BuildingType? BuildingType { get; set; }
 
         public int? ParkingTypeId { get; set; }
+        
+        [JsonIgnore]
         public ParkingType? ParkingType { get; set; }
 
         #endregion
@@ -38,7 +47,7 @@ namespace PlaceAgregator.Shared.Models
 
         #region Properties
 
-        public Shedule Shedule { get; set; }
+        public Shedule? Shedule { get; set; }
 
         public string Title { get; set; }
 
@@ -62,13 +71,13 @@ namespace PlaceAgregator.Shared.Models
 
         public decimal? CellingHeight { get; set; }
 
-        public int SocketsQuantity { get; set; } = 0;
+        public int? SocketsQuantity { get; set; }
 
-        public int MaleToiletsQuantity { get; set; } = 0;
+        public int? MaleToiletsQuantity { get; set; }
 
-        public int FemaleToiletsQuantity { get; set; } = 0;
+        public int? FemaleToiletsQuantity { get; set; }
 
-        public int SharedToiletsQuantity { get; set; } = 0;
+        public int? SharedToiletsQuantity { get; set; }
 
         public int? ParkingSpace { get; set; }
 
@@ -85,7 +94,7 @@ namespace PlaceAgregator.Shared.Models
         [Required]
         public bool HasDisabledEntrance { get; set; } = false;
 
-        public int BookingHorizonInDays { get; set; }
+        public int? BookingHorizonInDays { get; set; }
 
         #endregion
 

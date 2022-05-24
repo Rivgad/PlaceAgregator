@@ -24,7 +24,7 @@ namespace PlaceAgregator.Shared.DTOs.Authentication
         [Required]
         [JsonPropertyName("password")]
         public string Password { get; set; }
-        
+
         [Required]
         [Compare(nameof(Password), ErrorMessage = "Пароли не совпадают")]
         [JsonPropertyName("confirmPassword")]

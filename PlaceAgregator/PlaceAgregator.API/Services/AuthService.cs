@@ -76,7 +76,8 @@ namespace PlaceAgregator.API.Services
                     .Concat(new Claim[]
                     {
                         new(ClaimTypes.Email, user.Email),
-                        new(ClaimTypes.NameIdentifier, user.UserName)
+                        new(ClaimTypes.NameIdentifier, user.UserName),
+                        new(ClaimTypes.Sid, user.Id)
                     })
                     .Concat(roles.Select(item => new Claim(ClaimTypes.Role, item)))
                     .ToList();
@@ -101,7 +102,13 @@ namespace PlaceAgregator.API.Services
             }
         }
 
-
+        /// <summary>
+        /// Registrate new user with <see cref="Role.User"/>
+        /// </summary>
+        /// <param name="email"><see cref="IdentityUser{TKey}.Email"/></param>
+        /// <param name="userName"><see cref="IdentityUser{TKey}.UserName"/></param>
+        /// <param name="password"></param>
+        /// <returns><see cref="Response"/> with message about operation</returns>
         public async Task<Response> RegistrationAsync(string email, string userName, string password)
         {
             AppUser newUser = new AppUser()
@@ -134,7 +141,6 @@ namespace PlaceAgregator.API.Services
                         .Select(item => new ResponseError(item.Code, item.Description))
                         .ToArray()
                 };
-
             }
         }
     }

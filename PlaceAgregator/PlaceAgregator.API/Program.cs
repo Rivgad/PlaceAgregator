@@ -7,7 +7,9 @@ using PlaceAgregator.API.AppBuilders;
 using PlaceAgregator.API.Services;
 using PlaceAgregator.API.Services.Interfaces;
 using PlaceAgregator.EntityFramework;
+using PlaceAgregator.Shared.DTOs.Places;
 using PlaceAgregator.Shared.Models;
+using PlaceAgregator.Shared.Models.Types;
 using System.Text;
 
 
@@ -93,7 +95,25 @@ builder.Services.AddAuthentication(options =>
     });
 builder.Services.AddSingleton<IConfiguration>((services) => Configuration);
 builder.Services.AddScoped<IAuthService, AuthService>();
-
+builder.Services.AddAutoMapper(cfg =>
+{
+    cfg.CreateMap<PlaceUpdateDTO, Place>()
+        .ForMember(dest => dest.EventTypes, opt => opt.MapFrom(src => src.EventTypeIds.Select(item => new EventType() { Id = item })))
+        .ForMember(dest => dest.Prohibitions, opt => opt.MapFrom(src => src.ProhibitionIds.Select(item => new Prohibition() { Id = item })))
+        .ForMember(dest => dest.Rules, opt => opt.MapFrom(src => src.RuleIds.Select(item => new Rule() { Id = item })));
+    cfg.CreateMap<SheduleDTO, Shedule>();
+    cfg.CreateMap<Place, GetPlaceDTO>()
+        .ForMember(dest=>dest.EventTypeIds, opt=>opt.MapFrom(src=>src.EventTypes.Select(item=> item.Id)))
+        .ForMember(dest=>dest.ProhibitionIds, opt=>opt.MapFrom(src=>src.Prohibitions.Select(item=> item.Id)))
+        .ForMember(dest=>dest.RuleIds, opt=>opt.MapFrom(src=>src.Rules.Select(item=> item.Id)));
+    cfg.CreateMap<Shedule, SheduleDTO>();
+    cfg.CreateMap<Place, PlaceCardInfo>();
+    cfg.CreateMap<ServiceItem,ServiceItemGetDTO>();
+    cfg.CreateMap<Charge, ChargeGetDTO>();
+    cfg.CreateMap<Rate, RateGetDTO>();
+    cfg.CreateMap<Discount, DiscountGetDTO>();
+    
+});
 var app = builder.Build();
 
 app.SeedDatabase(recreate: false)
@@ -108,7 +128,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-app.UseExceptionHandler("/error");
+//app.UseExceptionHandler("/error");
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();

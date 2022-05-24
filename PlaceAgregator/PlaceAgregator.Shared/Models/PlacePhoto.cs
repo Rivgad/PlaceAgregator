@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace PlaceAgregator.Shared.Models
 {
@@ -6,6 +7,8 @@ namespace PlaceAgregator.Shared.Models
     {
         [Required]
         public int PlaceId { get; set; }
+
+        [JsonIgnore]
         public Place Place { get; set; }
 
         [Required]

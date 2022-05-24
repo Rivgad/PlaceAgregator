@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using PlaceAgregator.EntityFramework;
@@ -11,9 +12,10 @@ using PlaceAgregator.EntityFramework;
 namespace PlaceAgregator.EntityFramework.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220524141428_PlaceNullableFields")]
+    partial class PlaceNullableFields
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -785,7 +787,7 @@ namespace PlaceAgregator.EntityFramework.Migrations
                         .IsRequired();
 
                     b.HasOne("PlaceAgregator.Shared.Models.Rate", "Rate")
-                        .WithMany("Charges")
+                        .WithMany()
                         .HasForeignKey("RateId");
 
                     b.OwnsOne("PlaceAgregator.Shared.Models.TimeInterval", "TimeInterval", b1 =>
@@ -892,7 +894,7 @@ namespace PlaceAgregator.EntityFramework.Migrations
                         .IsRequired();
 
                     b.HasOne("PlaceAgregator.Shared.Models.Rate", "Rate")
-                        .WithMany("Discounts")
+                        .WithMany()
                         .HasForeignKey("RateId");
 
                     b.OwnsOne("PlaceAgregator.Shared.Models.TimeInterval", "TimeInterval", b1 =>
@@ -1036,7 +1038,8 @@ namespace PlaceAgregator.EntityFramework.Migrations
 
                     b.Navigation("ParkingType");
 
-                    b.Navigation("Shedule");
+                    b.Navigation("Shedule")
+                        .IsRequired();
 
                     b.Navigation("User");
 
@@ -1203,13 +1206,6 @@ namespace PlaceAgregator.EntityFramework.Migrations
                     b.Navigation("Rules");
 
                     b.Navigation("ServiceItems");
-                });
-
-            modelBuilder.Entity("PlaceAgregator.Shared.Models.Rate", b =>
-                {
-                    b.Navigation("Charges");
-
-                    b.Navigation("Discounts");
                 });
 #pragma warning restore 612, 618
         }
