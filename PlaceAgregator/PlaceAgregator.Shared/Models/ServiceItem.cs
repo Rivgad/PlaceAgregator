@@ -38,8 +38,5 @@ namespace PlaceAgregator.Shared.Models
         [Required]
         public PerValueType Per { get; set; } = PerValueType.Piece;
         public string? Comment { get; set; }
-
-        [Required]
-        public bool IsActive { get; set; } = false;
     }
 }

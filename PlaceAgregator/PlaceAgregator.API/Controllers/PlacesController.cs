@@ -37,13 +37,100 @@ namespace PlaceAgregator.API.Controllers
             return Ok(new PagesQuantityResponse((int)pagesCount));
         }
 
+        [Authorize(Roles = "user")]
+        [HttpPost("{id?}/ServiceItems")]
+        public async Task<IActionResult> CreateServiceItem(int id, [FromForm] ServiceItemCreateDTO serviceItem)
+        {
+            var place = await _context.Places.FirstOrDefaultAsync(item => item.Id == id && item.IsBlocked == false);
+            if (place == null)
+                return NotFound();
+
+            string? accountId = User.FindFirst(ClaimTypes.Sid)?.Value;
+            if (accountId == null)
+                return Forbid();
+
+            if (place.UserId != accountId)
+                return Forbid();
+
+            var newServiceItem = _mapper.Map<ServiceItem>(serviceItem);
+            newServiceItem.PlaceId = place.Id;
+
+            newServiceItem = _context.ServiceItems.Add(newServiceItem).Entity;
+            await _context.SaveChangesAsync();
+
+            return CreatedAtAction(nameof(CreateServiceItem), _mapper.Map<ServiceItemDTO>(newServiceItem));
+        }
+
+        [Authorize(Roles = "user")]
+        [HttpPatch("{id?}/ServiceItems/{itemId?}")]
+        public async Task<IActionResult> UpdateServiceItem(int id, int itemId, [FromForm] ServiceItemUpdateDTO serviceItem)
+        {
+            var place = await _context.Places
+                .Include(item => item.ServiceItems)
+                .FirstOrDefaultAsync(item => item.Id == id && item.IsBlocked == false);
+            if (place == null)
+                return NotFound();
+
+            string? accountId = User.FindFirst(ClaimTypes.Sid)?.Value;
+            if (accountId == null)
+                return Forbid();
+
+            if (place.UserId != accountId)
+                return Forbid();
+
+            var existedServiceItem = place.ServiceItems?.FirstOrDefault(item => item.Id == itemId);
+            if (existedServiceItem == null)
+                return NotFound();
+
+            _mapper.Map(serviceItem, existedServiceItem);
+
+            existedServiceItem = _context.ServiceItems.Update(existedServiceItem).Entity;
+            await _context.SaveChangesAsync();
+
+            return Ok(_mapper.Map<ServiceItemGetDTO>(existedServiceItem));
+        }
+
+        [Authorize(Roles = "user")]
+        [HttpDelete("{id?}/ServiceItems/{itemId?}")]
+        public async Task<IActionResult> DeleteServiceItem(int id, int itemId)
+        {
+            var place = await _context.Places
+                .Include(item => item.ServiceItems)
+                .FirstOrDefaultAsync(item => item.Id == id && item.IsBlocked == false);
+            if (place == null)
+                return NotFound();
+
+            string? accountId = User.FindFirst(ClaimTypes.Sid)?.Value;
+            if (accountId == null)
+                return Forbid();
+
+            if (place.UserId != accountId)
+                return Forbid();
+
+            var serviceItem = place.ServiceItems?.FirstOrDefault(item => item.Id == itemId);
+            if (serviceItem == null)
+                return NotFound();
+
+            _context.ServiceItems.Remove(serviceItem);
+            await _context.SaveChangesAsync();
+
+            return Ok(new { id = serviceItem.Id });
+        }
+
+        [Authorize(Roles = "user")]
         [HttpPost("{id?}/Photos")]
         public async Task<IActionResult> AddPhoto(int id, [FromBody] byte[] base64Code)
         {
             var place = await _context.Places.FirstOrDefaultAsync(item => item.Id == id && item.IsBlocked == false);
-
             if (place == null)
                 return NotFound();
+
+            string? accountId = User.FindFirst(ClaimTypes.Sid)?.Value;
+            if (accountId == null)
+                return Forbid();
+
+            if (place.UserId != accountId)
+                return Forbid();
 
             var photo = _context.PlacePhotos.Add(new PlacePhoto()
             {
@@ -55,15 +142,20 @@ namespace PlaceAgregator.API.Controllers
             return Ok(photo.Entity);
         }
 
+        [Authorize(Roles = "user")]
         [HttpDelete("{id?}/Photos/{photoId?}")]
         public async Task<IActionResult> DeletePhoto(int id, int photoId)
         {
-            var place = await _context.Places
-                .Include(item=>item.Photos)
-                .FirstOrDefaultAsync(item => item.Id == id && item.IsBlocked == false);
-
+            var place = await _context.Places.FirstOrDefaultAsync(item => item.Id == id && item.IsBlocked == false);
             if (place == null)
                 return NotFound();
+
+            string? accountId = User.FindFirst(ClaimTypes.Sid)?.Value;
+            if (accountId == null)
+                return Forbid();
+
+            if (place.UserId != accountId)
+                return Forbid();
 
             var photo = place.Photos?.FirstOrDefault(item => item.Id == photoId);
             if (photo == null)
@@ -140,6 +232,7 @@ namespace PlaceAgregator.API.Controllers
             return Ok(_mapper.Map<GetPlaceDTO>(place));
         }
 
+        [Authorize(Roles = "user")]
         [HttpGet("myPlaces")]
         public async Task<IActionResult> GetUserPlaces()
         {

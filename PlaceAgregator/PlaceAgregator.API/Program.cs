@@ -113,6 +113,9 @@ builder.Services.AddAutoMapper(cfg =>
     cfg.CreateMap<Charge, ChargeGetDTO>();
     cfg.CreateMap<Rate, RateGetDTO>();
     cfg.CreateMap<Discount, DiscountGetDTO>();
+    cfg.CreateMap<ServiceItemCreateDTO, ServiceItem>();
+    cfg.CreateMap<ServiceItemUpdateDTO, ServiceItem>();
+    cfg.CreateMap<ServiceItemDTO, ServiceItem>();
 
 });
 
