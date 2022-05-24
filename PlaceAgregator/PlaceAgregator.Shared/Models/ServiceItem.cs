@@ -30,7 +30,7 @@ namespace PlaceAgregator.Shared.Models
 
         [Required]
         public bool IsCountable { get; set; } = true;
-        public int? MaxCount { get; set; }
+        public int? MaxQuantity { get; set; }
 
         [Required]
         public PerValueType Per { get; set; } = PerValueType.Piece;
