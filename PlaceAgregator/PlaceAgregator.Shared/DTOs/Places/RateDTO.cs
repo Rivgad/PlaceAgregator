@@ -9,6 +9,15 @@ namespace PlaceAgregator.Shared.DTOs.Places
         [JsonPropertyName("id")]
         public int Id { get; set; }
     }
+    public class CreateRateDTO
+    {
+        [Required]
+        [JsonPropertyName("price")]
+        public decimal Price { get; set; }
+
+        [JsonPropertyName("timeInterval")]
+        public TimeInterval TimeInterval { get; set; }
+    }
     public class RateDTO
     {
         [Required]
