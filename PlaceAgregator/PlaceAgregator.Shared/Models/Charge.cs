@@ -6,12 +6,12 @@ namespace PlaceAgregator.Shared.Models
     public class Charge : Entity
     {
         public int? RateId { get; set; }
-        
+
         [JsonIgnore]
         public Rate? Rate { get; set; }
 
         public int PlaceId { get; set; }
-        
+
         [JsonIgnore]
         public Place Place { get; set; }
 

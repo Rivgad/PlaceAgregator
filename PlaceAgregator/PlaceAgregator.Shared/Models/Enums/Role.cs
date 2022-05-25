@@ -6,7 +6,7 @@ namespace PlaceAgregator.Shared.Models.Enums
     {
         [Description("user")]
         User = 0,
-        
+
         [Description("manager")]
         Manager = 1,
 

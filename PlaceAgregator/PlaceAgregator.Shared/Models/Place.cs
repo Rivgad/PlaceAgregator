@@ -12,22 +12,22 @@ namespace PlaceAgregator.Shared.Models
         #region FK
 
         public string UserId { get; set; }
-        
+
         [JsonIgnore]
         public AppUser User { get; set; }
 
         public int? WaterTypeId { get; set; }
-        
+
         [JsonIgnore]
         public WaterType? WaterType { get; set; }
 
         public int? BuildingTypeId { get; set; }
-        
+
         [JsonIgnore]
         public BuildingType? BuildingType { get; set; }
 
         public int? ParkingTypeId { get; set; }
-        
+
         [JsonIgnore]
         public ParkingType? ParkingType { get; set; }
 
