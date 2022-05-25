@@ -15,7 +15,10 @@ namespace PlaceAgregator.Shared.Models
             Accepted = 1,
 
             [Description("Отклонена")]
-            Rejected = 2
+            Rejected = 2,
+
+            [Description("Отменена")]
+            Cancelled = 3
         }
 
         public string UserId { get; set; }
