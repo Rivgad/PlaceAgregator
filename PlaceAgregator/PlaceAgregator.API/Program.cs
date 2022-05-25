@@ -8,7 +8,6 @@ using PlaceAgregator.API.Services;
 using PlaceAgregator.API.Services.Interfaces;
 using PlaceAgregator.EntityFramework;
 using PlaceAgregator.Shared.DTOs.Places;
-using PlaceAgregator.Shared.Extensions;
 using PlaceAgregator.Shared.Models;
 using PlaceAgregator.Shared.Models.Types;
 using System.Text;

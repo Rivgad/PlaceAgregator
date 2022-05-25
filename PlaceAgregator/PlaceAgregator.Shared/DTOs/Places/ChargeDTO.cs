@@ -1,5 +1,4 @@
-﻿using PlaceAgregator.Shared.Models;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
 namespace PlaceAgregator.Shared.DTOs.Places
