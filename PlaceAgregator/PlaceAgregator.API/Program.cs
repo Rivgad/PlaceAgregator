@@ -99,27 +99,32 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 
 builder.Services.AddAutoMapper(cfg =>
 {
+    cfg.CreateMap<Place, PlaceCardInfo>();
+    cfg.CreateMap<PlaceCreateDTO, Place>();
     cfg.CreateMap<PlaceUpdateDTO, Place>()
         .ForMember(dest => dest.EventTypes,
             opt => opt.MapFrom(src => src.EventTypeIds.Select(item => new EventType() { Id = item })))
         .ForMember(dest => dest.Prohibitions,
             opt => opt.MapFrom(src => src.ProhibitionIds.Select(item => new Prohibition() { Id = item })));
 
-    cfg.CreateMap<SheduleDTO, Shedule>();
     cfg.CreateMap<Place, GetPlaceDTO>()
         .ForMember(dest => dest.EventTypeIds,
             opt => opt.MapFrom(src => src.EventTypes.Select(item => item.Id)))
         .ForMember(dest => dest.ProhibitionIds,
             opt => opt.MapFrom(src => src.Prohibitions.Select(item => item.Id)));
 
+    cfg.CreateMap<SheduleDTO, Shedule>();
     cfg.CreateMap<Shedule, SheduleDTO>();
-    cfg.CreateMap<Place, PlaceCardInfo>();
-    cfg.CreateMap<ServiceItem, ServiceItemGetDTO>();
+
     cfg.CreateMap<Charge, ChargeGetDTO>();
+    cfg.CreateMap<ChargeCreateDTO, Charge>();
+
     cfg.CreateMap<Discount, DiscountGetDTO>();
+    cfg.CreateMap<DiscountCreateDTO, Discount>();
+
+    cfg.CreateMap<ServiceItem, ServiceItemGetDTO>();
     cfg.CreateMap<ServiceItemCreateDTO, ServiceItem>();
     cfg.CreateMap<ServiceItemUpdateDTO, ServiceItem>();
-    cfg.CreateMap<ServiceItemDTO, ServiceItem>();
 
 });
 

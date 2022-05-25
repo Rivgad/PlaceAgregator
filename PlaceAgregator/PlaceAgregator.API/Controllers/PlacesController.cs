@@ -16,7 +16,6 @@ namespace PlaceAgregator.API.Controllers
     [ApiController]
     public class PlacesController : ControllerBase
     {
-        private readonly IPlacesService _placesService;
         private readonly ApplicationDbContext _context;
         private readonly IMapper _mapper;
         private readonly int pageSize = 20;
@@ -27,7 +26,7 @@ namespace PlaceAgregator.API.Controllers
             _mapper = mapper;
         }
 
-
+        
         #region ServiceItems
 
         [Authorize(Roles = "user")]
@@ -290,25 +289,20 @@ namespace PlaceAgregator.API.Controllers
         [Authorize(Roles = "user")]
         [HttpPost]
         [Produces(typeof(GetPlaceDTO))]
-        public async Task<IActionResult> CreatePlaceAsync(PlaceCreateDTO place)
+        public async Task<IActionResult> CreatePlaceAsync([FromForm]PlaceCreateDTO place)
         {
             string? accountId = User.FindFirst(ClaimTypes.Sid)?.Value;
             if (accountId == null)
                 return BadRequest();
 
-            Place newPlace = new Place()
-            {
-                UserId = accountId,
-                City = place.City,
-                Title = place.Title,
-                Address = place.Address
-            };
+            Place newPlace = _mapper.Map<Place>(place);
+            newPlace.UserId = accountId;
+
             var result = await _context.Places.AddAsync(newPlace);
             await _context.SaveChangesAsync();
             newPlace = result.Entity;
 
-            GetPlaceDTO dto = _mapper.Map<GetPlaceDTO>(newPlace);
-            return Ok(dto);
+            return Ok(_mapper.Map<GetPlaceDTO>(newPlace));
         }
 
         [Authorize(Roles = "user")]
