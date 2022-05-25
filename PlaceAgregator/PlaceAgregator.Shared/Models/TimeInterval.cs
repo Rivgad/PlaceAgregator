@@ -1,22 +1,25 @@
-﻿using System.Text.Json.Serialization;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace PlaceAgregator.Shared.Models
 {
     public class TimeInterval
     {
         [JsonPropertyName("startDate")]
-        public DateTime StartDate { get; set; }
+        public DateTime StartDateTime { get; set; }
 
         [JsonPropertyName("endDate")]
-        public DateTime EndDate { get; set; }
-
-        [JsonPropertyName("startTo,e")]
-        public TimeOnly StartTime { get; set; }
-
-        [JsonPropertyName("endTime")]
-        public TimeOnly EndTime { get; set; }
+        public DateTime EndDateTime { get; set; }
 
         [JsonPropertyName("shedule")]
-        public Shedule Shedule { get; set; }
+        public Shedule? Shedule { get; set; }
+
+        public void Normalize()
+        {
+            if (StartDateTime > EndDateTime)
+            {
+                (StartDateTime, EndDateTime) = (EndDateTime, StartDateTime);
+            }
+        }
     }
 }
