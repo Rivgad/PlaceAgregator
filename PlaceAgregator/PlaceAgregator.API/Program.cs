@@ -8,6 +8,7 @@ using PlaceAgregator.API.Services;
 using PlaceAgregator.API.Services.Interfaces;
 using PlaceAgregator.EntityFramework;
 using PlaceAgregator.Shared.DTOs.Places;
+using PlaceAgregator.Shared.Extensions;
 using PlaceAgregator.Shared.Models;
 using PlaceAgregator.Shared.Models.Types;
 using System.Text;
@@ -17,7 +18,9 @@ var builder = WebApplication.CreateBuilder(args);
 IConfiguration Configuration = builder.Configuration;
 
 // Add services to the container.
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options=>
+        options.JsonSerializerOptions.Converters.Add(new TimeOnlyConverter()));
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
