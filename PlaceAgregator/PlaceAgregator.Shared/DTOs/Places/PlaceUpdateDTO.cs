@@ -17,9 +17,6 @@ namespace PlaceAgregator.Shared.DTOs.Places
         [JsonPropertyName("parkingTypeId")]
         public int? ParkingTypeId { get; set; }
 
-        [JsonPropertyName("rules")]
-        public int[]? RuleIds { get; set; }
-
         [JsonPropertyName("prohibitions")]
         public int[]? ProhibitionIds { get; set; }
 

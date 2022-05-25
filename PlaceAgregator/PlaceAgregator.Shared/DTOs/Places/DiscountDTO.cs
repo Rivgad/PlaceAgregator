@@ -9,6 +9,18 @@ namespace PlaceAgregator.Shared.DTOs.Places
         [JsonPropertyName("id")]
         public int Id { get; set; }
     }
+    public class DiscountCreateDTO
+    {
+        [Required]
+        [JsonPropertyName("procents")]
+        [Range(1, float.PositiveInfinity)]
+        public decimal Procents { get; set; }
+
+        [Required]
+        [Range(1, int.MaxValue)]
+        [JsonPropertyName("fromHoursQuantity")]
+        public int FromHoursQuantity { get; set; }
+    }
     public class DiscountDTO
     {
         [Required]
@@ -16,16 +28,13 @@ namespace PlaceAgregator.Shared.DTOs.Places
         public int PlaceId { get; set; }
 
         [Required]
+        [Range(1, float.PositiveInfinity)]
         [JsonPropertyName("procents")]
         public decimal Procents { get; set; }
 
-        [JsonPropertyName("rateId")]
-        public int? RateId { get; set; }
-
+        [Required]
+        [Range(1, int.MaxValue)]
         [JsonPropertyName("fromHoursQuantity")]
-        public int? FromHoursQuantity { get; set; }
-
-        [JsonPropertyName("timeInterval")]
-        public TimeInterval? TimeInterval { get; set; }
+        public int FromHoursQuantity { get; set; }
     }
 }

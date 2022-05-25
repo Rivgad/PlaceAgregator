@@ -20,10 +20,6 @@ namespace PlaceAgregator.Shared.DTOs.Places
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public int? ParkingTypeId { get; set; }
 
-        [JsonPropertyName("rules")]
-        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-        public int[]? RuleIds { get; set; }
-
         [JsonPropertyName("prohibitions")]
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public int[]? ProhibitionIds { get; set; }
@@ -36,10 +32,6 @@ namespace PlaceAgregator.Shared.DTOs.Places
         [JsonPropertyName("serviceItems")]
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public IEnumerable<ServiceItemGetDTO>? ServiceItems { get; set; }
-
-        [JsonPropertyName("rates")]
-        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-        public IEnumerable<RateGetDTO>? Rates { get; set; }
 
         [JsonPropertyName("discounts")]
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]

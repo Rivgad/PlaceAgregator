@@ -21,11 +21,6 @@ namespace PlaceAgregator.API.Services
             throw new NotImplementedException();
         }
 
-        public Task AddRateAsync(int placeId, Rate rate)
-        {
-            throw new NotImplementedException();
-        }
-
         public Task AddServiceItemAsync(int placeId, ServiceItem serviceItem)
         {
             throw new NotImplementedException();
