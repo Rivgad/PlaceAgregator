@@ -5,20 +5,18 @@ namespace PlaceAgregator.Shared.Models
 {
     public class Discount : Entity
     {
-        public int? RateId { get; set; }
-
-        [JsonIgnore]
-        public Rate? Rate { get; set; }
-
+        [Required]
         public int PlaceId { get; set; }
 
         [JsonIgnore]
         public Place Place { get; set; }
 
         [Required]
+        [Range(1, float.PositiveInfinity)]
         public decimal Procents { get; set; }
-        public int? FromHoursQuantity { get; set; }
 
-        public TimeInterval? TimeInterval { get; set; }
+        [Required]
+        [Range(1, int.MaxValue)]
+        public int FromHoursQuantity { get; set; }
     }
 }

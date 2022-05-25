@@ -39,10 +39,8 @@ namespace PlaceAgregator.Shared.Models
         public IEnumerable<ServiceItem>? ServiceItems { get; set; }
         public IEnumerable<Comment>? Comments { get; set; }
         public IEnumerable<PlacePhoto>? Photos { get; set; }
-        public IEnumerable<Rule>? Rules { get; set; }
         public IEnumerable<Prohibition>? Prohibitions { get; set; }
         public IEnumerable<EventType>? EventTypes { get; set; }
-        public IEnumerable<Rate>? Rates { get; set; }
         public IEnumerable<Discount>? Discounts { get; set; }
         public IEnumerable<Charge>? Charges { get; set; }
 

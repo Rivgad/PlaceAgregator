@@ -22,9 +22,6 @@ namespace PlaceAgregator.API.Services.Interfaces
         Task UpdateServiceItemAsync(int id, ServiceItem serviceItem);
         Task DeleteServiceItemAsync(int id);
 
-        Task AddRateAsync(int placeId, Rate rate);
-        Task DeleteRateAsync(int id);
-
         Task AddDiscount(int placeId, Discount discount);
         Task DeleteDiscountAsync(int id);
 

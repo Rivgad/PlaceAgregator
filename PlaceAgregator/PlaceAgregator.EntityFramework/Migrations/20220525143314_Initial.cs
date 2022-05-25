@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
@@ -65,7 +66,7 @@ namespace PlaceAgregator.EntityFramework.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ParkingType",
+                name: "ParkingTypes",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
@@ -74,11 +75,11 @@ namespace PlaceAgregator.EntityFramework.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ParkingType", x => x.Id);
+                    table.PrimaryKey("PK_ParkingTypes", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
-                name: "WaterType",
+                name: "WaterTypes",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
@@ -87,7 +88,7 @@ namespace PlaceAgregator.EntityFramework.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_WaterType", x => x.Id);
+                    table.PrimaryKey("PK_WaterTypes", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -202,17 +203,18 @@ namespace PlaceAgregator.EntityFramework.Migrations
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    IsBlocked = table.Column<bool>(type: "boolean", nullable: false),
                     UserId = table.Column<string>(type: "text", nullable: false),
                     WaterTypeId = table.Column<int>(type: "integer", nullable: true),
                     BuildingTypeId = table.Column<int>(type: "integer", nullable: true),
                     ParkingTypeId = table.Column<int>(type: "integer", nullable: true),
-                    Shedule_Monday = table.Column<bool>(type: "boolean", nullable: false),
-                    Shedule_Thuesday = table.Column<bool>(type: "boolean", nullable: false),
-                    Shedule_Wednesday = table.Column<bool>(type: "boolean", nullable: false),
-                    Shedule_Thursday = table.Column<bool>(type: "boolean", nullable: false),
-                    Shedule_Friday = table.Column<bool>(type: "boolean", nullable: false),
-                    Shedule_Saturday = table.Column<bool>(type: "boolean", nullable: false),
-                    Shedule_Sunday = table.Column<bool>(type: "boolean", nullable: false),
+                    Shedule_Monday = table.Column<bool>(type: "boolean", nullable: true),
+                    Shedule_Thuesday = table.Column<bool>(type: "boolean", nullable: true),
+                    Shedule_Wednesday = table.Column<bool>(type: "boolean", nullable: true),
+                    Shedule_Thursday = table.Column<bool>(type: "boolean", nullable: true),
+                    Shedule_Friday = table.Column<bool>(type: "boolean", nullable: true),
+                    Shedule_Saturday = table.Column<bool>(type: "boolean", nullable: true),
+                    Shedule_Sunday = table.Column<bool>(type: "boolean", nullable: true),
                     Title = table.Column<string>(type: "text", nullable: false),
                     BaseRate = table.Column<decimal>(type: "numeric", nullable: true),
                     IsActive = table.Column<bool>(type: "boolean", nullable: false),
@@ -224,17 +226,17 @@ namespace PlaceAgregator.EntityFramework.Migrations
                     Capacity = table.Column<int>(type: "integer", nullable: true),
                     Area = table.Column<decimal>(type: "numeric", nullable: true),
                     CellingHeight = table.Column<decimal>(type: "numeric", nullable: true),
-                    SocketsQuantity = table.Column<int>(type: "integer", nullable: false),
-                    MaleToiletsQuantity = table.Column<int>(type: "integer", nullable: false),
-                    FemaleToiletsQuantity = table.Column<int>(type: "integer", nullable: false),
-                    SharedToiletsQuantity = table.Column<int>(type: "integer", nullable: false),
+                    SocketsQuantity = table.Column<int>(type: "integer", nullable: true),
+                    MaleToiletsQuantity = table.Column<int>(type: "integer", nullable: true),
+                    FemaleToiletsQuantity = table.Column<int>(type: "integer", nullable: true),
+                    SharedToiletsQuantity = table.Column<int>(type: "integer", nullable: true),
                     ParkingSpace = table.Column<int>(type: "integer", nullable: true),
                     Floor = table.Column<int>(type: "integer", nullable: true),
                     FloorsQuantity = table.Column<int>(type: "integer", nullable: true),
                     HasElevator = table.Column<bool>(type: "boolean", nullable: false),
                     HasFreightElevator = table.Column<bool>(type: "boolean", nullable: false),
                     HasDisabledEntrance = table.Column<bool>(type: "boolean", nullable: false),
-                    BookingHorizonInDays = table.Column<int>(type: "integer", nullable: false)
+                    BookingHorizonInDays = table.Column<int>(type: "integer", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -251,14 +253,14 @@ namespace PlaceAgregator.EntityFramework.Migrations
                         principalTable: "BuildingTypes",
                         principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_Places_ParkingType_ParkingTypeId",
+                        name: "FK_Places_ParkingTypes_ParkingTypeId",
                         column: x => x.ParkingTypeId,
-                        principalTable: "ParkingType",
+                        principalTable: "ParkingTypes",
                         principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_Places_WaterType_WaterTypeId",
+                        name: "FK_Places_WaterTypes_WaterTypeId",
                         column: x => x.WaterTypeId,
-                        principalTable: "WaterType",
+                        principalTable: "WaterTypes",
                         principalColumn: "Id");
                 });
 
@@ -296,6 +298,28 @@ namespace PlaceAgregator.EntityFramework.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Charges",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    PlaceId = table.Column<int>(type: "integer", nullable: false),
+                    Procents = table.Column<decimal>(type: "numeric", nullable: false),
+                    FromGuestsQuantity = table.Column<int>(type: "integer", nullable: false),
+                    Comment = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Charges", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Charges_Places_PlaceId",
+                        column: x => x.PlaceId,
+                        principalTable: "Places",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Comments",
                 columns: table => new
                 {
@@ -303,7 +327,8 @@ namespace PlaceAgregator.EntityFramework.Migrations
                     PlaceId = table.Column<int>(type: "integer", nullable: false),
                     Text = table.Column<string>(type: "text", nullable: false),
                     LastEditTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    Rating = table.Column<int>(type: "integer", nullable: false)
+                    Rating = table.Column<int>(type: "integer", nullable: false),
+                    IsBlocked = table.Column<bool>(type: "boolean", nullable: false, defaultValue: false)
                 },
                 constraints: table =>
                 {
@@ -316,6 +341,27 @@ namespace PlaceAgregator.EntityFramework.Migrations
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Comments_Places_PlaceId",
+                        column: x => x.PlaceId,
+                        principalTable: "Places",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Discounts",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    PlaceId = table.Column<int>(type: "integer", nullable: false),
+                    Procents = table.Column<decimal>(type: "numeric", nullable: false),
+                    FromHoursQuantity = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Discounts", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Discounts_Places_PlaceId",
                         column: x => x.PlaceId,
                         principalTable: "Places",
                         principalColumn: "Id",
@@ -348,8 +394,7 @@ namespace PlaceAgregator.EntityFramework.Migrations
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     PlaceId = table.Column<int>(type: "integer", nullable: false),
-                    Value = table.Column<byte[]>(type: "bytea", nullable: false),
-                    Order = table.Column<int>(type: "integer", nullable: false)
+                    Value = table.Column<byte[]>(type: "bytea", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -382,56 +427,6 @@ namespace PlaceAgregator.EntityFramework.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Rates",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    PlaceId = table.Column<int>(type: "integer", nullable: false),
-                    Price = table.Column<decimal>(type: "numeric", nullable: false),
-                    TimeInterval_StartDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    TimeInterval_EndDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    TimeInterval_StartTime = table.Column<TimeOnly>(type: "time without time zone", nullable: true),
-                    TimeInterval_EndTime = table.Column<TimeOnly>(type: "time without time zone", nullable: true),
-                    TimeInterval_Shedule_Monday = table.Column<bool>(type: "boolean", nullable: true),
-                    TimeInterval_Shedule_Thuesday = table.Column<bool>(type: "boolean", nullable: true),
-                    TimeInterval_Shedule_Wednesday = table.Column<bool>(type: "boolean", nullable: true),
-                    TimeInterval_Shedule_Thursday = table.Column<bool>(type: "boolean", nullable: true),
-                    TimeInterval_Shedule_Friday = table.Column<bool>(type: "boolean", nullable: true),
-                    TimeInterval_Shedule_Saturday = table.Column<bool>(type: "boolean", nullable: true),
-                    TimeInterval_Shedule_Sunday = table.Column<bool>(type: "boolean", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Rates", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Rates_Places_PlaceId",
-                        column: x => x.PlaceId,
-                        principalTable: "Places",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Rules",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    PlaceId = table.Column<int>(type: "integer", nullable: true),
-                    Title = table.Column<string>(type: "text", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Rules", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Rules_Places_PlaceId",
-                        column: x => x.PlaceId,
-                        principalTable: "Places",
-                        principalColumn: "Id");
-                });
-
-            migrationBuilder.CreateTable(
                 name: "ServiceItems",
                 columns: table => new
                 {
@@ -441,10 +436,9 @@ namespace PlaceAgregator.EntityFramework.Migrations
                     Title = table.Column<string>(type: "text", nullable: false),
                     Price = table.Column<decimal>(type: "numeric", nullable: false),
                     IsCountable = table.Column<bool>(type: "boolean", nullable: false),
-                    MaxCount = table.Column<int>(type: "integer", nullable: true),
+                    MaxQuantity = table.Column<int>(type: "integer", nullable: true),
                     Per = table.Column<int>(type: "integer", nullable: false),
-                    Comment = table.Column<string>(type: "text", nullable: true),
-                    IsActive = table.Column<bool>(type: "boolean", nullable: false)
+                    Comment = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -455,83 +449,6 @@ namespace PlaceAgregator.EntityFramework.Migrations
                         principalTable: "Places",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Charges",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    RateId = table.Column<int>(type: "integer", nullable: true),
-                    PlaceId = table.Column<int>(type: "integer", nullable: false),
-                    Procents = table.Column<decimal>(type: "numeric", nullable: false),
-                    FromGuestsQuantity = table.Column<int>(type: "integer", nullable: true),
-                    Comment = table.Column<string>(type: "text", nullable: true),
-                    TimeInterval_StartDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    TimeInterval_EndDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    TimeInterval_StartTime = table.Column<TimeOnly>(type: "time without time zone", nullable: true),
-                    TimeInterval_EndTime = table.Column<TimeOnly>(type: "time without time zone", nullable: true),
-                    TimeInterval_Shedule_Monday = table.Column<bool>(type: "boolean", nullable: true),
-                    TimeInterval_Shedule_Thuesday = table.Column<bool>(type: "boolean", nullable: true),
-                    TimeInterval_Shedule_Wednesday = table.Column<bool>(type: "boolean", nullable: true),
-                    TimeInterval_Shedule_Thursday = table.Column<bool>(type: "boolean", nullable: true),
-                    TimeInterval_Shedule_Friday = table.Column<bool>(type: "boolean", nullable: true),
-                    TimeInterval_Shedule_Saturday = table.Column<bool>(type: "boolean", nullable: true),
-                    TimeInterval_Shedule_Sunday = table.Column<bool>(type: "boolean", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Charges", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Charges_Places_PlaceId",
-                        column: x => x.PlaceId,
-                        principalTable: "Places",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Charges_Rates_RateId",
-                        column: x => x.RateId,
-                        principalTable: "Rates",
-                        principalColumn: "Id");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Discounts",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    RateId = table.Column<int>(type: "integer", nullable: true),
-                    PlaceId = table.Column<int>(type: "integer", nullable: false),
-                    Procents = table.Column<decimal>(type: "numeric", nullable: false),
-                    FromHoursQuantity = table.Column<int>(type: "integer", nullable: true),
-                    TimeInterval_StartDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    TimeInterval_EndDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    TimeInterval_StartTime = table.Column<TimeOnly>(type: "time without time zone", nullable: true),
-                    TimeInterval_EndTime = table.Column<TimeOnly>(type: "time without time zone", nullable: true),
-                    TimeInterval_Shedule_Monday = table.Column<bool>(type: "boolean", nullable: true),
-                    TimeInterval_Shedule_Thuesday = table.Column<bool>(type: "boolean", nullable: true),
-                    TimeInterval_Shedule_Wednesday = table.Column<bool>(type: "boolean", nullable: true),
-                    TimeInterval_Shedule_Thursday = table.Column<bool>(type: "boolean", nullable: true),
-                    TimeInterval_Shedule_Friday = table.Column<bool>(type: "boolean", nullable: true),
-                    TimeInterval_Shedule_Saturday = table.Column<bool>(type: "boolean", nullable: true),
-                    TimeInterval_Shedule_Sunday = table.Column<bool>(type: "boolean", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Discounts", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Discounts_Places_PlaceId",
-                        column: x => x.PlaceId,
-                        principalTable: "Places",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Discounts_Rates_RateId",
-                        column: x => x.RateId,
-                        principalTable: "Rates",
-                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -617,11 +534,6 @@ namespace PlaceAgregator.EntityFramework.Migrations
                 column: "PlaceId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Charges_RateId",
-                table: "Charges",
-                column: "RateId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Comments_UserId",
                 table: "Comments",
                 column: "UserId");
@@ -630,11 +542,6 @@ namespace PlaceAgregator.EntityFramework.Migrations
                 name: "IX_Discounts_PlaceId",
                 table: "Discounts",
                 column: "PlaceId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Discounts_RateId",
-                table: "Discounts",
-                column: "RateId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_EventTypes_PlaceId",
@@ -669,16 +576,6 @@ namespace PlaceAgregator.EntityFramework.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_Prohibitions_PlaceId",
                 table: "Prohibitions",
-                column: "PlaceId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Rates_PlaceId",
-                table: "Rates",
-                column: "PlaceId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Rules_PlaceId",
-                table: "Rules",
                 column: "PlaceId");
 
             migrationBuilder.CreateIndex(
@@ -726,9 +623,6 @@ namespace PlaceAgregator.EntityFramework.Migrations
                 name: "Prohibitions");
 
             migrationBuilder.DropTable(
-                name: "Rules");
-
-            migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
@@ -736,9 +630,6 @@ namespace PlaceAgregator.EntityFramework.Migrations
 
             migrationBuilder.DropTable(
                 name: "ServiceItems");
-
-            migrationBuilder.DropTable(
-                name: "Rates");
 
             migrationBuilder.DropTable(
                 name: "Places");
@@ -750,10 +641,10 @@ namespace PlaceAgregator.EntityFramework.Migrations
                 name: "BuildingTypes");
 
             migrationBuilder.DropTable(
-                name: "ParkingType");
+                name: "ParkingTypes");
 
             migrationBuilder.DropTable(
-                name: "WaterType");
+                name: "WaterTypes");
         }
     }
 }

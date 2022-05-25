@@ -12,8 +12,8 @@ using PlaceAgregator.EntityFramework;
 namespace PlaceAgregator.EntityFramework.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20220525121406_TimeIntervalDeleteTimeOnly")]
-    partial class TimeIntervalDeleteTimeOnly
+    [Migration("20220525143314_Initial")]
+    partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -303,7 +303,7 @@ namespace PlaceAgregator.EntityFramework.Migrations
                     b.Property<string>("Comment")
                         .HasColumnType("text");
 
-                    b.Property<int?>("FromGuestsQuantity")
+                    b.Property<int>("FromGuestsQuantity")
                         .HasColumnType("integer");
 
                     b.Property<int>("PlaceId")
@@ -312,14 +312,9 @@ namespace PlaceAgregator.EntityFramework.Migrations
                     b.Property<decimal>("Procents")
                         .HasColumnType("numeric");
 
-                    b.Property<int?>("RateId")
-                        .HasColumnType("integer");
-
                     b.HasKey("Id");
 
                     b.HasIndex("PlaceId");
-
-                    b.HasIndex("RateId");
 
                     b.ToTable("Charges");
                 });
@@ -362,7 +357,7 @@ namespace PlaceAgregator.EntityFramework.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("FromHoursQuantity")
+                    b.Property<int>("FromHoursQuantity")
                         .HasColumnType("integer");
 
                     b.Property<int>("PlaceId")
@@ -371,14 +366,9 @@ namespace PlaceAgregator.EntityFramework.Migrations
                     b.Property<decimal>("Procents")
                         .HasColumnType("numeric");
 
-                    b.Property<int?>("RateId")
-                        .HasColumnType("integer");
-
                     b.HasKey("Id");
 
                     b.HasIndex("PlaceId");
-
-                    b.HasIndex("RateId");
 
                     b.ToTable("Discounts");
                 });
@@ -511,27 +501,6 @@ namespace PlaceAgregator.EntityFramework.Migrations
                     b.ToTable("PlacePhotos");
                 });
 
-            modelBuilder.Entity("PlaceAgregator.Shared.Models.Rate", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("PlaceId")
-                        .HasColumnType("integer");
-
-                    b.Property<decimal>("Price")
-                        .HasColumnType("numeric");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("PlaceId");
-
-                    b.ToTable("Rates");
-                });
-
             modelBuilder.Entity("PlaceAgregator.Shared.Models.ServiceItem", b =>
                 {
                     b.Property<int>("Id")
@@ -622,7 +591,7 @@ namespace PlaceAgregator.EntityFramework.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("ParkingType");
+                    b.ToTable("ParkingTypes");
                 });
 
             modelBuilder.Entity("PlaceAgregator.Shared.Models.Types.Prohibition", b =>
@@ -647,28 +616,6 @@ namespace PlaceAgregator.EntityFramework.Migrations
                     b.ToTable("Prohibitions");
                 });
 
-            modelBuilder.Entity("PlaceAgregator.Shared.Models.Types.Rule", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<int?>("PlaceId")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("PlaceId");
-
-                    b.ToTable("Rules");
-                });
-
             modelBuilder.Entity("PlaceAgregator.Shared.Models.Types.WaterType", b =>
                 {
                     b.Property<int>("Id")
@@ -683,7 +630,7 @@ namespace PlaceAgregator.EntityFramework.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("WaterType");
+                    b.ToTable("WaterTypes");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -783,77 +730,7 @@ namespace PlaceAgregator.EntityFramework.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("PlaceAgregator.Shared.Models.Rate", "Rate")
-                        .WithMany("Charges")
-                        .HasForeignKey("RateId");
-
-                    b.OwnsOne("PlaceAgregator.Shared.Models.TimeInterval", "TimeInterval", b1 =>
-                        {
-                            b1.Property<int>("ChargeId")
-                                .HasColumnType("integer");
-
-                            b1.Property<DateTime>("EndDateTime")
-                                .HasColumnType("timestamp with time zone");
-
-                            b1.Property<DateTime>("StartDateTime")
-                                .HasColumnType("timestamp with time zone");
-
-                            b1.HasKey("ChargeId");
-
-                            b1.ToTable("Charges");
-
-                            b1.WithOwner()
-                                .HasForeignKey("ChargeId");
-
-                            b1.OwnsOne("PlaceAgregator.Shared.Models.Shedule", "Shedule", b2 =>
-                                {
-                                    b2.Property<int>("TimeIntervalChargeId")
-                                        .HasColumnType("integer");
-
-                                    b2.Property<bool?>("Friday")
-                                        .IsRequired()
-                                        .HasColumnType("boolean");
-
-                                    b2.Property<bool?>("Monday")
-                                        .IsRequired()
-                                        .HasColumnType("boolean");
-
-                                    b2.Property<bool?>("Saturday")
-                                        .IsRequired()
-                                        .HasColumnType("boolean");
-
-                                    b2.Property<bool?>("Sunday")
-                                        .IsRequired()
-                                        .HasColumnType("boolean");
-
-                                    b2.Property<bool?>("Thuesday")
-                                        .IsRequired()
-                                        .HasColumnType("boolean");
-
-                                    b2.Property<bool?>("Thursday")
-                                        .IsRequired()
-                                        .HasColumnType("boolean");
-
-                                    b2.Property<bool?>("Wednesday")
-                                        .IsRequired()
-                                        .HasColumnType("boolean");
-
-                                    b2.HasKey("TimeIntervalChargeId");
-
-                                    b2.ToTable("Charges");
-
-                                    b2.WithOwner()
-                                        .HasForeignKey("TimeIntervalChargeId");
-                                });
-
-                            b1.Navigation("Shedule");
-                        });
-
                     b.Navigation("Place");
-
-                    b.Navigation("Rate");
-
-                    b.Navigation("TimeInterval");
                 });
 
             modelBuilder.Entity("PlaceAgregator.Shared.Models.Comment", b =>
@@ -883,77 +760,7 @@ namespace PlaceAgregator.EntityFramework.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("PlaceAgregator.Shared.Models.Rate", "Rate")
-                        .WithMany("Discounts")
-                        .HasForeignKey("RateId");
-
-                    b.OwnsOne("PlaceAgregator.Shared.Models.TimeInterval", "TimeInterval", b1 =>
-                        {
-                            b1.Property<int>("DiscountId")
-                                .HasColumnType("integer");
-
-                            b1.Property<DateTime>("EndDateTime")
-                                .HasColumnType("timestamp with time zone");
-
-                            b1.Property<DateTime>("StartDateTime")
-                                .HasColumnType("timestamp with time zone");
-
-                            b1.HasKey("DiscountId");
-
-                            b1.ToTable("Discounts");
-
-                            b1.WithOwner()
-                                .HasForeignKey("DiscountId");
-
-                            b1.OwnsOne("PlaceAgregator.Shared.Models.Shedule", "Shedule", b2 =>
-                                {
-                                    b2.Property<int>("TimeIntervalDiscountId")
-                                        .HasColumnType("integer");
-
-                                    b2.Property<bool?>("Friday")
-                                        .IsRequired()
-                                        .HasColumnType("boolean");
-
-                                    b2.Property<bool?>("Monday")
-                                        .IsRequired()
-                                        .HasColumnType("boolean");
-
-                                    b2.Property<bool?>("Saturday")
-                                        .IsRequired()
-                                        .HasColumnType("boolean");
-
-                                    b2.Property<bool?>("Sunday")
-                                        .IsRequired()
-                                        .HasColumnType("boolean");
-
-                                    b2.Property<bool?>("Thuesday")
-                                        .IsRequired()
-                                        .HasColumnType("boolean");
-
-                                    b2.Property<bool?>("Thursday")
-                                        .IsRequired()
-                                        .HasColumnType("boolean");
-
-                                    b2.Property<bool?>("Wednesday")
-                                        .IsRequired()
-                                        .HasColumnType("boolean");
-
-                                    b2.HasKey("TimeIntervalDiscountId");
-
-                                    b2.ToTable("Discounts");
-
-                                    b2.WithOwner()
-                                        .HasForeignKey("TimeIntervalDiscountId");
-                                });
-
-                            b1.Navigation("Shedule");
-                        });
-
                     b.Navigation("Place");
-
-                    b.Navigation("Rate");
-
-                    b.Navigation("TimeInterval");
                 });
 
             modelBuilder.Entity("PlaceAgregator.Shared.Models.Place", b =>
@@ -1039,81 +846,6 @@ namespace PlaceAgregator.EntityFramework.Migrations
                     b.Navigation("Place");
                 });
 
-            modelBuilder.Entity("PlaceAgregator.Shared.Models.Rate", b =>
-                {
-                    b.HasOne("PlaceAgregator.Shared.Models.Place", "Place")
-                        .WithMany("Rates")
-                        .HasForeignKey("PlaceId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.OwnsOne("PlaceAgregator.Shared.Models.TimeInterval", "TimeInterval", b1 =>
-                        {
-                            b1.Property<int>("RateId")
-                                .HasColumnType("integer");
-
-                            b1.Property<DateTime>("EndDateTime")
-                                .HasColumnType("timestamp with time zone");
-
-                            b1.Property<DateTime>("StartDateTime")
-                                .HasColumnType("timestamp with time zone");
-
-                            b1.HasKey("RateId");
-
-                            b1.ToTable("Rates");
-
-                            b1.WithOwner()
-                                .HasForeignKey("RateId");
-
-                            b1.OwnsOne("PlaceAgregator.Shared.Models.Shedule", "Shedule", b2 =>
-                                {
-                                    b2.Property<int>("TimeIntervalRateId")
-                                        .HasColumnType("integer");
-
-                                    b2.Property<bool?>("Friday")
-                                        .IsRequired()
-                                        .HasColumnType("boolean");
-
-                                    b2.Property<bool?>("Monday")
-                                        .IsRequired()
-                                        .HasColumnType("boolean");
-
-                                    b2.Property<bool?>("Saturday")
-                                        .IsRequired()
-                                        .HasColumnType("boolean");
-
-                                    b2.Property<bool?>("Sunday")
-                                        .IsRequired()
-                                        .HasColumnType("boolean");
-
-                                    b2.Property<bool?>("Thuesday")
-                                        .IsRequired()
-                                        .HasColumnType("boolean");
-
-                                    b2.Property<bool?>("Thursday")
-                                        .IsRequired()
-                                        .HasColumnType("boolean");
-
-                                    b2.Property<bool?>("Wednesday")
-                                        .IsRequired()
-                                        .HasColumnType("boolean");
-
-                                    b2.HasKey("TimeIntervalRateId");
-
-                                    b2.ToTable("Rates");
-
-                                    b2.WithOwner()
-                                        .HasForeignKey("TimeIntervalRateId");
-                                });
-
-                            b1.Navigation("Shedule");
-                        });
-
-                    b.Navigation("Place");
-
-                    b.Navigation("TimeInterval");
-                });
-
             modelBuilder.Entity("PlaceAgregator.Shared.Models.ServiceItem", b =>
                 {
                     b.HasOne("PlaceAgregator.Shared.Models.Place", "Place")
@@ -1136,13 +868,6 @@ namespace PlaceAgregator.EntityFramework.Migrations
                 {
                     b.HasOne("PlaceAgregator.Shared.Models.Place", null)
                         .WithMany("Prohibitions")
-                        .HasForeignKey("PlaceId");
-                });
-
-            modelBuilder.Entity("PlaceAgregator.Shared.Models.Types.Rule", b =>
-                {
-                    b.HasOne("PlaceAgregator.Shared.Models.Place", null)
-                        .WithMany("Rules")
                         .HasForeignKey("PlaceId");
                 });
 
@@ -1176,18 +901,7 @@ namespace PlaceAgregator.EntityFramework.Migrations
 
                     b.Navigation("Prohibitions");
 
-                    b.Navigation("Rates");
-
-                    b.Navigation("Rules");
-
                     b.Navigation("ServiceItems");
-                });
-
-            modelBuilder.Entity("PlaceAgregator.Shared.Models.Rate", b =>
-                {
-                    b.Navigation("Charges");
-
-                    b.Navigation("Discounts");
                 });
 #pragma warning restore 612, 618
         }
