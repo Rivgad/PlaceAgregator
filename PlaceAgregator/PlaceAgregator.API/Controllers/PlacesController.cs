@@ -5,10 +5,10 @@ using Microsoft.EntityFrameworkCore;
 using PlaceAgregator.API.Services.Interfaces;
 using PlaceAgregator.EntityFramework;
 using PlaceAgregator.Shared.DTOs.Places;
+using PlaceAgregator.Shared.Extensions;
 using PlaceAgregator.Shared.Models;
 using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
-using System.Text;
 
 namespace PlaceAgregator.API.Controllers
 {
@@ -112,7 +112,68 @@ namespace PlaceAgregator.API.Controllers
 
         #endregion
 
+        #region Rates
 
+        [HttpPost("{placeId?}/Rates")]
+        public async Task<IActionResult> CreateRate(int placeId, [FromBody] CreateRateDTO rate)
+        {
+            var place = await _context.Places
+                .Include(item => item.Rates)
+                .FirstOrDefaultAsync(item => item.Id == placeId && item.IsBlocked == false);
+            if (place == null)
+                return NotFound();
+
+            string? accountId = User.FindFirst(ClaimTypes.Sid)?.Value;
+            if (accountId == null || place.UserId != accountId)
+                return Forbid();
+
+            var newRate = _mapper.Map<Rate>(rate);
+            newRate.PlaceId = place.Id;
+
+            if (newRate.TimeInterval != null)
+            {
+                newRate.TimeInterval.Normalize();
+
+                var res = place.Rates == null ? true : 
+                    place.Rates?
+                        .Select(item => item.TimeInterval)
+                        .IsOutOfRange(newRate.TimeInterval);
+
+                if (res == false)
+                    return BadRequest("Даты пересекаются");
+            }
+
+            newRate = _context.Rates.Add(newRate).Entity;
+            await _context.SaveChangesAsync();
+
+            return Ok(_mapper.Map<RateGetDTO>(newRate));
+        }
+
+        [HttpDelete("{placeId?}/Rates/{rateId?}")]
+        public async Task<IActionResult> DeleteRate(int placeId, int rateId)
+        {
+            var place = await _context.Places.FirstOrDefaultAsync(item => item.Id == placeId && item.IsBlocked == false);
+            if (place == null)
+                return NotFound();
+
+            string? accountId = User.FindFirst(ClaimTypes.Sid)?.Value;
+            if (accountId == null)
+                return Forbid();
+
+            if (place.UserId != accountId)
+                return Forbid();
+
+            var rate = await _context.Rates.FirstOrDefaultAsync(item => item.Id == rateId);
+            if (rate == null)
+                return NotFound();
+
+            _context.Rates.Remove(rate);
+            await _context.SaveChangesAsync();
+
+            return Ok(new { id = rate.Id });
+        }
+
+        #endregion
 
         #region Photo
 
@@ -234,11 +295,14 @@ namespace PlaceAgregator.API.Controllers
         public async Task<IActionResult> GetPlaceAsync(int id)
         {
             var place = await _context.Places
-                .Include(item=>item.Photos)
-                .Include(item=>item.EventTypes)
-                .Include(item=>item.Prohibitions)
-                .Include(item=>item.Rules)
-                .Include(item=>item.ServiceItems)
+                .Include(item => item.Rates)
+                .Include(item => item.Charges)
+                .Include(item => item.Discounts)
+                .Include(item => item.Photos)
+                .Include(item => item.EventTypes)
+                .Include(item => item.Prohibitions)
+                .Include(item => item.Rules)
+                .Include(item => item.ServiceItems)
                 .FirstOrDefaultAsync(item => item.Id == id && item.IsBlocked == false);
 
             if (place == null)
@@ -306,7 +370,7 @@ namespace PlaceAgregator.API.Controllers
         }
 
         [Authorize(Roles = "user")]
-        [HttpPatch]
+        [HttpPut]
         [Produces(typeof(GetPlaceDTO))]
         public async Task<IActionResult> UpdatePlaceAsync(int placeId, [FromForm] PlaceUpdateDTO placeDTO)
         {
