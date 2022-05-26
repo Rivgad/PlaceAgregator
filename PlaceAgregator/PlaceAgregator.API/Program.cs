@@ -127,6 +127,8 @@ builder.Services.AddAutoMapper(cfg =>
     cfg.CreateMap<ServiceItemUpdateDTO, ServiceItem>();
 
     cfg.CreateMap<BookingRequest, BookingRequestGetDTO>();
+    cfg.CreateMap<BookingRequestCreateDTO, BookingRequest>();
+    cfg.CreateMap<BookingRequestServiceItemDTO, BookingRequestServiceItem>();
     cfg.CreateMap<BookingRequestServiceItem, BookingRequestServiceItemGetDTO>()
         .ForMember(dest=>dest.Title, opt=> opt.MapFrom(src=> src.ServiceItem.Title));
 

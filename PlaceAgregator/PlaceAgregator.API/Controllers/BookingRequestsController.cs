@@ -117,5 +117,29 @@ namespace PlaceAgregator.API.Controllers
             var result = await query.Select(item => _mapper.Map<BookingRequestGetDTO>(item)).ToListAsync();
             return Ok(result);
         }
+
+        [Authorize(Roles = "user")]
+        [HttpPost]
+        [Produces(typeof(BookingRequestGetDTO))]
+        public async Task<IActionResult> Create([FromForm] BookingRequestCreateDTO request)
+        {
+            throw new NotImplementedException();
+        }
+
+        [Authorize(Roles = "user")]
+        [HttpPost("[Action]/{id}")]
+        [Produces(typeof(BookingRequestGetDTO))]
+        public async Task<IActionResult> Cancel(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        [Authorize(Roles = "user")]
+        [HttpPost("[Action]/{id}")]
+        [Produces(typeof(BookingRequestGetDTO))]
+        public async Task<IActionResult> Response(int id, [FromForm]BookingRequest.RequestStatus status)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
