@@ -25,7 +25,7 @@ namespace PlaceAgregator.API.Controllers
 
         [Authorize(Roles = "manager")]
         [HttpGet]
-        public IEnumerable<BookingRequestGetDTO> GetBookingRequests(
+        public IEnumerable<BookingRequestGetDTO> GetAll(
             string? userId,
             BookingRequest.RequestStatus? status,
             [Range(1, int.MaxValue)]
