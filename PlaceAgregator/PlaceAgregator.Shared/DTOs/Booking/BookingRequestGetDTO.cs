@@ -10,6 +10,9 @@ namespace PlaceAgregator.Shared.DTOs.Booking
         [JsonPropertyName("placeId")]
         public int PlaceId { get; set; }
 
+        [JsonPropertyName("userId")]
+        public string UserId { get; set; }
+
         [JsonPropertyName("creationDateTime")]
         public DateTime CreationDateTime { get; set; }
 
