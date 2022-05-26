@@ -1,4 +1,5 @@
 ﻿using System.Linq.Expressions;
+using System.Reflection;
 
 namespace PlaceAgregator.Shared.Extensions
 {
@@ -10,7 +11,7 @@ namespace PlaceAgregator.Shared.Extensions
         {
             string command = desc ? "OrderByDescending" : "OrderBy";
             var type = typeof(TEntity);
-            var property = type.GetProperty(orderByProperty);
+            var property = type.GetProperty(orderByProperty, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
             var parameter = Expression.Parameter(type, "p");
             var propertyAccess = Expression.MakeMemberAccess(parameter, property);
             var orderByExpression = Expression.Lambda(propertyAccess, parameter);
