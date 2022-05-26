@@ -12,6 +12,9 @@ namespace PlaceAgregator.Shared.Extensions
             string command = desc ? "OrderByDescending" : "OrderBy";
             var type = typeof(TEntity);
             var property = type.GetProperty(orderByProperty, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
+            if (property == null)
+                return source;
+
             var parameter = Expression.Parameter(type, "p");
             var propertyAccess = Expression.MakeMemberAccess(parameter, property);
             var orderByExpression = Expression.Lambda(propertyAccess, parameter);

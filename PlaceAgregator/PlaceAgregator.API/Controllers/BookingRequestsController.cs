@@ -2,17 +2,12 @@
 using PlaceAgregator.EntityFramework;
 using PlaceAgregator.Shared.Extensions;
 using PlaceAgregator.Shared.Models;
-using System;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Collections.Generic;
 using System.Data;
-using System.Data.SqlClient;
-using System.Data.Common;
-using System.Globalization;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Authorization;
-using System.Security.Claims;
+using PlaceAgregator.Shared.DTOs.Booking;
+using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 
 namespace PlaceAgregator.API.Controllers
 {
@@ -21,49 +16,48 @@ namespace PlaceAgregator.API.Controllers
     public class BookingRequestsController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
-
-        public BookingRequestsController(ApplicationDbContext context)
+        private readonly IMapper _mapper;
+        public BookingRequestsController(ApplicationDbContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         [Authorize(Roles = "manager")]
         [HttpGet]
-        public IActionResult GetBookingRequests(
-            [Range(1, int.MaxValue)]
-            int? page,
-            [Range(10, 50)]
-            int? pageSize,
+        public IEnumerable<BookingRequestGetDTO> GetBookingRequests(
             string? userId,
             BookingRequest.RequestStatus? status,
-            string? orderBy,
-            bool? desc
+            [Range(1, int.MaxValue)]
+            int? page = 1,
+            [Range(2, 50)]
+            int? pageSize = 20,
+            string? orderBy = $"{nameof(BookingRequest.CreationDateTime)}",
+            bool? desc = true
             )
         {
-            var query = _context.BookingRequests.AsQueryable();
-            
+            var query = _context.BookingRequests
+                .Include(item => item.ServiceItems)
+                .ThenInclude(item => item.ServiceItem)
+                .AsQueryable();
+
             if (userId != null)
-                query = query.Where(item=> item.UserId == userId);
+                query = query.Where(item => item.UserId == userId);
 
             if (status != null)
-                query = query.Where(item=> item.Status == status);
+                query = query.Where(item => item.Status == status);
 
-            if(page != null && pageSize != null)
-                query = query.Skip((int)((page - 1)* pageSize)).Take((int)pageSize);
-
-            try
+            if (orderBy != null)
             {
-                if (orderBy != null)
-                {
-                    query = query.OrderBy(orderBy, desc ?? true);
-                }
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
+                query = query.OrderBy(orderBy, desc ?? true);
             }
 
-            return Ok(query);
+            if (page != null && pageSize != null)
+                query = query.Skip((int)((page - 1) * pageSize)).Take((int)pageSize);
+
+            var result = query.Select(item => _mapper.Map<BookingRequestGetDTO>(item)).ToList();
+            return result;
         }
+
     }
 }

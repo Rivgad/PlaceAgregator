@@ -7,6 +7,7 @@ using PlaceAgregator.API.AppBuilders;
 using PlaceAgregator.API.Services;
 using PlaceAgregator.API.Services.Interfaces;
 using PlaceAgregator.EntityFramework;
+using PlaceAgregator.Shared.DTOs.Booking;
 using PlaceAgregator.Shared.DTOs.Places;
 using PlaceAgregator.Shared.Models;
 using PlaceAgregator.Shared.Models.Types;
@@ -124,6 +125,10 @@ builder.Services.AddAutoMapper(cfg =>
     cfg.CreateMap<ServiceItem, ServiceItemGetDTO>();
     cfg.CreateMap<ServiceItemCreateDTO, ServiceItem>();
     cfg.CreateMap<ServiceItemUpdateDTO, ServiceItem>();
+
+    cfg.CreateMap<BookingRequest, BookingRequestGetDTO>();
+    cfg.CreateMap<BookingRequestServiceItem, BookingRequestServiceItemGetDTO>()
+        .ForMember(dest=>dest.Title, opt=> opt.MapFrom(src=> src.ServiceItem.Title));
 
 });
 
