@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 
 namespace PlaceAgregator.Shared.DTOs.Booking
 {
-    public class BookingCreateDTO
+    public class BookingRequestCreateDTO
     {
         [Required]
         [JsonPropertyName("placeId")]
