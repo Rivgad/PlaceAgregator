@@ -28,6 +28,9 @@ namespace PlaceAgregator.Shared.DTOs.Booking
         [JsonPropertyName("guestsQuantity")]
         public int GuestsQuantity { get; set; }
 
+        [JsonPropertyName("totalPrice")]
+        public decimal? TotalPrice { get; set; }
+
         [JsonPropertyName("comment")]
         public string? Comment { get; set; }
 

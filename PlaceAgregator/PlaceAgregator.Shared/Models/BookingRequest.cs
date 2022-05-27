@@ -49,6 +49,8 @@ namespace PlaceAgregator.Shared.Models
         public int GuestsQuantity { get; set; }
         public string? Comment { get; set; }
 
+        public decimal? TotalPrice { get; set; }
+
         public IEnumerable<BookingRequestServiceItem>? ServiceItems { get; set; }
     }
 }
