@@ -26,13 +26,13 @@ namespace PlaceAgregator.Shared.Models
         [JsonIgnore]
         public AppUser User { get; set; }
 
-        public int PlaceId { get; set; }
+        public int? PlaceId { get; set; }
 
         [JsonIgnore]
-        public Place Place { get; set; }
+        public Place? Place { get; set; }
 
         [Required]
-        public RequestStatus Status { get; set; } = 0;
+        public RequestStatus Status { get; set; } = RequestStatus.Created;
 
         [Required]
         public DateTime CreationDateTime { get; set; }

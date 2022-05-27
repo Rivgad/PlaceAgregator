@@ -234,7 +234,6 @@ namespace PlaceAgregator.EntityFramework
                         new ServiceItem()
                         {
                             Id = 1,
-                            IsCountable = true,
                             MaxQuantity = 2,
                             PlaceId = 1,
                             Title = "Прожектор",
@@ -245,7 +244,7 @@ namespace PlaceAgregator.EntityFramework
                         new ServiceItem()
                         {
                             Id=2,
-                            IsCountable = false,
+                            MaxQuantity = 1,
                             Price = 300,
                             PlaceId = 1,
                             Title = "Бармен",
@@ -370,9 +369,9 @@ namespace PlaceAgregator.EntityFramework
                         new ServiceItem()
                         {
                             Id = 3,
-                            IsCountable = false,
                             PlaceId = 2,
                             Title = "Подушки",
+                            MaxQuantity = 1,
                             Price = 500,
                             Per = ServiceItem.PerValueType.Hour,
                             Comment = "Удобные и мягкие"
