@@ -9,8 +9,6 @@ using PlaceAgregator.Shared.DTOs.Booking;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
-using NpgsqlTypes;
-using System.Globalization;
 using Itenso.TimePeriod;
 
 namespace PlaceAgregator.API.Controllers
@@ -145,9 +143,6 @@ namespace PlaceAgregator.API.Controllers
             if (place.UserId == accountId)
                 return BadRequest("Вы являетесь владельцем площадки");
 
-            request.StartDateTime = request.StartDateTime.ToUniversalTime();
-            request.EndDateTime = request.EndDateTime.ToUniversalTime();
-
             //Обнуление минут и секунд
             request.StartDateTime = new DateTime(
                 year: request.StartDateTime.Year, 
@@ -155,17 +150,20 @@ namespace PlaceAgregator.API.Controllers
                 day: request.StartDateTime.Day, 
                 hour: request.StartDateTime.Hour, 
                 minute: 0, 
-                second: 0);
+                second: 0)
+                .ToUniversalTime();
+
             request.EndDateTime = new DateTime(
                 year: request.EndDateTime.Year,
                 month: request.EndDateTime.Month,
                 day: request.EndDateTime.Day,
                 hour: request.EndDateTime.Hour,
                 minute: 0,
-                second: 0);
+                second: 0)
+                .ToUniversalTime();
             
             //Меняем местами, если диапозон перевернут
-            if(request.StartDateTime < request.EndDateTime)
+            if(request.StartDateTime > request.EndDateTime)
                 (request.StartDateTime, request.EndDateTime) = (request.EndDateTime, request.StartDateTime);
 
             var requestTimeRange = new TimeRange(request.StartDateTime, request.EndDateTime);
@@ -193,14 +191,15 @@ namespace PlaceAgregator.API.Controllers
                 item.EndDateTime.ToUniversalTime() > DateTime.UtcNow) &&
 
                 // у которых старт или конец после начала бронирования
-                (item.StartDateTime >= requestTimeRange.Start || item.EndDateTime >= requestTimeRange.Start) &&
+                (item.StartDateTime.ToUniversalTime() >= requestTimeRange.Start.ToUniversalTime() || 
+                item.EndDateTime.ToUniversalTime() >= requestTimeRange.Start.ToUniversalTime()) &&
 
                 // у которых старт или конец до конца бронирования
-                (item.StartDateTime <= requestTimeRange.End || item.EndDateTime <= requestTimeRange.End) &&
-
-                // Которые приняты или созданы менее 4 часов назад
-                RequestIsAcceptedOrCreated3HoursAgo(item))
+                (item.StartDateTime.ToUniversalTime() <= requestTimeRange.End.ToUniversalTime() || 
+                item.EndDateTime.ToUniversalTime() <= requestTimeRange.End.ToUniversalTime()))
                 .ToListAsync())
+                // Которые приняты или созданы менее 4 часов назад
+                .Where(item=> RequestIsAcceptedOrCreated3HoursAgo(item))
                 .Select(item => new TimeRange(item.StartDateTime, item.StartDateTime));
 
 
@@ -223,17 +222,17 @@ namespace PlaceAgregator.API.Controllers
                 .ToArray();
             
             // получаем услуги которые есть у площадки
-            var serviceItemIds = request.ServiceItems.Select(item => item.ServiceItemId);
+            var serviceItemIds = request.ServiceItems?.Select(item => item.ServiceItemId);
             var validServiceItemIds = place.ServiceItems
                 .Where(item => serviceItemIds
                 .Contains(item.Id))
                 .Select(item=>item.Id);
 
-            if (serviceItemIds.Count() != request.ServiceItems.Length)
+            if (serviceItemIds?.Count() != request.ServiceItems?.Length)
                 return BadRequest("Запись неверных услуг");
 
             // записываем только валидные услуги
-            request.ServiceItems = request.ServiceItems
+            request.ServiceItems = request.ServiceItems?
                 .Where(item => validServiceItemIds
                 .Contains(item.ServiceItemId))
                 .ToArray();
@@ -282,17 +281,6 @@ namespace PlaceAgregator.API.Controllers
             return false;
         }
 
-        private bool IsOutIfRange(TimeRange range, List<TimeRange> times)
-        {
-            foreach (var timerange in times)
-            {
-                if (timerange.OverlapsWith(range))
-                    return false;
-            }
-
-            return true;
-        }
-
         private async Task<decimal> CalculateAndValidateOrderPrice(IEnumerable<BookingRequestServiceItem> serviceItems)
         {
             var itemQuantityDict = serviceItems
@@ -327,19 +315,103 @@ namespace PlaceAgregator.API.Controllers
         }
 
         [Authorize(Roles = "user")]
-        [HttpPost("[Action]/{id}")]
+        [HttpPost("{id}/[Action]")]
         [Produces(typeof(BookingRequestGetDTO))]
         public async Task<IActionResult> Cancel(int id)
         {
-            throw new NotImplementedException();
+            string? accountId = User.FindFirst(ClaimTypes.Sid)?.Value;
+            if (accountId == null)
+                return Forbid();
+
+            var bookingRequest = await _context.BookingRequests
+                .FirstOrDefaultAsync(item => item.Id == id && item.UserId == accountId);
+
+            if (bookingRequest == null)
+                return NotFound();
+
+            if (bookingRequest.UserId != accountId)
+                return Unauthorized();
+
+            if (bookingRequest.Status == BookingRequest.RequestStatus.Rejected)
+                return BadRequest("Бронирование уже отклонено");
+
+            if (bookingRequest.Status == BookingRequest.RequestStatus.Cancelled)
+                return BadRequest("Бронирование уже отменено");
+
+            if(DateTime.UtcNow >= bookingRequest.EndDateTime.ToUniversalTime())
+                return BadRequest("Невозможно отменить бронирование так как оно уже закончилось");
+            
+            if (DateTime.UtcNow >= bookingRequest.StartDateTime.ToUniversalTime())
+                return BadRequest("Невозможно отменить бронирование так как оно уже началось");
+
+            if (DateTime.UtcNow.Subtract(bookingRequest.StartDateTime.ToUniversalTime()).TotalHours <= 3)
+                return BadRequest("Невозможно отменить бронирование менее чем за 3 часа до начала");
+
+            bookingRequest.Status = BookingRequest.RequestStatus.Rejected;
+            _context.Update(bookingRequest);
+            await _context.SaveChangesAsync();
+
+            return Ok(_mapper.Map<BookingRequestGetDTO>(bookingRequest));
         }
 
         [Authorize(Roles = "user")]
-        [HttpPost("[Action]/{id}")]
+        [HttpPost("{id}/[Action]")]
         [Produces(typeof(BookingRequestGetDTO))]
-        public async Task<IActionResult> Response(int id, [FromForm]BookingRequest.RequestStatus status)
+        public async Task<IActionResult> Accept(int id)
         {
-            throw new NotImplementedException();
+            string? accountId = User.FindFirst(ClaimTypes.Sid)?.Value;
+            if (accountId == null)
+                return Forbid();
+            
+            var bookingRequest = await _context.BookingRequests
+                .FirstOrDefaultAsync(item => item.Id == id && item.UserId == accountId);
+            if (bookingRequest == null)
+                return NotFound();
+
+            if (!await UserIsOwner(bookingRequest.PlaceId, accountId))
+                return Unauthorized("Вы не являетесь владельцем площадки");
+
+            if (bookingRequest.Status != BookingRequest.RequestStatus.Created)
+                return BadRequest();
+            
+            bookingRequest.Status = BookingRequest.RequestStatus.Accepted;
+            _context.Update(bookingRequest);
+            await _context.SaveChangesAsync();
+
+            return Ok(_mapper.Map<BookingRequestGetDTO>(bookingRequest));
+        }
+
+        [Authorize(Roles = "user")]
+        [HttpPost("{id}/[Action]")]
+        [Produces(typeof(BookingRequestGetDTO))]
+        public async Task<IActionResult> Reject(int id)
+        {
+            string? accountId = User.FindFirst(ClaimTypes.Sid)?.Value;
+            if (accountId == null)
+                return Forbid();
+
+            var bookingRequest = await _context.BookingRequests
+                .FirstOrDefaultAsync(item => item.Id == id && item.UserId == accountId);
+            if (bookingRequest == null)
+                return NotFound();
+
+            if (!await UserIsOwner(bookingRequest.PlaceId, accountId))
+                return Unauthorized("Вы не являетесь владельцем площадки");
+
+            if (bookingRequest.Status != BookingRequest.RequestStatus.Created)
+                return BadRequest();
+
+            bookingRequest.Status = BookingRequest.RequestStatus.Rejected;
+            _context.Update(bookingRequest);
+            await _context.SaveChangesAsync();
+
+            return Ok(_mapper.Map<BookingRequestGetDTO>(bookingRequest));
+        }
+
+        private async Task<bool> UserIsOwner(int placeId, string userId)
+        {
+            var result = await _context.Places.AnyAsync(place => place.Id == placeId && place.UserId == userId);
+            return result;
         }
     }
 }

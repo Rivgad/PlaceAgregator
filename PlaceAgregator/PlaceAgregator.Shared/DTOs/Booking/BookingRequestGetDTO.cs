@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using PlaceAgregator.Shared.Models;
+using System.Text.Json.Serialization;
 
 namespace PlaceAgregator.Shared.DTOs.Booking
 {
@@ -12,6 +13,9 @@ namespace PlaceAgregator.Shared.DTOs.Booking
 
         [JsonPropertyName("userId")]
         public string? UserId { get; set; }
+
+        [JsonPropertyName("status")]
+        public BookingRequest.RequestStatus Status { get; set; }
 
         [JsonPropertyName("creationDateTime")]
         public DateTime CreationDateTime { get; set; }
