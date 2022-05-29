@@ -188,19 +188,10 @@ namespace PlaceAgregator.API.Controllers
                 .Where(item =>
                 // У которых начало или конец после сегодняшней даты
                 (item.StartDateTime.ToUniversalTime() > DateTime.UtcNow ||
-                item.EndDateTime.ToUniversalTime() > DateTime.UtcNow) &&
-
-                // у которых старт или конец после начала бронирования
-                (item.StartDateTime.ToUniversalTime() >= requestTimeRange.Start.ToUniversalTime() || 
-                item.EndDateTime.ToUniversalTime() >= requestTimeRange.Start.ToUniversalTime()) &&
-
-                // у которых старт или конец до конца бронирования
-                (item.StartDateTime.ToUniversalTime() <= requestTimeRange.End.ToUniversalTime() || 
-                item.EndDateTime.ToUniversalTime() <= requestTimeRange.End.ToUniversalTime()))
+                item.EndDateTime.ToUniversalTime() > DateTime.UtcNow))
                 .ToListAsync())
                 // Которые приняты или созданы менее 4 часов назад
-                .Where(item=> RequestIsAcceptedOrCreated3HoursAgo(item))
-                .Select(item => new TimeRange(item.StartDateTime, item.StartDateTime));
+                .Select(item => new TimeRange(item.StartDateTime, item.EndDateTime));
 
 
             if(bookedTimeIntervals.Any())

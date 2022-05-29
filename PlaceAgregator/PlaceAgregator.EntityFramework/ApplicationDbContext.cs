@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using PlaceAgregator.Shared.Extensions;
 using PlaceAgregator.Shared.Models;
 using PlaceAgregator.Shared.Models.Types;
 
@@ -29,6 +30,8 @@ namespace PlaceAgregator.EntityFramework
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.ApplyUtcDateTimeConverter();
+
             modelBuilder.Entity<Place>()
                 .OwnsOne(item => item.Shedule);
 
