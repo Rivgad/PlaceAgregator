@@ -9,6 +9,9 @@ using PlaceAgregator.Shared.DTOs.Booking;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
+using NpgsqlTypes;
+using System.Globalization;
+using Itenso.TimePeriod;
 
 namespace PlaceAgregator.API.Controllers
 {
@@ -121,9 +124,206 @@ namespace PlaceAgregator.API.Controllers
         [Authorize(Roles = "user")]
         [HttpPost]
         [Produces(typeof(BookingRequestGetDTO))]
-        public async Task<IActionResult> Create([FromForm] BookingRequestCreateDTO request)
+        public async Task<IActionResult> CreateBookingRequest([FromForm] BookingRequestCreateDTO request)
         {
-            throw new NotImplementedException();
+            string? accountId = User.FindFirst(ClaimTypes.Sid)?.Value;
+            if (accountId == null)
+                return Forbid();
+            
+            var place = await _context.Places
+                .Include(item=>item.ServiceItems)
+                .Include(item=>item.Charges)
+                .Include(item=>item.Discounts)
+                .FirstOrDefaultAsync(item=>item.Id == request.PlaceId);
+           
+            if (place == null)
+                return NotFound();
+
+            if (place.BaseRate == null || place.IsBlocked || !place.IsActive)
+                return BadRequest();
+            
+            if (place.UserId == accountId)
+                return BadRequest("Вы являетесь владельцем площадки");
+
+            request.StartDateTime = request.StartDateTime.ToUniversalTime();
+            request.EndDateTime = request.EndDateTime.ToUniversalTime();
+
+            //Обнуление минут и секунд
+            request.StartDateTime = new DateTime(
+                year: request.StartDateTime.Year, 
+                month: request.StartDateTime.Month, 
+                day: request.StartDateTime.Day, 
+                hour: request.StartDateTime.Hour, 
+                minute: 0, 
+                second: 0);
+            request.EndDateTime = new DateTime(
+                year: request.EndDateTime.Year,
+                month: request.EndDateTime.Month,
+                day: request.EndDateTime.Day,
+                hour: request.EndDateTime.Hour,
+                minute: 0,
+                second: 0);
+            
+            //Меняем местами, если диапозон перевернут
+            if(request.StartDateTime < request.EndDateTime)
+                (request.StartDateTime, request.EndDateTime) = (request.EndDateTime, request.StartDateTime);
+
+            var requestTimeRange = new TimeRange(request.StartDateTime, request.EndDateTime);
+            int duration = (int)requestTimeRange.Duration.TotalHours;
+
+            if(duration < 1)
+            {
+                return BadRequest("Минимальное время бронирования = 1 час");
+            }
+            if (requestTimeRange.Start.ToUniversalTime() < DateTime.UtcNow.AddHours(3))
+            {
+                return BadRequest("Начало должно быть не раньше чем за 3 часа");
+            }
+            if(place.BookingHorizonInDays != null)
+            {
+                if (requestTimeRange.Start.ToUniversalTime() > DateTime.UtcNow.AddDays((double)place.BookingHorizonInDays))
+                    return BadRequest($"Начало должно быть не позже {DateTime.Now.AddDays((double)place.BookingHorizonInDays).ToString("f")}");
+            }
+
+            // Получаем массив с возможными пересекающимися бронированиями
+            var bookedTimeIntervals = (await _context.BookingRequests
+                .Where(item =>
+                // У которых начало или конец после сегодняшней даты
+                (item.StartDateTime.ToUniversalTime() > DateTime.UtcNow ||
+                item.EndDateTime.ToUniversalTime() > DateTime.UtcNow) &&
+
+                // у которых старт или конец после начала бронирования
+                (item.StartDateTime >= requestTimeRange.Start || item.EndDateTime >= requestTimeRange.Start) &&
+
+                // у которых старт или конец до конца бронирования
+                (item.StartDateTime <= requestTimeRange.End || item.EndDateTime <= requestTimeRange.End) &&
+
+                // Которые приняты или созданы менее 4 часов назад
+                RequestIsAcceptedOrCreated3HoursAgo(item))
+                .ToListAsync())
+                .Select(item => new TimeRange(item.StartDateTime, item.StartDateTime));
+
+
+            if(bookedTimeIntervals.Any())
+            {
+                foreach (var timeRange in bookedTimeIntervals)
+                {
+                    if (requestTimeRange.OverlapsWith(timeRange))
+                        return BadRequest("Время уже занято");
+                }
+            }
+            // Суммируем одинаковые услуги
+            request.ServiceItems =  request.ServiceItems?
+                .GroupBy(item=>item.ServiceItemId)
+                .Select(item=> new BookingRequestServiceItemDTO()
+                {
+                    ServiceItemId = item.Key,
+                    Quantity = item.Select(item=>item.Quantity).Sum()
+                })
+                .ToArray();
+            
+            // получаем услуги которые есть у площадки
+            var serviceItemIds = request.ServiceItems.Select(item => item.ServiceItemId);
+            var validServiceItemIds = place.ServiceItems
+                .Where(item => serviceItemIds
+                .Contains(item.Id))
+                .Select(item=>item.Id);
+
+            if (serviceItemIds.Count() != request.ServiceItems.Length)
+                return BadRequest("Запись неверных услуг");
+
+            // записываем только валидные услуги
+            request.ServiceItems = request.ServiceItems
+                .Where(item => validServiceItemIds
+                .Contains(item.ServiceItemId))
+                .ToArray();
+
+
+            var newBookingRequest = _mapper.Map<BookingRequest>(request);
+            newBookingRequest.Status = BookingRequest.RequestStatus.Created;
+            newBookingRequest.CreationDateTime = DateTime.UtcNow;
+            newBookingRequest.UserId = accountId;
+
+            decimal totalPrice = await CalculateAndValidateOrderPrice(newBookingRequest.ServiceItems);
+            decimal totalDiscount = place.Discounts
+                .Where(item => item.FromHoursQuantity <= duration)
+                .Select(item=>item.Procents)
+                .Sum();
+            decimal totalCharge = place.Charges
+                .Where(item => item.FromGuestsQuantity <= request.GuestsQuantity)
+                .Select(item => item.Procents)
+                .Sum();
+
+            // Просчитываем конечную сумму 
+            totalPrice += (decimal)place.BaseRate * duration * (1 - totalDiscount/100) * (1 + totalCharge/100);
+
+            newBookingRequest.TotalPrice = totalPrice; 
+
+            var result = await _context.BookingRequests.AddAsync(newBookingRequest);
+            await _context.SaveChangesAsync();
+            
+            return CreatedAtAction(nameof(CreateBookingRequest), 
+                _mapper.Map<BookingRequestGetDTO>(result.Entity));
+        }
+
+        /// <summary>
+        /// Checks <see cref="BookingRequest.Status"/> and <see cref="BookingRequest.Status"/>
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        private bool RequestIsAcceptedOrCreated3HoursAgo(BookingRequest request)
+        {
+            if(request.Status == BookingRequest.RequestStatus.Accepted)
+                return true;
+            if (request.Status == BookingRequest.RequestStatus.Created && 
+            DateTime.UtcNow.Subtract(request.CreationDateTime.ToUniversalTime()).TotalHours < 3)
+                return true;
+            
+            return false;
+        }
+
+        private bool IsOutIfRange(TimeRange range, List<TimeRange> times)
+        {
+            foreach (var timerange in times)
+            {
+                if (timerange.OverlapsWith(range))
+                    return false;
+            }
+
+            return true;
+        }
+
+        private async Task<decimal> CalculateAndValidateOrderPrice(IEnumerable<BookingRequestServiceItem> serviceItems)
+        {
+            var itemQuantityDict = serviceItems
+                .GroupBy(item => item.ServiceItemId)
+                .ToDictionary(t => t.Key, t => t.Select(item => item.Quantity).Sum());
+
+            try
+            {
+                IEnumerable<int>? productIds = itemQuantityDict.Select(item => item.Key);
+                var productPriceDict = await _context
+                    .ServiceItems
+                    .Where(item => productIds.Contains(item.Id) == true)
+                    .ToDictionaryAsync(item => item.Id, item => item.Price);
+
+                if (productPriceDict.Count != itemQuantityDict.Count)
+                {
+                    var products = itemQuantityDict
+                        .Select(item => item.Key)
+                        .Except(productPriceDict.Select(item => item.Key));
+                    var productsStr = string.Join(",", products.Select(item => $"productId: {item}"));
+                    throw new Exception($"Current products don't exist: {productsStr}");
+                }
+
+                decimal totalPrice = productPriceDict.Select(item => item.Value * itemQuantityDict[item.Key]).Sum();
+
+                return totalPrice;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
 
         [Authorize(Roles = "user")]
