@@ -21,12 +21,14 @@ namespace PlaceAgregator.Shared.Models
             Cancelled = 3
         }
 
+        [Required]
         public string UserId { get; set; }
 
         [JsonIgnore]
         public AppUser User { get; set; }
 
-        public int? PlaceId { get; set; }
+        [Required]
+        public int PlaceId { get; set; }
 
         [JsonIgnore]
         public Place? Place { get; set; }
