@@ -26,6 +26,7 @@ namespace PlaceAgregator.EntityFramework
             await SeedUsersAsync(userManager, recreate: recreate);
             await SeedDefaultTypes(appDbContext);
             await SeedDefaultPlaces(appDbContext, userManager);
+            await SeedDefaultComments(appDbContext, userManager);
         }
         public static async Task SeedRolesAsync(RoleManager<IdentityRole> roleManager)
         {
@@ -450,6 +451,45 @@ namespace PlaceAgregator.EntityFramework
             foreach (var place in defaultPlaces)
             {
                 await context.Places.AddAsync(place);
+            }
+
+            await context.SaveChangesAsync();
+        }
+        public static async Task SeedDefaultComments(ApplicationDbContext context, UserManager<AppUser> userManager)
+        {
+            var place1 = await context.Places.FirstOrDefaultAsync(item => item.Id == 1);
+            var place2 = await context.Places.FirstOrDefaultAsync(item => item.Id == 2);
+            var renterId = (await userManager.FindByNameAsync("renter"))?.Id;
+
+            if (place1 == null || place2 == null || renterId == null)
+                return;
+
+            var defaultComments = new List<Comment>()
+            {
+                new()
+                {
+                    UserId = renterId,
+                    PlaceId = place1.Id,
+                    LastEditTime= DateTime.UtcNow,
+                    Rating = 4,
+                    Text="Нормальная площадка",
+                    IsBlocked=false
+                },
+                new()
+                {
+                    UserId = renterId,
+                    PlaceId = place2.Id,
+                    LastEditTime= DateTime.UtcNow,
+                    Rating = 5,
+                    Text="Отличная площадка",
+                    IsBlocked=false
+                }
+            };
+
+            foreach (var comment in defaultComments)
+            {
+                if (!context.Comments.Any(item => item.PlaceId == comment.PlaceId && item.UserId == comment.UserId))
+                    await context.Comments.AddAsync(comment);
             }
 
             await context.SaveChangesAsync();

@@ -7,7 +7,6 @@ using PlaceAgregator.EntityFramework;
 using PlaceAgregator.Shared.DTOs.Booking;
 using PlaceAgregator.Shared.Extensions;
 using PlaceAgregator.Shared.Models;
-using System.ComponentModel.DataAnnotations;
 using System.Data;
 using System.Security.Claims;
 
@@ -32,13 +31,7 @@ namespace PlaceAgregator.API.Controllers
         [Produces(typeof(BookingRequestGetDTO[]))]
         [ProducesResponseType(403)]
         public async Task<IActionResult> GetAllUserBookingRequestsHistory(
-            BookingRequest.RequestStatus? status,
-            [Range(1, int.MaxValue)]
-            int? page,
-            [Range(2, 50)]
-            int? pageSize,
-            string? orderBy = $"{nameof(BookingRequest.CreationDateTime)}",
-            bool? desc = true)
+            [FromQuery] BookingRequestFilterDTO filter)
         {
             string? accountId = User.FindFirst(ClaimTypes.Sid)?.Value;
             if (accountId == null)
@@ -52,16 +45,16 @@ namespace PlaceAgregator.API.Controllers
 
             query = query.Where(item => item.UserId == accountId);
 
-            if (status != null)
-                query = query.Where(item => item.Status == status);
+            if (filter.Status != null)
+                query = query.Where(item => item.Status == filter.Status);
 
-            if (orderBy != null)
+            if (filter.OrderBy != null)
             {
-                query = query.OrderBy(orderBy, desc ?? true);
+                query = query.OrderBy(filter.OrderBy, filter.Desc ?? true);
             }
 
-            if (page != null && pageSize != null)
-                query = query.Skip((int)((page - 1) * pageSize)).Take((int)pageSize);
+            if (filter.Page != null && filter.PageSize != null)
+                query = query.Skip((int)((filter.Page - 1) * filter.PageSize)).Take((int)filter.PageSize);
 
             var result = await query.Select(item => _mapper.Map<BookingRequestGetDTO>(item)).ToListAsync();
             return Ok(result);
@@ -75,13 +68,7 @@ namespace PlaceAgregator.API.Controllers
         public async Task<IActionResult> GetAllForLessorIdAsync(
             int? placeId,
             string? userId,
-            BookingRequest.RequestStatus? status,
-            [Range(1, int.MaxValue)]
-            int? page,
-            [Range(2, 50)]
-            int? pageSize,
-            string? orderBy = $"{nameof(BookingRequest.CreationDateTime)}",
-            bool? desc = true)
+            [FromQuery] BookingRequestFilterDTO filter)
         {
             string? accountId = User.FindFirst(ClaimTypes.Sid)?.Value;
             if (accountId == null)
@@ -104,16 +91,16 @@ namespace PlaceAgregator.API.Controllers
             if (placeId != null)
                 query = query.Where(item => item.PlaceId == placeId);
 
-            if (status != null)
-                query = query.Where(item => item.Status == status);
+            if (filter.Status != null)
+                query = query.Where(item => item.Status == filter.Status);
 
-            if (orderBy != null)
+            if (filter.OrderBy != null)
             {
-                query = query.OrderBy(orderBy, desc ?? true);
+                query = query.OrderBy(filter.OrderBy, filter.Desc ?? true);
             }
 
-            if (page != null && pageSize != null)
-                query = query.Skip((int)((page - 1) * pageSize)).Take((int)pageSize);
+            if (filter.Page != null && filter.PageSize != null)
+                query = query.Skip((int)((filter.Page - 1) * filter.PageSize)).Take((int)filter.PageSize);
 
             var result = await query.Select(item => _mapper.Map<BookingRequestGetDTO>(item)).ToListAsync();
             return Ok(result);
