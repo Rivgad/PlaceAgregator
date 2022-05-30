@@ -1,50 +1,37 @@
 const axios = require('axios').default;
 
+const login = (login, password) => {
+    return axios
+    .post("/api/Auth/Login", { login, password })
+    .then((request) => {
+      if (request.data.accessToken) {
+        localStorage.setItem("user", JSON.stringify(request.data));
+      }
+      return request.data;
+    })
+    .catch((error) => { throw Error(error) } )
+};
 
-export default class AuthService {
-    constructor() {
-        this.currentAccount = null;
-    }
-    async Login(login, password) {
-        let result = null;
+const registration = (login, password, passwordConfirm) => {
+    return axios
+    .post("/api/Auth/Registration", { login, password })
+    .then((request) => {
+      return request.data;
+    })
+    .catch((error) => { 
+        console.log(error);
+        throw Error(error);
+    })
+};
 
-            await axios.post(`/api/auth/login?login=${login}&password=${password}`, {
-                validateStatus: (status)=>{
-                    return status===200;
-                }
-            })
-            .then((response)=>{
-                result = response.data;
-                localStorage.setItem('token', result.access_token);
-            })
-                .catch(
-                    (error)=>{throw new Error(error);}
-                )
-                .finally(
-                    ()=>{
-                        return result;
-                    }
-                );
-    }
-    Logout() {
-        this.currentAccount = null;
-    }
-    async Registration(login, password){
-        try {
-            await axios.post(`/api/auth/registration?login=${login}&password=${password}`)
-            .then(request=>{
-                if(request.status !== 200){
-                    throw new Error("huinya");
-                }
-            })
-            .catch(error=>{
-                throw new Error(error.message)
-            });
-        } catch (error) {
-            throw new Error(error);
-        }
-    }
-    IsAuthenticated = () => this.currentAccount == null ? false : true;
+const logout = () => {
+  localStorage.removeItem("user");
+};
 
-}
+const authService = {
+  login,
+  registration,
+  logout,
+};
 
+export default authService;

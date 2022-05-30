@@ -27,7 +27,7 @@ const AuthDialog =({open, handleClose})=>{
                             }}
                         >
                             {dialogType === DialogType.SignIn ?
-                                <SignInForm handleSubmit={console.log} openSignUp={() => { setDialogType(DialogType.SignUp) }} />
+                                <SignInForm openSignUp={() => { setDialogType(DialogType.SignUp) }} />
                                 :
                                 <SignUpForm handleSubmit={console.log} openSignIn={() => { setDialogType(DialogType.SignIn) }} />
                             }

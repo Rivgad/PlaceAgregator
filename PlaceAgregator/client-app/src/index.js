@@ -7,6 +7,8 @@ import CssBaseline from '@mui/material/CssBaseline';
 import './index.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import App from './App';
+import { Provider } from 'react-redux';
+import store from './store';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
@@ -34,19 +36,21 @@ export const themeOptions = {
 
 const theme = createTheme(themeOptions);
 
-const Ind = ()=>{
-    
+const Ind = () => {
 
-    return(
+
+    return (
         <React.StrictMode>
-        <ThemeProvider theme={theme}>
-            <CssBaseline />
-            <App/>
-        </ThemeProvider>
-    </React.StrictMode>
+            <Provider store={store}>
+                <ThemeProvider theme={theme}>
+                    <CssBaseline />
+                    <App />
+                </ThemeProvider>
+            </Provider>
+        </React.StrictMode>
     );
 }
 
 root.render(
-    <Ind/>
+    <Ind />
 );

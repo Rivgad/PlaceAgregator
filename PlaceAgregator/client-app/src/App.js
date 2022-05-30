@@ -1,7 +1,6 @@
 import { BrowserRouter, Outlet, Route, Routes } from "react-router-dom";
 
 import BookingsPage from "./features/bookings/BookingsPage";
-import AppFooter from "./features/footer/AppFooter";
 import AppHeader from "./features/header/AppHeader";
 import PlaceEditPage from "./features/places/edit/Page";
 import MyPlacesPage from "./features/places/MyPlacesPage";
@@ -21,7 +20,6 @@ const App = () => {
                             <>
                                 <AppHeader />
                                 <Outlet />
-                                <AppFooter />
                             </>
                         }
                     >
