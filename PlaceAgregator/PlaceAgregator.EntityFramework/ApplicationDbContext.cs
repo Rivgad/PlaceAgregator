@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using PlaceAgregator.Shared.Extensions;
 using PlaceAgregator.Shared.Models;
 using PlaceAgregator.Shared.Models.Types;
 
@@ -13,15 +14,15 @@ namespace PlaceAgregator.EntityFramework
         public DbSet<Comment> Comments { get; set; }
         public DbSet<Place> Places { get; set; }
         public DbSet<ServiceItem> ServiceItems { get; set; }
-        public DbSet<Rate> Rates { get; set; }
         public DbSet<Charge> Charges { get; set; }
         public DbSet<Discount> Discounts { get; set; }
 
         public DbSet<Prohibition> Prohibitions { get; set; }
         public DbSet<BuildingType> BuildingTypes { get; set; }
+        public DbSet<ParkingType> ParkingTypes { get; set; }
+        public DbSet<WaterType> WaterTypes { get; set; }
         public DbSet<EventType> EventTypes { get; set; }
         public DbSet<PlacePhoto> PlacePhotos { get; set; }
-        public DbSet<Rule> Rules { get; set; }
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
@@ -29,30 +30,43 @@ namespace PlaceAgregator.EntityFramework
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Rate>()
-                .OwnsOne(item => item.TimeInterval, ti =>
-                {
-                    ti.OwnsOne(item => item.Shedule);
-                });
-
-            modelBuilder.Entity<Charge>()
-                .OwnsOne(item => item.TimeInterval, ti =>
-                {
-                    ti.OwnsOne(item => item.Shedule);
-                });
-
-            modelBuilder.Entity<Discount>()
-                .OwnsOne(item => item.TimeInterval, ti =>
-                {
-                    ti.OwnsOne(item => item.Shedule);
-                });
+            modelBuilder.ApplyUtcDateTimeConverter();
 
             modelBuilder.Entity<Place>()
                 .OwnsOne(item => item.Shedule);
 
+            modelBuilder.Entity<Place>()
+                .HasMany(item => item.BookingRequests)
+                .WithOne(item => item.Place)
+                .HasForeignKey(item => item.PlaceId)
+                .OnDelete(DeleteBehavior.SetNull);
 
-            modelBuilder.Entity<BookingRequestServiceItem>()
-                .HasKey(item => new { item.ServiceItemId, item.BookingRequestId });
+            modelBuilder.Entity<BookingRequest>()
+                .HasOne(item => item.Place)
+                .WithMany(item => item.BookingRequests)
+                .HasForeignKey(item => item.PlaceId)
+                .OnDelete(DeleteBehavior.SetNull);
+
+            modelBuilder.Entity<BookingRequest>()
+                .HasOne(item => item.User)
+                .WithMany(item => item.BookingRequests)
+                .HasForeignKey(item => item.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<BookingRequestServiceItem>(
+                j =>
+                {
+                    j.HasKey(item => new { item.ServiceItemId, item.BookingRequestId });
+                    j.HasOne(item => item.ServiceItem)
+                        .WithMany(item => item.BookingRequestServiceItems)
+                        .HasForeignKey(item => item.ServiceItemId)
+                        .OnDelete(DeleteBehavior.Cascade);
+                    j.HasOne(item => item.BookingRequest)
+                        .WithMany(item => item.ServiceItems)
+                        .HasForeignKey(item => item.BookingRequestId)
+                        .OnDelete(DeleteBehavior.Cascade);
+                    j.Property(item => item.Quantity).IsRequired();
+                });
 
             modelBuilder.Entity<Comment>(
                 j =>

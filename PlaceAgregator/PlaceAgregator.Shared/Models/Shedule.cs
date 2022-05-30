@@ -1,36 +1,28 @@
-﻿using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace PlaceAgregator.Shared.Models
 {
     public class Shedule
     {
         [Required]
-        [DefaultValue(false)]
-        public bool? Monday { get; set; } = false;
+        public bool? Monday { get; set; }
 
         [Required]
-        [DefaultValue(false)]
-        public bool? Thuesday { get; set; } = false;
+        public bool? Thuesday { get; set; }
 
         [Required]
-        [DefaultValue(false)]
-        public bool? Wednesday { get; set; } = false;
+        public bool? Wednesday { get; set; }
 
         [Required]
-        [DefaultValue(false)]
-        public bool? Thursday { get; set; } = false;
+        public bool? Thursday { get; set; }
 
         [Required]
-        [DefaultValue(false)]
-        public bool? Friday { get; set; } = false;
+        public bool? Friday { get; set; }
 
         [Required]
-        [DefaultValue(false)]
-        public bool? Saturday { get; set; } = false;
+        public bool? Saturday { get; set; }
 
         [Required]
-        [DefaultValue(false)]
-        public bool? Sunday { get; set; } = false;
+        public bool? Sunday { get; set; }
     }
 }

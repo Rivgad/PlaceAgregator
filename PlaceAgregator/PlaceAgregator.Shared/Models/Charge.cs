@@ -1,20 +1,24 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace PlaceAgregator.Shared.Models
 {
     public class Charge : Entity
     {
-        public int? RateId { get; set; }
-        public Rate? Rate { get; set; }
-
+        [Required]
         public int PlaceId { get; set; }
+
+        [JsonIgnore]
         public Place Place { get; set; }
 
         [Required]
+        [Range(1, float.PositiveInfinity)]
         public decimal Procents { get; set; }
-        public int? FromGuestsQuantity { get; set; }
-        public string? Comment { get; set; }
 
-        public TimeInterval? TimeInterval { get; set; }
+        [Required]
+        [Range(1, int.MaxValue)]
+        public int FromGuestsQuantity { get; set; }
+
+        public string? Comment { get; set; }
     }
 }

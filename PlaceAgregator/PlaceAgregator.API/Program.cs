@@ -7,7 +7,10 @@ using PlaceAgregator.API.AppBuilders;
 using PlaceAgregator.API.Services;
 using PlaceAgregator.API.Services.Interfaces;
 using PlaceAgregator.EntityFramework;
+using PlaceAgregator.Shared.DTOs.Booking;
+using PlaceAgregator.Shared.DTOs.Places;
 using PlaceAgregator.Shared.Models;
+using PlaceAgregator.Shared.Models.Types;
 using System.Text;
 
 
@@ -42,10 +45,10 @@ builder.Services.AddSwaggerGen(options =>
                  {
                      Type = ReferenceType.SecurityScheme,
                      Id = "Bearer"
-                 }
+                 },
              },
-            new string[] {}
-        }
+            Array.Empty<string>()
+        },
     });
 });
 
@@ -61,7 +64,7 @@ builder.Services.AddIdentity<AppUser, IdentityRole>(
         options.Password.RequireUppercase = true;
         options.Password.RequireLowercase = true;
         options.Password.RequireDigit = true;
-        options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_";
     })
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddUserManager<UserManager<AppUser>>()
@@ -91,15 +94,45 @@ builder.Services.AddAuthentication(options =>
                 Encoding.UTF8.GetBytes(Configuration["JWT:Secret"]))
         };
     });
+builder.Services.AddSingleton<IConfiguration>((services) => Configuration);
+builder.Services.AddScoped<IAuthService, AuthService>();
 
-builder.Services.AddSingleton<IAuthService>(
-    new AuthService(
-            jwtIssuer: Configuration.GetValue<string>("JWT:Issuer"),
-            jwtAudience: Configuration.GetValue<string>("JWT:Audience"),
-            jwtSecret: Configuration.GetValue<string>("JWT:Secret"),
-            jwtLifespan: Configuration.GetValue<int>("Jwt:Lifespan")
-        )
-    );
+builder.Services.AddAutoMapper(cfg =>
+{
+    cfg.CreateMap<Place, PlaceCardInfo>();
+    cfg.CreateMap<PlaceCreateDTO, Place>();
+    cfg.CreateMap<PlaceUpdateDTO, Place>()
+        .ForMember(dest => dest.EventTypes,
+            opt => opt.MapFrom(src => src.EventTypeIds.Select(item => new EventType() { Id = item })))
+        .ForMember(dest => dest.Prohibitions,
+            opt => opt.MapFrom(src => src.ProhibitionIds.Select(item => new Prohibition() { Id = item })));
+
+    cfg.CreateMap<Place, GetPlaceDTO>()
+        .ForMember(dest => dest.EventTypeIds,
+            opt => opt.MapFrom(src => src.EventTypes.Select(item => item.Id)))
+        .ForMember(dest => dest.ProhibitionIds,
+            opt => opt.MapFrom(src => src.Prohibitions.Select(item => item.Id)));
+
+    cfg.CreateMap<SheduleDTO, Shedule>();
+    cfg.CreateMap<Shedule, SheduleDTO>();
+
+    cfg.CreateMap<Charge, ChargeGetDTO>();
+    cfg.CreateMap<ChargeCreateDTO, Charge>();
+
+    cfg.CreateMap<Discount, DiscountGetDTO>();
+    cfg.CreateMap<DiscountCreateDTO, Discount>();
+
+    cfg.CreateMap<ServiceItem, ServiceItemGetDTO>();
+    cfg.CreateMap<ServiceItemCreateDTO, ServiceItem>();
+    cfg.CreateMap<ServiceItemUpdateDTO, ServiceItem>();
+
+    cfg.CreateMap<BookingRequest, BookingRequestGetDTO>();
+    cfg.CreateMap<BookingRequestCreateDTO, BookingRequest>();
+    cfg.CreateMap<BookingRequestServiceItemDTO, BookingRequestServiceItem>();
+    cfg.CreateMap<BookingRequestServiceItem, BookingRequestServiceItemGetDTO>()
+        .ForMember(dest => dest.Title, opt => opt.MapFrom(src => src.ServiceItem.Title));
+
+});
 
 var app = builder.Build();
 
@@ -115,6 +148,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+//app.UseExceptionHandler("/error");
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();

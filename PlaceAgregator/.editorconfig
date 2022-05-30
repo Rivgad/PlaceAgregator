@@ -1,4 +1,22 @@
 ﻿[*.cs]
 
+# CS8620: Аргумент запрещено использовать для параметра из-за различий в отношении допустимости значений NULL для ссылочных типов.
+dotnet_diagnostic.CS8620.severity = silent
+
+# CS0108: Член скрывает унаследованный член: отсутствует новое ключевое слово
+dotnet_diagnostic.CS0108.severity = silent
+
+# CS1998: В асинхронном методе отсутствуют операторы await, будет выполнен синхронный метод
+dotnet_diagnostic.CS1998.severity = silent
+
+# CS8603: Возможно, возврат ссылки, допускающей значение NULL.
+dotnet_diagnostic.CS8603.severity = silent
+
+# IDE0058: Значение выражения никогда не используется
+dotnet_diagnostic.IDE0058.severity = silent
+
+# CS8604: Возможно, аргумент-ссылка, допускающий значение NULL.
+dotnet_diagnostic.CS8604.severity = silent
+
 # CS8618: Поле, не допускающее значения NULL, должно содержать значение, отличное от NULL, при выходе из конструктора. Возможно, стоит объявить поле как допускающее значения NULL.
-dotnet_diagnostic.CS8618.severity = none
+dotnet_diagnostic.CS8618.severity = suggestion
