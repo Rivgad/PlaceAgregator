@@ -276,6 +276,88 @@ namespace PlaceAgregator.API.Controllers
             return result;
         }
 
+        [HttpGet("[Action]/{placeId}")]
+        public async Task<IEnumerable<BookingRequestGetDTO>> GetBlockingBookingRequests(int placeId)
+        {
+            var query = _context.BookingRequests.Where(item => item.PlaceId == placeId)
+                .Where(item => item.Status == BookingRequest.RequestStatus.Created && (DateTime.UtcNow - item.CreationDateTime).TotalHours <= 3
+                ||
+                item.Status == BookingRequest.RequestStatus.Accepted);
+
+            var result = await query.ToListAsync();
+
+            return result.Select(item => _mapper.Map<BookingRequestGetDTO>(item));
+        }
+
+        [HttpPost("[Action]")]
+        public async Task<IActionResult> GetPrice([FromBody] BookingRequestCreateDTO request)
+        {
+            var place = await _context.Places
+                .Include(item => item.ServiceItems)
+                .Include(item => item.Charges)
+                .Include(item => item.Discounts)
+                .FirstOrDefaultAsync(item => item.Id == request.PlaceId);
+
+            if (place == null)
+                return NotFound();
+
+            if (place.BaseRate == null || place.IsBlocked || !place.IsActive)
+                return BadRequest();
+
+            //Обнуление минут и секунд
+            request.StartDateTime = Normalize(request.StartDateTime);
+
+            request.EndDateTime = Normalize(request.EndDateTime);
+
+            //Меняем местами, если диапозон перевернут
+            if (request.StartDateTime > request.EndDateTime)
+                (request.StartDateTime, request.EndDateTime) = (request.EndDateTime, request.StartDateTime);
+
+            var requestTimeRange = new TimeRange(request.StartDateTime, request.EndDateTime);
+            int duration = (int)requestTimeRange.Duration.TotalHours;
+
+            var newBookingRequest = _mapper.Map<BookingRequest>(request);
+
+            decimal serviceItemsTotalPrice = 0;
+            try
+            {
+                serviceItemsTotalPrice += await CalculateAndValidateOrderPrice(newBookingRequest.ServiceItems);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
+            decimal totalDiscount = place.Discounts
+                .Where(item => item.FromHoursQuantity <= duration)
+                .Select(item => item.Procents)
+                .Sum();
+            decimal totalCharge = place.Charges
+                .Where(item => item.FromGuestsQuantity <= request.GuestsQuantity)
+                .Select(item => item.Procents)
+                .Sum();
+
+            // Просчитываем конечную сумму 
+            decimal totalPrice = (decimal)place.BaseRate * duration * (1 - totalDiscount / 100) * (1 + totalCharge / 100);
+            totalPrice += serviceItemsTotalPrice;
+
+            return Ok(new { price = totalPrice });
+        }
+
+        private static DateTime Normalize(DateTime dateTime)
+        {
+            dateTime = new DateTime(
+                year: dateTime.Year,
+                month: dateTime.Month,
+                day: dateTime.Day,
+                hour: dateTime.Hour,
+                minute: 0,
+                second: 0)
+                .ToUniversalTime();
+
+            return dateTime;
+        }
+
         /// <summary>
         /// Creates new <see cref="BookingRequest"/>
         /// </summary>
