@@ -5,13 +5,14 @@ namespace PlaceAgregator.Shared.DTOs.Users
 {
     public class AppUserUpdateDTO
     {
-        [MinLength(6)]
+        [Required]
         [JsonPropertyName("userName")]
-        public string? UserName { get; set; }
+        public string UserName { get; set; }
 
-        [MinLength(3)]
+        [Required]
+        [EmailAddress]
         [JsonPropertyName("email")]
-        public string? Email { get; set; }
+        public string Email { get; set; }
 
         [JsonPropertyName("firstName")]
         public string? FirstName { get; set; }
