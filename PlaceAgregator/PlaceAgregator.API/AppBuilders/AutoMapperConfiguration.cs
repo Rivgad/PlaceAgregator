@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using PlaceAgregator.Shared.DTOs.Booking;
 using PlaceAgregator.Shared.DTOs.Comments;
 using PlaceAgregator.Shared.DTOs.Places;
+using PlaceAgregator.Shared.DTOs.Users;
 using PlaceAgregator.Shared.Models;
 using PlaceAgregator.Shared.Models.Types;
 
@@ -48,6 +49,9 @@ namespace PlaceAgregator.API.AppBuilders
             cfg.CreateMap<CommentDTO, Comment>();
             cfg.CreateMap<Comment, CommentGetDTO>()
                 .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.User.UserName));
+
+            cfg.CreateMap<AppUser, AppUserGetDTO>();
+            cfg.CreateMap<AppUserUpdateDTO, AppUser>();
 
             return cfg;
         }
