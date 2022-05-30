@@ -264,7 +264,6 @@ namespace PlaceAgregator.EntityFramework
                             GuestsQuantity = 5,
                             Status = BookingRequest.RequestStatus.Created,
                             Comment = "Хочу того да сего да побольше",
-                            EnrollDateTime = DateTime.UtcNow.AddDays(10),
                             ServiceItems = new List<BookingRequestServiceItem>()
                             {
                                 new BookingRequestServiceItem()
@@ -389,7 +388,6 @@ namespace PlaceAgregator.EntityFramework
                             EndDateTime = DateTime.UtcNow.AddDays(20).AddHours(2),
                             GuestsQuantity = 10,
                             Status = BookingRequest.RequestStatus.Created,
-                            EnrollDateTime = DateTime.UtcNow.AddDays(10),
                             ServiceItems = new List<BookingRequestServiceItem>()
                             {
                                 new BookingRequestServiceItem()

@@ -17,9 +17,6 @@ namespace PlaceAgregator.Shared.DTOs.Booking
         [JsonPropertyName("endDateTime")]
         public DateTime EndDateTime { get; set; }
 
-        [JsonPropertyName("enrollDateTime")]
-        public DateTime? EnrollDateTime { get; set; }
-
         [Required]
         [JsonPropertyName("guestsQuantity")]
         public int GuestsQuantity { get; set; }
