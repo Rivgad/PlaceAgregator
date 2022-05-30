@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using PlaceAgregator.EntityFramework;
@@ -11,9 +12,10 @@ using PlaceAgregator.EntityFramework;
 namespace PlaceAgregator.EntityFramework.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220527073751_BookingRequestAddTotalPrice")]
+    partial class BookingRequestAddTotalPrice
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -259,6 +261,9 @@ namespace PlaceAgregator.EntityFramework.Migrations
                     b.Property<DateTime>("EndDateTime")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<DateTime?>("EnrollDateTime")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<int>("GuestsQuantity")
                         .HasColumnType("integer");
 
@@ -271,7 +276,7 @@ namespace PlaceAgregator.EntityFramework.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("integer");
 
-                    b.Property<decimal>("TotalPrice")
+                    b.Property<decimal?>("TotalPrice")
                         .HasColumnType("numeric");
 
                     b.Property<string>("UserId")
@@ -525,7 +530,10 @@ namespace PlaceAgregator.EntityFramework.Migrations
                     b.Property<string>("Comment")
                         .HasColumnType("text");
 
-                    b.Property<int>("MaxQuantity")
+                    b.Property<bool>("IsCountable")
+                        .HasColumnType("boolean");
+
+                    b.Property<int?>("MaxQuantity")
                         .HasColumnType("integer");
 
                     b.Property<int>("Per")
@@ -719,7 +727,7 @@ namespace PlaceAgregator.EntityFramework.Migrations
                     b.HasOne("PlaceAgregator.Shared.Models.Place", "Place")
                         .WithMany("BookingRequests")
                         .HasForeignKey("PlaceId")
-                        .OnDelete(DeleteBehavior.SetNull)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("PlaceAgregator.Shared.Models.AppUser", "User")
@@ -742,7 +750,7 @@ namespace PlaceAgregator.EntityFramework.Migrations
                         .IsRequired();
 
                     b.HasOne("PlaceAgregator.Shared.Models.ServiceItem", "ServiceItem")
-                        .WithMany("BookingRequestServiceItems")
+                        .WithMany()
                         .HasForeignKey("ServiceItemId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -929,11 +937,6 @@ namespace PlaceAgregator.EntityFramework.Migrations
                     b.Navigation("Photos");
 
                     b.Navigation("ServiceItems");
-                });
-
-            modelBuilder.Entity("PlaceAgregator.Shared.Models.ServiceItem", b =>
-                {
-                    b.Navigation("BookingRequestServiceItems");
                 });
 
             modelBuilder.Entity("PlaceAgregator.Shared.Models.Types.BuildingType", b =>

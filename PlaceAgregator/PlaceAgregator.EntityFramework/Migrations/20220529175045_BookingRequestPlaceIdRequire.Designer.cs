@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using PlaceAgregator.EntityFramework;
@@ -11,9 +12,10 @@ using PlaceAgregator.EntityFramework;
 namespace PlaceAgregator.EntityFramework.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220529175045_BookingRequestPlaceIdRequire")]
+    partial class BookingRequestPlaceIdRequire
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -259,6 +261,9 @@ namespace PlaceAgregator.EntityFramework.Migrations
                     b.Property<DateTime>("EndDateTime")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<DateTime?>("EnrollDateTime")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<int>("GuestsQuantity")
                         .HasColumnType("integer");
 
@@ -271,7 +276,7 @@ namespace PlaceAgregator.EntityFramework.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("integer");
 
-                    b.Property<decimal>("TotalPrice")
+                    b.Property<decimal?>("TotalPrice")
                         .HasColumnType("numeric");
 
                     b.Property<string>("UserId")

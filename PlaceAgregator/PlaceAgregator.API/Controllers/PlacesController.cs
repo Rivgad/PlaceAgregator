@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using PlaceAgregator.API.Services.Interfaces;
 using PlaceAgregator.EntityFramework;
 using PlaceAgregator.Shared.DTOs.Places;
 using PlaceAgregator.Shared.Extensions;
@@ -26,7 +25,114 @@ namespace PlaceAgregator.API.Controllers
             _mapper = mapper;
         }
 
-        
+        #region Charges
+
+        [Authorize(Roles = "user")]
+        [HttpPost("{id?}/Charges")]
+        [Produces(typeof(ChargeGetDTO))]
+        public async Task<IActionResult> AddCharge(int id, [FromBody] ChargeCreateDTO charge)
+        {
+            var place = await _context.Places.FirstOrDefaultAsync(item => item.Id == id && item.IsBlocked == false);
+            if (place == null)
+                return NotFound();
+
+            string? accountId = User.FindFirst(ClaimTypes.Sid)?.Value;
+            if (accountId == null)
+                return Forbid();
+
+            if (place.UserId != accountId)
+                return Forbid();
+
+            Charge newCharge = _mapper.Map<Charge>(charge);
+            newCharge.PlaceId = place.Id;
+
+            newCharge = _context.Charges.Add(newCharge).Entity;
+            await _context.SaveChangesAsync();
+
+            return Ok(_mapper.Map<ChargeGetDTO>(newCharge));
+        }
+
+        [Authorize(Roles = "user")]
+        [HttpDelete("{id?}/Charges/{chargeId?}")]
+        public async Task<IActionResult> DeleteCharge(int id, int chargeId)
+        {
+            var place = await _context.Places
+                .Include(item => item.Charges)
+                .FirstOrDefaultAsync(item => item.Id == id && item.IsBlocked == false);
+
+            if (place == null)
+                return NotFound();
+
+            string? accountId = User.FindFirst(ClaimTypes.Sid)?.Value;
+            if (accountId == null || place.UserId != accountId)
+                return Forbid();
+
+            var charge = place.Charges?.FirstOrDefault(item => item.Id == chargeId);
+            if (charge == null)
+                return BadRequest();
+
+            _context.Charges.Remove(charge);
+            await _context.SaveChangesAsync();
+
+            return Ok(new { id = chargeId });
+        }
+
+        #endregion
+
+        #region Discounts
+
+        [Authorize(Roles = "user")]
+        [HttpPost("{id?}/Discounts")]
+        [Produces(typeof(DiscountGetDTO))]
+        public async Task<IActionResult> AddDiscount(int id, [FromBody] DiscountCreateDTO discount)
+        {
+            var place = await _context.Places.FirstOrDefaultAsync(item => item.Id == id && item.IsBlocked == false);
+            if (place == null)
+                return NotFound();
+
+            string? accountId = User.FindFirst(ClaimTypes.Sid)?.Value;
+            if (accountId == null)
+                return Forbid();
+
+            if (place.UserId != accountId)
+                return Forbid();
+
+            Discount newDiscount = _mapper.Map<Discount>(discount);
+            newDiscount.PlaceId = place.Id;
+
+            newDiscount = _context.Discounts.Add(newDiscount).Entity;
+            await _context.SaveChangesAsync();
+
+            return Ok(_mapper.Map<DiscountGetDTO>(newDiscount));
+        }
+
+        [Authorize(Roles = "user")]
+        [HttpDelete("{id?}/Discounts/{discountId?}")]
+        public async Task<IActionResult> DeleteDiscount(int id, int discountId)
+        {
+            var place = await _context.Places
+                .Include(item => item.Discounts)
+                .FirstOrDefaultAsync(item => item.Id == id && item.IsBlocked == false);
+
+            if (place == null)
+                return NotFound();
+
+            string? accountId = User.FindFirst(ClaimTypes.Sid)?.Value;
+            if (accountId == null || place.UserId != accountId)
+                return Forbid();
+
+            var discount = place.Discounts?.FirstOrDefault(item => item.Id == discountId);
+            if (discount == null)
+                return BadRequest();
+
+            _context.Discounts.Remove(discount);
+            await _context.SaveChangesAsync();
+
+            return Ok(new { id = discountId });
+        }
+
+        #endregion
+
         #region ServiceItems
 
         [Authorize(Roles = "user")]
@@ -145,7 +251,7 @@ namespace PlaceAgregator.API.Controllers
         public async Task<IActionResult> DeletePhoto(int id, int photoId)
         {
             var place = await _context.Places
-                .Include(item=>item.Photos)
+                .Include(item => item.Photos)
                 .FirstOrDefaultAsync(item => item.Id == id && item.IsBlocked == false);
             if (place == null)
                 return NotFound();
@@ -289,7 +395,7 @@ namespace PlaceAgregator.API.Controllers
         [Authorize(Roles = "user")]
         [HttpPost]
         [Produces(typeof(GetPlaceDTO))]
-        public async Task<IActionResult> CreatePlaceAsync([FromForm]PlaceCreateDTO place)
+        public async Task<IActionResult> CreatePlaceAsync([FromForm] PlaceCreateDTO place)
         {
             string? accountId = User.FindFirst(ClaimTypes.Sid)?.Value;
             if (accountId == null)
@@ -339,7 +445,7 @@ namespace PlaceAgregator.API.Controllers
             await _context.SaveChangesAsync();
 
             return Ok(placeDTO);
-        } 
+        }
 
         #endregion
     }

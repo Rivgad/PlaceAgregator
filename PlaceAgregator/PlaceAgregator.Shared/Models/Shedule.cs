@@ -1,5 +1,4 @@
-﻿using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace PlaceAgregator.Shared.Models
 {
@@ -12,7 +11,7 @@ namespace PlaceAgregator.Shared.Models
         public bool? Thuesday { get; set; }
 
         [Required]
-        public bool? Wednesday { get; set; } 
+        public bool? Wednesday { get; set; }
 
         [Required]
         public bool? Thursday { get; set; }

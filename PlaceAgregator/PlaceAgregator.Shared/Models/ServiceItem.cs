@@ -20,6 +20,7 @@ namespace PlaceAgregator.Shared.Models
             [Description("Человек")]
             Person = 4
         }
+
         public int PlaceId { get; set; }
 
         [JsonIgnore]
@@ -32,11 +33,13 @@ namespace PlaceAgregator.Shared.Models
         public decimal Price { get; set; }
 
         [Required]
-        public bool IsCountable { get; set; } = true;
-        public int? MaxQuantity { get; set; }
+        public int MaxQuantity { get; set; }
 
         [Required]
         public PerValueType Per { get; set; } = PerValueType.Piece;
+
         public string? Comment { get; set; }
+
+        public IEnumerable<BookingRequestServiceItem>? BookingRequestServiceItems { get; set; }
     }
 }

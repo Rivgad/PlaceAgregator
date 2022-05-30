@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using PlaceAgregator.EntityFramework;
@@ -11,9 +12,10 @@ using PlaceAgregator.EntityFramework;
 namespace PlaceAgregator.EntityFramework.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220527085612_BookingRequestPlaceIdNullable")]
+    partial class BookingRequestPlaceIdNullable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -259,10 +261,13 @@ namespace PlaceAgregator.EntityFramework.Migrations
                     b.Property<DateTime>("EndDateTime")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<DateTime?>("EnrollDateTime")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<int>("GuestsQuantity")
                         .HasColumnType("integer");
 
-                    b.Property<int>("PlaceId")
+                    b.Property<int?>("PlaceId")
                         .HasColumnType("integer");
 
                     b.Property<DateTime>("StartDateTime")
@@ -271,7 +276,7 @@ namespace PlaceAgregator.EntityFramework.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("integer");
 
-                    b.Property<decimal>("TotalPrice")
+                    b.Property<decimal?>("TotalPrice")
                         .HasColumnType("numeric");
 
                     b.Property<string>("UserId")
@@ -719,8 +724,7 @@ namespace PlaceAgregator.EntityFramework.Migrations
                     b.HasOne("PlaceAgregator.Shared.Models.Place", "Place")
                         .WithMany("BookingRequests")
                         .HasForeignKey("PlaceId")
-                        .OnDelete(DeleteBehavior.SetNull)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.HasOne("PlaceAgregator.Shared.Models.AppUser", "User")
                         .WithMany("BookingRequests")

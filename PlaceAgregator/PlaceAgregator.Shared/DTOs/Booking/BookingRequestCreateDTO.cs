@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 
 namespace PlaceAgregator.Shared.DTOs.Booking
 {
-    public class BookingCreateDTO
+    public class BookingRequestCreateDTO
     {
         [Required]
         [JsonPropertyName("placeId")]
@@ -16,9 +16,6 @@ namespace PlaceAgregator.Shared.DTOs.Booking
         [Required]
         [JsonPropertyName("endDateTime")]
         public DateTime EndDateTime { get; set; }
-
-        [JsonPropertyName("enrollDateTime")]
-        public DateTime? EnrollDateTime { get; set; }
 
         [Required]
         [JsonPropertyName("guestsQuantity")]

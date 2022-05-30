@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using PlaceAgregator.Shared.Extensions;
 using PlaceAgregator.Shared.Models;
 using PlaceAgregator.Shared.Models.Types;
 
@@ -29,11 +30,43 @@ namespace PlaceAgregator.EntityFramework
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.ApplyUtcDateTimeConverter();
+
             modelBuilder.Entity<Place>()
                 .OwnsOne(item => item.Shedule);
 
-            modelBuilder.Entity<BookingRequestServiceItem>()
-                .HasKey(item => new { item.ServiceItemId, item.BookingRequestId });
+            modelBuilder.Entity<Place>()
+                .HasMany(item => item.BookingRequests)
+                .WithOne(item => item.Place)
+                .HasForeignKey(item => item.PlaceId)
+                .OnDelete(DeleteBehavior.SetNull);
+
+            modelBuilder.Entity<BookingRequest>()
+                .HasOne(item => item.Place)
+                .WithMany(item => item.BookingRequests)
+                .HasForeignKey(item => item.PlaceId)
+                .OnDelete(DeleteBehavior.SetNull);
+
+            modelBuilder.Entity<BookingRequest>()
+                .HasOne(item => item.User)
+                .WithMany(item => item.BookingRequests)
+                .HasForeignKey(item => item.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<BookingRequestServiceItem>(
+                j =>
+                {
+                    j.HasKey(item => new { item.ServiceItemId, item.BookingRequestId });
+                    j.HasOne(item => item.ServiceItem)
+                        .WithMany(item => item.BookingRequestServiceItems)
+                        .HasForeignKey(item => item.ServiceItemId)
+                        .OnDelete(DeleteBehavior.Cascade);
+                    j.HasOne(item => item.BookingRequest)
+                        .WithMany(item => item.ServiceItems)
+                        .HasForeignKey(item => item.BookingRequestId)
+                        .OnDelete(DeleteBehavior.Cascade);
+                    j.Property(item => item.Quantity).IsRequired();
+                });
 
             modelBuilder.Entity<Comment>(
                 j =>

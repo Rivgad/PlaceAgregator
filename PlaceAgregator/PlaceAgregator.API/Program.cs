@@ -7,8 +7,8 @@ using PlaceAgregator.API.AppBuilders;
 using PlaceAgregator.API.Services;
 using PlaceAgregator.API.Services.Interfaces;
 using PlaceAgregator.EntityFramework;
+using PlaceAgregator.Shared.DTOs.Booking;
 using PlaceAgregator.Shared.DTOs.Places;
-using PlaceAgregator.Shared.Extensions;
 using PlaceAgregator.Shared.Models;
 using PlaceAgregator.Shared.Models.Types;
 using System.Text;
@@ -45,10 +45,10 @@ builder.Services.AddSwaggerGen(options =>
                  {
                      Type = ReferenceType.SecurityScheme,
                      Id = "Bearer"
-                 }
+                 },
              },
-            new string[] {}
-        }
+            Array.Empty<string>()
+        },
     });
 });
 
@@ -125,6 +125,12 @@ builder.Services.AddAutoMapper(cfg =>
     cfg.CreateMap<ServiceItem, ServiceItemGetDTO>();
     cfg.CreateMap<ServiceItemCreateDTO, ServiceItem>();
     cfg.CreateMap<ServiceItemUpdateDTO, ServiceItem>();
+
+    cfg.CreateMap<BookingRequest, BookingRequestGetDTO>();
+    cfg.CreateMap<BookingRequestCreateDTO, BookingRequest>();
+    cfg.CreateMap<BookingRequestServiceItemDTO, BookingRequestServiceItem>();
+    cfg.CreateMap<BookingRequestServiceItem, BookingRequestServiceItemGetDTO>()
+        .ForMember(dest => dest.Title, opt => opt.MapFrom(src => src.ServiceItem.Title));
 
 });
 
