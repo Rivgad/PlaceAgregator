@@ -36,9 +36,9 @@ namespace PlaceAgregator.EntityFramework
                 .OwnsOne(item => item.Shedule);
 
             modelBuilder.Entity<Place>()
-                .HasMany(item=>item.BookingRequests)
-                .WithOne(item=>item.Place)
-                .HasForeignKey(item=>item.PlaceId)
+                .HasMany(item => item.BookingRequests)
+                .WithOne(item => item.Place)
+                .HasForeignKey(item => item.PlaceId)
                 .OnDelete(DeleteBehavior.SetNull);
 
             modelBuilder.Entity<BookingRequest>()

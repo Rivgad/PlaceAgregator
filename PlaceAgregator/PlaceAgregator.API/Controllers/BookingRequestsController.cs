@@ -1,15 +1,15 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using Itenso.TimePeriod;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using PlaceAgregator.EntityFramework;
+using PlaceAgregator.Shared.DTOs.Booking;
 using PlaceAgregator.Shared.Extensions;
 using PlaceAgregator.Shared.Models;
-using System.Data;
 using System.ComponentModel.DataAnnotations;
-using Microsoft.AspNetCore.Authorization;
-using PlaceAgregator.Shared.DTOs.Booking;
-using AutoMapper;
-using Microsoft.EntityFrameworkCore;
+using System.Data;
 using System.Security.Claims;
-using Itenso.TimePeriod;
 
 namespace PlaceAgregator.API.Controllers
 {
@@ -120,7 +120,7 @@ namespace PlaceAgregator.API.Controllers
         }
 
         #endregion
-        
+
         #region Change status handles
 
         /// <summary>

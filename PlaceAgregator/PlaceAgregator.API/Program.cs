@@ -130,7 +130,7 @@ builder.Services.AddAutoMapper(cfg =>
     cfg.CreateMap<BookingRequestCreateDTO, BookingRequest>();
     cfg.CreateMap<BookingRequestServiceItemDTO, BookingRequestServiceItem>();
     cfg.CreateMap<BookingRequestServiceItem, BookingRequestServiceItemGetDTO>()
-        .ForMember(dest=>dest.Title, opt=> opt.MapFrom(src=> src.ServiceItem.Title));
+        .ForMember(dest => dest.Title, opt => opt.MapFrom(src => src.ServiceItem.Title));
 
 });
 

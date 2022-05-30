@@ -7,7 +7,7 @@ namespace PlaceAgregator.Shared.DTOs.Booking
     {
         [JsonPropertyName("id")]
         public int Id { get; set; }
-        
+
         [JsonPropertyName("placeId")]
         public int? PlaceId { get; set; }
 
