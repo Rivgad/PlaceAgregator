@@ -24,7 +24,7 @@ namespace PlaceAgregator.Shared.Models
         public DateTime LastEditTime { get; set; }
 
         [Required]
-        public int Rating { get; set; } = 1;
+        public int Rating { get; set; }
 
         [Required]
         public bool IsBlocked { get; set; }
