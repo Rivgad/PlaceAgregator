@@ -47,38 +47,12 @@ namespace PlaceAgregator.Shared.DTOs.Places
         [Range(0, int.MaxValue)]
         public int? SocketsQuantity { get; set; }
 
-        [JsonPropertyName("maleToiletsQuantity")]
+        [JsonPropertyName("toiletsQuantity")]
         [Range(0, int.MaxValue)]
-        public int? MaleToiletsQuantity { get; set; }
-
-        [JsonPropertyName("femaleToiletsQuantity")]
-        [Range(0, int.MaxValue)]
-        public int? FemaleToiletsQuantity { get; set; }
-
-        [JsonPropertyName("sharedToiletsQuantity")]
-        [Range(0, int.MaxValue)]
-        public int? SharedToiletsQuantity { get; set; }
-
-        [JsonPropertyName("parkingSpace")]
-        [Range(0, int.MaxValue)]
-        public int? ParkingSpace { get; set; }
-
-        [JsonPropertyName("floor")]
-        [Range(0, int.MaxValue)]
-        public int? Floor { get; set; }
-
-        [JsonPropertyName("floorsQuantity")]
-        [Range(0, int.MaxValue)]
-        public int? FloorsQuantity { get; set; }
+        public int? ToiletsQuantity { get; set; }
 
         [JsonPropertyName("hasElevator")]
         public bool? HasElevator { get; set; }
-
-        [JsonPropertyName("hasFreightElevator")]
-        public bool? HasFreightElevator { get; set; }
-
-        [JsonPropertyName("hasDisabledEntrance")]
-        public bool? HasDisabledEntrance { get; set; }
 
         [JsonPropertyName("bookingHorizonInDays")]
         [Range(0, int.MaxValue)]

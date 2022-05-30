@@ -21,7 +21,7 @@ namespace PlaceAgregator.API.AppBuilders
                 .ForMember(dest => dest.Prohibitions,
                     opt => opt.MapFrom(src => src.ProhibitionIds.Select(item => new Prohibition() { Id = item })));
 
-            cfg.CreateMap<Place, GetPlaceDTO>()
+            cfg.CreateMap<Place, PlaceGetDTO>()
                 .ForMember(dest => dest.EventTypeIds,
                     opt => opt.MapFrom(src => src.EventTypes.Select(item => item.Id)))
                 .ForMember(dest => dest.ProhibitionIds,

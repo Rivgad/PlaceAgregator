@@ -357,7 +357,7 @@ namespace PlaceAgregator.API.Controllers
         }
 
         [HttpGet("{id}")]
-        [ProducesResponseType(200, Type = typeof(GetPlaceDTO))]
+        [ProducesResponseType(200, Type = typeof(PlaceGetDTO))]
         [ProducesResponseType(400)]
         public async Task<IActionResult> GetPlaceAsync(int id)
         {
@@ -374,7 +374,7 @@ namespace PlaceAgregator.API.Controllers
             if (place == null)
                 return NotFound();
 
-            return Ok(_mapper.Map<GetPlaceDTO>(place));
+            return Ok(_mapper.Map<PlaceGetDTO>(place));
         }
 
         [Authorize(Roles = "user")]
@@ -413,7 +413,7 @@ namespace PlaceAgregator.API.Controllers
 
         [Authorize(Roles = "user")]
         [HttpPost]
-        [Produces(typeof(GetPlaceDTO))]
+        [Produces(typeof(PlaceGetDTO))]
         public async Task<IActionResult> CreatePlaceAsync([FromForm] PlaceCreateDTO place)
         {
             string? accountId = User.FindFirst(ClaimTypes.Sid)?.Value;
@@ -427,12 +427,12 @@ namespace PlaceAgregator.API.Controllers
             await _context.SaveChangesAsync();
             newPlace = result.Entity;
 
-            return Ok(_mapper.Map<GetPlaceDTO>(newPlace));
+            return Ok(_mapper.Map<PlaceGetDTO>(newPlace));
         }
 
         [Authorize(Roles = "user")]
         [HttpPut("{id}")]
-        [Produces(typeof(GetPlaceDTO))]
+        [Produces(typeof(PlaceGetDTO))]
         public async Task<IActionResult> UpdatePlaceAsync(int id, [FromForm] PlaceUpdateDTO placeDTO)
         {
             var place = await _context.Places.FirstOrDefaultAsync(item => item.Id == id && item.IsBlocked == false);

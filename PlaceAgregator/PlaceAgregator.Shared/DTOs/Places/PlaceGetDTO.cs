@@ -4,7 +4,7 @@ using System.Text.Json.Serialization;
 
 namespace PlaceAgregator.Shared.DTOs.Places
 {
-    public class GetPlaceDTO
+    public class PlaceGetDTO
     {
         [JsonPropertyName("id")]
         public int Id { get; set; }
@@ -81,41 +81,13 @@ namespace PlaceAgregator.Shared.DTOs.Places
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public int? SocketsQuantity { get; set; }
 
-        [JsonPropertyName("maleToiletsQuantity")]
+        [JsonPropertyName("toiletsQuantity")]
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-        public int? MaleToiletsQuantity { get; set; }
-
-        [JsonPropertyName("femaleToiletsQuantity")]
-        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-        public int? FemaleToiletsQuantity { get; set; }
-
-        [JsonPropertyName("sharedToiletsQuantity")]
-        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-        public int? SharedToiletsQuantity { get; set; }
-
-        [JsonPropertyName("parkingSpace")]
-        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-        public int? ParkingSpace { get; set; }
-
-        [JsonPropertyName("floor")]
-        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-        public int? Floor { get; set; }
-
-        [JsonPropertyName("floorsQuantity")]
-        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-        public int? FloorsQuantity { get; set; }
+        public int? ToiletsQuantity { get; set; }
 
         [JsonPropertyName("hasElevator")]
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public bool? HasElevator { get; set; }
-
-        [JsonPropertyName("hasFreightElevator")]
-        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-        public bool? HasFreightElevator { get; set; }
-
-        [JsonPropertyName("hasDisabledEntrance")]
-        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-        public bool? HasDisabledEntrance { get; set; }
 
         [JsonPropertyName("bookingHorizonInDays")]
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]

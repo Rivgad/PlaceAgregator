@@ -300,8 +300,7 @@ namespace PlaceAgregator.EntityFramework
                         Wednesday = true,
                         Friday = true,
                         Thuesday = true
-                    },
-                    ParkingSpace = 20
+                    }
                 },
                 new Place()
                 {
@@ -402,8 +401,7 @@ namespace PlaceAgregator.EntityFramework
                         Thuesday = true,
                         Sunday = false,
                         Saturday = false
-                    },
-                    ParkingSpace = 30
+                    }
                 }
             };
 

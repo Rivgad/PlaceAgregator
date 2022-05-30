@@ -59,26 +59,10 @@ namespace PlaceAgregator.Shared.Models
 
         public int? SocketsQuantity { get; set; }
 
-        public int? MaleToiletsQuantity { get; set; }
-
-        public int? FemaleToiletsQuantity { get; set; }
-
-        public int? SharedToiletsQuantity { get; set; }
-
-        public int? ParkingSpace { get; set; }
-
-        public int? Floor { get; set; }
-
-        public int? FloorsQuantity { get; set; }
+        public int? ToiletsQuantity { get; set; }
 
         [Required]
         public bool HasElevator { get; set; } = false;
-
-        [Required]
-        public bool HasFreightElevator { get; set; } = false;
-
-        [Required]
-        public bool HasDisabledEntrance { get; set; } = false;
 
         public int? BookingHorizonInDays { get; set; }
 
