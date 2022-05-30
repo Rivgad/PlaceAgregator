@@ -9,7 +9,7 @@ namespace PlaceAgregator.Shared.DTOs.Places
         [JsonPropertyName("id")]
         public int Id { get; set; }
 
-        [JsonPropertyName("user")]
+        [JsonPropertyName("owner")]
         public AppUserGetDTO User { get; set; }
 
         [JsonPropertyName("waterTypeId")]
