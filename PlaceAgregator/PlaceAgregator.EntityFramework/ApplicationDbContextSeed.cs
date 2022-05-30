@@ -127,11 +127,6 @@ namespace PlaceAgregator.EntityFramework
                 "Квартирник",
                 "Презентация"
             };
-            var waterTypes = new List<string>()
-            {
-                "Кулер",
-                "Из под крана"
-            };
 
             var prohibionTypes = new List<string>()
             {
@@ -147,40 +142,10 @@ namespace PlaceAgregator.EntityFramework
                 "приносить свои напитки (включая алкоголь)"
             };
 
-            var buildingTypes = new List<string>()
-            {
-                "Офис" ,
-                "Отель",
-                "Лофт",
-                "Отель"
-            };
-
-            var parkingTypes = new List<string>()
-            {
-                "Рядом со зданием",
-                "Своя парковка",
-                "Парковка дальше 100м от здания"
-            };
-
             foreach (var eventType in eventTypes)
             {
                 if (!context.EventTypes.Any(item => item.Title == eventType))
                     await context.EventTypes.AddAsync(new() { Title = eventType });
-            }
-            foreach (var type in waterTypes)
-            {
-                if (!context.WaterTypes.Any(item => item.Title == type))
-                    await context.WaterTypes.AddAsync(new() { Title = type });
-            }
-            foreach (var type in buildingTypes)
-            {
-                if (!context.BuildingTypes.Any(item => item.Title == type))
-                    await context.BuildingTypes.AddAsync(new() { Title = type });
-            }
-            foreach (var type in parkingTypes)
-            {
-                if (!context.ParkingTypes.Any(item => item.Title == type))
-                    await context.ParkingTypes.AddAsync(new() { Title = type });
             }
             foreach (var type in prohibionTypes)
             {
@@ -327,9 +292,6 @@ namespace PlaceAgregator.EntityFramework
                             Comment = "Уборка от 20 человек"
                         }
                     },
-                    BuildingTypeId = 1,
-                    WaterTypeId = 1,
-                    ParkingTypeId = 1,
                     IsActive = true,
                     Shedule = new Shedule()
                     {
@@ -430,9 +392,6 @@ namespace PlaceAgregator.EntityFramework
                             Procents = 30,
                         }
                     },
-                    BuildingTypeId = 1,
-                    WaterTypeId = 2,
-                    ParkingTypeId = 2,
                     IsActive = true,
                     Shedule = new Shedule()
                     {

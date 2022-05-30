@@ -12,18 +12,6 @@ namespace PlaceAgregator.Shared.DTOs.Places
         [JsonPropertyName("owner")]
         public AppUserGetDTO User { get; set; }
 
-        [JsonPropertyName("waterTypeId")]
-        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-        public int? WaterTypeId { get; set; }
-
-        [JsonPropertyName("buildingTypeId")]
-        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-        public int? BuildingTypeId { get; set; }
-
-        [JsonPropertyName("parkingTypeId")]
-        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-        public int? ParkingTypeId { get; set; }
-
         [JsonPropertyName("prohibitions")]
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public int[]? ProhibitionIds { get; set; }

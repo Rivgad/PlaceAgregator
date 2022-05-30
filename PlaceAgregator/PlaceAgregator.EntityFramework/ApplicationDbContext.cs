@@ -18,9 +18,6 @@ namespace PlaceAgregator.EntityFramework
         public DbSet<Discount> Discounts { get; set; }
 
         public DbSet<Prohibition> Prohibitions { get; set; }
-        public DbSet<BuildingType> BuildingTypes { get; set; }
-        public DbSet<ParkingType> ParkingTypes { get; set; }
-        public DbSet<WaterType> WaterTypes { get; set; }
         public DbSet<EventType> EventTypes { get; set; }
         public DbSet<PlacePhoto> PlacePhotos { get; set; }
 

@@ -16,21 +16,6 @@ namespace PlaceAgregator.Shared.Models
         [JsonIgnore]
         public AppUser User { get; set; }
 
-        public int? WaterTypeId { get; set; }
-
-        [JsonIgnore]
-        public WaterType? WaterType { get; set; }
-
-        public int? BuildingTypeId { get; set; }
-
-        [JsonIgnore]
-        public BuildingType? BuildingType { get; set; }
-
-        public int? ParkingTypeId { get; set; }
-
-        [JsonIgnore]
-        public ParkingType? ParkingType { get; set; }
-
         #endregion
 
         #region Relations

@@ -455,12 +455,6 @@ namespace PlaceAgregator.API.Controllers
             if (place.Prohibitions != null)
                 _context.AttachRange(place.Prohibitions);
 
-            if (place.BuildingTypeId != null)
-                _context.Attach(place.BuildingTypeId);
-            if (place.ParkingTypeId != null)
-                _context.AttachRange(place.ParkingTypeId);
-            if (place.WaterTypeId != null)
-                _context.AttachRange(place.WaterTypeId);
             await _context.SaveChangesAsync();
 
             return Ok(placeDTO);

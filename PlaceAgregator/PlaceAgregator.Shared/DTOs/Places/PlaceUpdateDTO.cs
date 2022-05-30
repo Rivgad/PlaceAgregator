@@ -5,24 +5,11 @@ namespace PlaceAgregator.Shared.DTOs.Places
 {
     public class PlaceUpdateDTO
     {
-        [Range(0, int.MaxValue)]
-        [JsonPropertyName("waterTypeId")]
-        public int? WaterTypeId { get; set; }
-
-        [Range(0, int.MaxValue)]
-        [JsonPropertyName("buildingTypeId")]
-        public int? BuildingTypeId { get; set; }
-
-        [Range(0, int.MaxValue)]
-        [JsonPropertyName("parkingTypeId")]
-        public int? ParkingTypeId { get; set; }
-
         [JsonPropertyName("prohibitions")]
         public int[]? ProhibitionIds { get; set; }
 
         [JsonPropertyName("eventTypeIds")]
         public int[]? EventTypeIds { get; set; }
-
 
         [JsonPropertyName("shedule")]
         public SheduleDTO? Shedule { get; set; }
