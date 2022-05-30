@@ -36,16 +36,6 @@ namespace PlaceAgregator.API.AppBuilders
             cfg.CreateMap<Discount, DiscountGetDTO>();
             cfg.CreateMap<DiscountCreateDTO, Discount>();
 
-            cfg.CreateMap<ServiceItem, ServiceItemGetDTO>();
-            cfg.CreateMap<ServiceItemCreateDTO, ServiceItem>();
-            cfg.CreateMap<ServiceItemUpdateDTO, ServiceItem>();
-
-            cfg.CreateMap<BookingRequest, BookingRequestGetDTO>();
-            cfg.CreateMap<BookingRequestCreateDTO, BookingRequest>();
-            cfg.CreateMap<BookingRequestServiceItemDTO, BookingRequestServiceItem>();
-            cfg.CreateMap<BookingRequestServiceItem, BookingRequestServiceItemGetDTO>()
-                .ForMember(dest => dest.Title, opt => opt.MapFrom(src => src.ServiceItem.Title));
-
             cfg.CreateMap<CommentDTO, Comment>();
             cfg.CreateMap<Comment, CommentGetDTO>()
                 .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.User.UserName));

@@ -21,7 +21,6 @@ namespace PlaceAgregator.Shared.Models
         #region Relations
 
         public IEnumerable<BookingRequest>? BookingRequests { get; set; }
-        public IEnumerable<ServiceItem>? ServiceItems { get; set; }
         public IEnumerable<Comment>? Comments { get; set; }
         public IEnumerable<PlacePhoto>? Photos { get; set; }
         public IEnumerable<Prohibition>? Prohibitions { get; set; }

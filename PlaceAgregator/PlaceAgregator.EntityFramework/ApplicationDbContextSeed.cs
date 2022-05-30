@@ -195,28 +195,6 @@ namespace PlaceAgregator.EntityFramework
                         eventTypes[1],
                         eventTypes[2]
                     },
-                    ServiceItems = new List<ServiceItem>()
-                    {
-                        new ServiceItem()
-                        {
-                            Id = 1,
-                            MaxQuantity = 2,
-                            PlaceId = 1,
-                            Title = "Прожектор",
-                            Price = 400,
-                            Per = ServiceItem.PerValueType.Piece,
-                            Comment = "Прожектор с HDMI входом"
-                        },
-                        new ServiceItem()
-                        {
-                            Id=2,
-                            MaxQuantity = 1,
-                            Price = 300,
-                            PlaceId = 1,
-                            Title = "Бармен",
-                            Per = ServiceItem.PerValueType.Hour
-                        }
-                    },
                     BookingRequests = new List<BookingRequest>()
                     {
                         new BookingRequest()
@@ -229,22 +207,7 @@ namespace PlaceAgregator.EntityFramework
                             EndDateTime = DateTime.UtcNow.AddDays(15).AddHours(5),
                             GuestsQuantity = 5,
                             Status = BookingRequest.RequestStatus.Created,
-                            Comment = "Хочу того да сего да побольше",
-                            ServiceItems = new List<BookingRequestServiceItem>()
-                            {
-                                new BookingRequestServiceItem()
-                                {
-                                    BookingRequestId = 1,
-                                    ServiceItemId = 1,
-                                    Quantity = 1,
-                                },
-                                new BookingRequestServiceItem()
-                                {
-                                    BookingRequestId = 1,
-                                    ServiceItemId = 2,
-                                    Quantity = 1
-                                }
-                            }
+                            Comment = "Хочу того да сего да побольше"
                         },
                         new BookingRequest()
                         {
@@ -325,19 +288,6 @@ namespace PlaceAgregator.EntityFramework
                         eventTypes[4],
                         eventTypes[5]
                     },
-                    ServiceItems = new List<ServiceItem>()
-                    {
-                        new ServiceItem()
-                        {
-                            Id = 3,
-                            PlaceId = 2,
-                            Title = "Подушки",
-                            MaxQuantity = 1,
-                            Price = 500,
-                            Per = ServiceItem.PerValueType.Hour,
-                            Comment = "Удобные и мягкие"
-                        }
-                    },
                     BookingRequests = new List<BookingRequest>()
                     {
                         new BookingRequest()
@@ -349,16 +299,7 @@ namespace PlaceAgregator.EntityFramework
                             StartDateTime = DateTime.UtcNow.AddDays(20),
                             EndDateTime = DateTime.UtcNow.AddDays(20).AddHours(2),
                             GuestsQuantity = 10,
-                            Status = BookingRequest.RequestStatus.Created,
-                            ServiceItems = new List<BookingRequestServiceItem>()
-                            {
-                                new BookingRequestServiceItem()
-                                {
-                                    BookingRequestId = 3,
-                                    ServiceItemId = 3,
-                                    Quantity = 1,
-                                },
-                            }
+                            Status = BookingRequest.RequestStatus.Created
                         },
                         new BookingRequest()
                         {

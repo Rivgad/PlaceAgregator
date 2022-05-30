@@ -38,8 +38,6 @@ namespace PlaceAgregator.API.Controllers
                 return Forbid();
 
             var query = _context.BookingRequests
-                .Include(item => item.ServiceItems)
-                .ThenInclude(item => item.ServiceItem)
                 .Where(item => item.UserId == accountId)
                 .AsQueryable();
 
@@ -78,8 +76,6 @@ namespace PlaceAgregator.API.Controllers
                 .Include(item => item.BookingRequests)
                 .Where(item => item.UserId == accountId)
                 .SelectMany(item => item.BookingRequests)
-                .Include(item => item.ServiceItems)
-                .ThenInclude(item => item.ServiceItem)
                 .AsQueryable();
 
             if (!await query.AnyAsync())
@@ -226,45 +222,6 @@ namespace PlaceAgregator.API.Controllers
         #endregion
 
         /// <summary>
-        /// Calculate and validate service items
-        /// </summary>
-        /// <param name="serviceItems"></param>
-        /// <returns>Total service items prices sum</returns>
-        /// <exception cref="Exception"></exception>
-        private async Task<decimal> CalculateAndValidateOrderPrice(IEnumerable<BookingRequestServiceItem> serviceItems)
-        {
-            var itemQuantityDict = serviceItems
-                .GroupBy(item => item.ServiceItemId)
-                .ToDictionary(t => t.Key, t => t.Select(item => item.Quantity).Sum());
-
-            foreach (var item in itemQuantityDict)
-            {
-                var serviceItem = await _context.ServiceItems.FirstOrDefaultAsync(si => si.Id == item.Key);
-                if (serviceItem == null)
-                    throw new Exception($"Услуга с Id = {item.Key} не существует");
-                if (item.Value > serviceItem.MaxQuantity)
-                    throw new Exception($"Для услуги с Id = {item.Key} максимальное количество шт = {serviceItem.MaxQuantity}");
-            }
-
-            try
-            {
-                IEnumerable<int>? productIds = itemQuantityDict.Select(item => item.Key);
-                var productPriceDict = await _context
-                    .ServiceItems
-                    .Where(item => productIds.Contains(item.Id) == true)
-                    .ToDictionaryAsync(item => item.Id, item => item.Price);
-
-                decimal totalPrice = productPriceDict.Select(item => item.Value * itemQuantityDict[item.Key]).Sum();
-
-                return totalPrice;
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
-        }
-
-        /// <summary>
         /// Checks whether the user is the owner of the place
         /// </summary>
         /// <param name="placeId"></param>
@@ -293,7 +250,6 @@ namespace PlaceAgregator.API.Controllers
         public async Task<IActionResult> GetPrice([FromBody] BookingRequestCreateDTO request)
         {
             var place = await _context.Places
-                .Include(item => item.ServiceItems)
                 .Include(item => item.Charges)
                 .Include(item => item.Discounts)
                 .FirstOrDefaultAsync(item => item.Id == request.PlaceId);
@@ -318,16 +274,6 @@ namespace PlaceAgregator.API.Controllers
 
             var newBookingRequest = _mapper.Map<BookingRequest>(request);
 
-            decimal serviceItemsTotalPrice = 0;
-            try
-            {
-                serviceItemsTotalPrice += await CalculateAndValidateOrderPrice(newBookingRequest.ServiceItems);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-
             decimal totalDiscount = place.Discounts
                 .Where(item => item.FromHoursQuantity <= duration)
                 .Select(item => item.Procents)
@@ -339,7 +285,6 @@ namespace PlaceAgregator.API.Controllers
 
             // Просчитываем конечную сумму 
             decimal totalPrice = (decimal)place.BaseRate * duration * (1 - totalDiscount / 100) * (1 + totalCharge / 100);
-            totalPrice += serviceItemsTotalPrice;
 
             return Ok(new { price = totalPrice });
         }
@@ -373,7 +318,6 @@ namespace PlaceAgregator.API.Controllers
                 return Forbid();
 
             var place = await _context.Places
-                .Include(item => item.ServiceItems)
                 .Include(item => item.Charges)
                 .Include(item => item.Discounts)
                 .FirstOrDefaultAsync(item => item.Id == request.PlaceId);
@@ -461,47 +405,12 @@ namespace PlaceAgregator.API.Controllers
                         return BadRequest("Время уже занято");
                 }
             }
-            // Суммируем одинаковые услуги
-            request.ServiceItems = request.ServiceItems?
-                .GroupBy(item => item.ServiceItemId)
-                .Select(item => new BookingRequestServiceItemDTO()
-                {
-                    ServiceItemId = item.Key,
-                    Quantity = item.Select(item => item.Quantity).Sum()
-                })
-                .ToArray();
-
-            // получаем услуги которые есть у площадки
-            var serviceItemIds = request.ServiceItems?.Select(item => item.ServiceItemId);
-            var validServiceItemIds = place.ServiceItems
-                .Where(item => serviceItemIds
-                .Contains(item.Id))
-                .Select(item => item.Id);
-
-            if (serviceItemIds?.Count() != request.ServiceItems?.Length)
-                return BadRequest("Запись невалидных услуг");
-
-            // записываем только валидные услуги
-            request.ServiceItems = request.ServiceItems?
-                .Where(item => validServiceItemIds
-                .Contains(item.ServiceItemId))
-                .ToArray();
 
 
             var newBookingRequest = _mapper.Map<BookingRequest>(request);
             newBookingRequest.Status = BookingRequest.RequestStatus.Created;
             newBookingRequest.CreationDateTime = DateTime.UtcNow;
             newBookingRequest.UserId = accountId;
-
-            decimal serviceItemsTotalPrice = 0;
-            try
-            {
-                serviceItemsTotalPrice += await CalculateAndValidateOrderPrice(newBookingRequest.ServiceItems);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
 
             decimal totalDiscount = place.Discounts
                 .Where(item => item.FromHoursQuantity <= duration)
@@ -514,7 +423,6 @@ namespace PlaceAgregator.API.Controllers
 
             // Просчитываем конечную сумму 
             decimal totalPrice = (decimal)place.BaseRate * duration * (1 - totalDiscount / 100) * (1 + totalCharge / 100);
-            totalPrice += serviceItemsTotalPrice;
 
             newBookingRequest.TotalPrice = totalPrice;
 

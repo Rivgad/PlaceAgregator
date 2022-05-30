@@ -134,92 +134,6 @@ namespace PlaceAgregator.API.Controllers
 
         #endregion
 
-        #region ServiceItems
-
-        [Authorize(Roles = "user")]
-        [HttpPost("{placeId}/ServiceItems")]
-        [Produces(typeof(ServiceItemGetDTO))]
-        public async Task<IActionResult> CreateServiceItem(int placeId, [FromForm] ServiceItemCreateDTO serviceItem)
-        {
-            var place = await _context.Places.FirstOrDefaultAsync(item => item.Id == placeId && item.IsBlocked == false);
-            if (place == null)
-                return NotFound();
-
-            string? accountId = User.FindFirst(ClaimTypes.Sid)?.Value;
-            if (accountId == null)
-                return Forbid();
-
-            if (place.UserId != accountId)
-                return Forbid();
-
-            var newServiceItem = _mapper.Map<ServiceItem>(serviceItem);
-            newServiceItem.PlaceId = place.Id;
-
-            newServiceItem = _context.ServiceItems.Add(newServiceItem).Entity;
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction(nameof(CreateServiceItem), _mapper.Map<ServiceItemGetDTO>(newServiceItem));
-        }
-
-        [Authorize(Roles = "user")]
-        [HttpPut("{placeId}/ServiceItems/{itemId}")]
-        [Produces(typeof(ServiceItemGetDTO))]
-        public async Task<IActionResult> UpdateServiceItem(int placeId, int itemId, [FromForm] ServiceItemUpdateDTO serviceItem)
-        {
-            var place = await _context.Places
-                .Include(item => item.ServiceItems)
-                .FirstOrDefaultAsync(item => item.Id == placeId && item.IsBlocked == false);
-            if (place == null)
-                return NotFound();
-
-            string? accountId = User.FindFirst(ClaimTypes.Sid)?.Value;
-            if (accountId == null)
-                return Forbid();
-
-            if (place.UserId != accountId)
-                return Forbid();
-
-            var existedServiceItem = place.ServiceItems?.FirstOrDefault(item => item.Id == itemId);
-            if (existedServiceItem == null)
-                return NotFound();
-
-            _mapper.Map(serviceItem, existedServiceItem);
-
-            existedServiceItem = _context.ServiceItems.Update(existedServiceItem).Entity;
-            await _context.SaveChangesAsync();
-
-            return Ok(_mapper.Map<ServiceItemGetDTO>(existedServiceItem));
-        }
-
-        [Authorize(Roles = "user")]
-        [HttpDelete("{placeId}/ServiceItems/{itemId}")]
-        public async Task<IActionResult> DeleteServiceItem(int placeId, int itemId)
-        {
-            var place = await _context.Places
-                .Include(item => item.ServiceItems)
-                .FirstOrDefaultAsync(item => item.Id == placeId && item.IsBlocked == false);
-            if (place == null)
-                return NotFound();
-
-            string? accountId = User.FindFirst(ClaimTypes.Sid)?.Value;
-            if (accountId == null)
-                return Forbid();
-
-            if (place.UserId != accountId)
-                return Forbid();
-
-            var serviceItem = place.ServiceItems?.FirstOrDefault(item => item.Id == itemId);
-            if (serviceItem == null)
-                return NotFound();
-
-            _context.ServiceItems.Remove(serviceItem);
-            await _context.SaveChangesAsync();
-
-            return Ok(new { id = serviceItem.Id });
-        }
-
-        #endregion
-
         #region Photo
 
         [Authorize(Roles = "user")]
@@ -368,7 +282,6 @@ namespace PlaceAgregator.API.Controllers
                 .Include(item => item.Photos)
                 .Include(item => item.EventTypes)
                 .Include(item => item.Prohibitions)
-                .Include(item => item.ServiceItems)
                 .FirstOrDefaultAsync(item => item.Id == id && item.IsBlocked == false);
 
             if (place == null)

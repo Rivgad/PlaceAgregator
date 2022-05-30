@@ -52,7 +52,5 @@ namespace PlaceAgregator.Shared.Models
 
         [Required]
         public decimal TotalPrice { get; set; }
-
-        public IEnumerable<BookingRequestServiceItem>? ServiceItems { get; set; }
     }
 }

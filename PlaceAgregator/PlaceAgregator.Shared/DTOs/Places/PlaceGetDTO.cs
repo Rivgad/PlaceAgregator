@@ -20,11 +20,6 @@ namespace PlaceAgregator.Shared.DTOs.Places
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public int[]? EventTypeIds { get; set; }
 
-
-        [JsonPropertyName("serviceItems")]
-        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-        public IEnumerable<ServiceItemGetDTO>? ServiceItems { get; set; }
-
         [JsonPropertyName("discounts")]
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public IEnumerable<DiscountGetDTO>? Discounts { get; set; }
