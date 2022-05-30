@@ -46,7 +46,8 @@ namespace PlaceAgregator.API.AppBuilders
                 .ForMember(dest => dest.Title, opt => opt.MapFrom(src => src.ServiceItem.Title));
 
             cfg.CreateMap<CommentDTO, Comment>();
-            cfg.CreateMap<Comment, CommentGetDTO>();
+            cfg.CreateMap<Comment, CommentGetDTO>()
+                .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.User.UserName));
 
             return cfg;
         }
