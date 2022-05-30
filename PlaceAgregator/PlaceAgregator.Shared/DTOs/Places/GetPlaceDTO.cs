@@ -1,4 +1,5 @@
-﻿using PlaceAgregator.Shared.Models;
+﻿using PlaceAgregator.Shared.DTOs.Users;
+using PlaceAgregator.Shared.Models;
 using System.Text.Json.Serialization;
 
 namespace PlaceAgregator.Shared.DTOs.Places
@@ -7,6 +8,9 @@ namespace PlaceAgregator.Shared.DTOs.Places
     {
         [JsonPropertyName("id")]
         public int Id { get; set; }
+
+        [JsonPropertyName("user")]
+        public AppUserGetDTO User { get; set; }
 
         [JsonPropertyName("waterTypeId")]
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]

@@ -7,6 +7,7 @@ using PlaceAgregator.Shared.DTOs.Places;
 using PlaceAgregator.Shared.Extensions;
 using PlaceAgregator.Shared.Models;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using System.Security.Claims;
 
 namespace PlaceAgregator.API.Controllers
@@ -326,16 +327,33 @@ namespace PlaceAgregator.API.Controllers
 
         [HttpGet]
         [Produces(typeof(PlaceCardInfo[]))]
-        public async Task<IEnumerable<PlaceCardInfo>> GetAllAsync([Range(1, int.MaxValue)] int page)
+        public async Task<IEnumerable<PlaceCardInfo>> GetAllAsync([FromQuery] PlaceFilterDTO filter)
         {
-            page = page - 1;
-            var result = _context.Places
-                .Where(item => item.IsBlocked == false)
-                .OrderBy(item => item.Id)
-                .Skip(page * pageSize)
-                .Take(pageSize);
+            var query = _context.Places
+                .Include(item => item.BookingRequests)
+                .AsQueryable();
 
-            return await result.Select(item => _mapper.Map<PlaceCardInfo>(item)).ToListAsync();
+            query = query.Where(item => item.IsBlocked == false || item.IsActive == true);
+
+            if (filter.MinCapacity != null)
+                query = query.Where(item => item.Capacity >= filter.MinCapacity);
+
+            if (filter.MinArea != null)
+                query = query.Where(item => item.Area >= filter.MinArea);
+
+            if (filter.MinRating != null)
+                query = query.Where(item => item.Rating >= filter.MinRating);
+
+            if (filter.Address != null)
+                query = query.Where(item => item.Address.ToLower().Contains(filter.Address.ToLower()));
+
+            if (filter.City != null)
+                query = query.Where(item => item.City.ToLower().Contains(filter.City.ToLower()));
+
+            if (filter.MaxRate != null)
+                query = query.Where(item => item.BaseRate <= filter.MaxRate);
+
+            return await query.Select(item => _mapper.Map<PlaceCardInfo>(item)).ToListAsync();
         }
 
         [HttpGet("{id}")]
@@ -344,6 +362,7 @@ namespace PlaceAgregator.API.Controllers
         public async Task<IActionResult> GetPlaceAsync(int id)
         {
             var place = await _context.Places
+                .Include(item => item.User)
                 .Include(item => item.Charges)
                 .Include(item => item.Discounts)
                 .Include(item => item.Photos)

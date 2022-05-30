@@ -66,7 +66,7 @@ namespace PlaceAgregator.API.Controllers
         }
 
         [Authorize]
-        [HttpPost]
+        [HttpPost("[Action]")]
         public async Task<IActionResult> ChangePassword(PasswordUpdateDTO request)
         {
             string? accountId = User.FindFirst(ClaimTypes.Sid)?.Value;
