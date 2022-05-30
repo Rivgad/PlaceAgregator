@@ -55,15 +55,6 @@ namespace PlaceAgregator.Shared.Models
 
         public decimal? Area { get; set; }
 
-        public decimal? CellingHeight { get; set; }
-
-        public int? SocketsQuantity { get; set; }
-
-        public int? ToiletsQuantity { get; set; }
-
-        [Required]
-        public bool HasElevator { get; set; } = false;
-
         public int? BookingHorizonInDays { get; set; }
 
         #endregion

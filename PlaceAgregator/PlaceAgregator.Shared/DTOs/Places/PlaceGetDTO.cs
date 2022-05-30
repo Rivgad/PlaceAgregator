@@ -73,22 +73,6 @@ namespace PlaceAgregator.Shared.DTOs.Places
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public decimal? Area { get; set; }
 
-        [JsonPropertyName("cellingHeight")]
-        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-        public decimal? CellingHeight { get; set; }
-
-        [JsonPropertyName("socketsQuantity")]
-        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-        public int? SocketsQuantity { get; set; }
-
-        [JsonPropertyName("toiletsQuantity")]
-        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-        public int? ToiletsQuantity { get; set; }
-
-        [JsonPropertyName("hasElevator")]
-        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-        public bool? HasElevator { get; set; }
-
         [JsonPropertyName("bookingHorizonInDays")]
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public int? BookingHorizonInDays { get; set; }
