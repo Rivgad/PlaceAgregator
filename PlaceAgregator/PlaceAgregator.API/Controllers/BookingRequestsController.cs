@@ -261,9 +261,13 @@ namespace PlaceAgregator.API.Controllers
                 return BadRequest();
 
             //Обнуление минут и секунд
-            request.StartDateTime = Normalize(request.StartDateTime);
+            request.StartDateTime = request.StartDateTime
+                .DropMinutesAndSeconds()
+                .ToUniversalTime();
 
-            request.EndDateTime = Normalize(request.EndDateTime);
+            request.EndDateTime = request.EndDateTime
+                .DropMinutesAndSeconds()
+                .ToUniversalTime();
 
             //Меняем местами, если диапозон перевернут
             if (request.StartDateTime > request.EndDateTime)
@@ -272,35 +276,10 @@ namespace PlaceAgregator.API.Controllers
             var requestTimeRange = new TimeRange(request.StartDateTime, request.EndDateTime);
             int duration = (int)requestTimeRange.Duration.TotalHours;
 
-            var newBookingRequest = _mapper.Map<BookingRequest>(request);
-
-            decimal totalDiscount = place.Discounts
-                .Where(item => item.FromHoursQuantity <= duration)
-                .Select(item => item.Procents)
-                .Sum();
-            decimal totalCharge = place.Charges
-                .Where(item => item.FromGuestsQuantity <= request.GuestsQuantity)
-                .Select(item => item.Procents)
-                .Sum();
-
             // Просчитываем конечную сумму 
-            decimal totalPrice = (decimal)place.BaseRate * duration * (1 - totalDiscount / 100) * (1 + totalCharge / 100);
+            decimal totalPrice = place.GetPrice(duration, request.GuestsQuantity);
 
             return Ok(new { price = totalPrice });
-        }
-
-        private static DateTime Normalize(DateTime dateTime)
-        {
-            dateTime = new DateTime(
-                year: dateTime.Year,
-                month: dateTime.Month,
-                day: dateTime.Day,
-                hour: dateTime.Hour,
-                minute: 0,
-                second: 0)
-                .ToUniversalTime();
-
-            return dateTime;
         }
 
         /// <summary>
@@ -335,22 +314,12 @@ namespace PlaceAgregator.API.Controllers
                 return BadRequest($"Максимальное количество гостей = {place.Capacity}");
 
             //Обнуление минут и секунд
-            request.StartDateTime = new DateTime(
-                year: request.StartDateTime.Year,
-                month: request.StartDateTime.Month,
-                day: request.StartDateTime.Day,
-                hour: request.StartDateTime.Hour,
-                minute: 0,
-                second: 0)
+            request.StartDateTime = request.StartDateTime
+                .DropMinutesAndSeconds()
                 .ToUniversalTime();
 
-            request.EndDateTime = new DateTime(
-                year: request.EndDateTime.Year,
-                month: request.EndDateTime.Month,
-                day: request.EndDateTime.Day,
-                hour: request.EndDateTime.Hour,
-                minute: 0,
-                second: 0)
+            request.EndDateTime = request.EndDateTime
+                .DropMinutesAndSeconds()
                 .ToUniversalTime();
 
             //Меняем местами, если диапозон перевернут
@@ -406,25 +375,12 @@ namespace PlaceAgregator.API.Controllers
                 }
             }
 
-
             var newBookingRequest = _mapper.Map<BookingRequest>(request);
             newBookingRequest.Status = BookingRequest.RequestStatus.Created;
             newBookingRequest.CreationDateTime = DateTime.UtcNow;
             newBookingRequest.UserId = accountId;
 
-            decimal totalDiscount = place.Discounts
-                .Where(item => item.FromHoursQuantity <= duration)
-                .Select(item => item.Procents)
-                .Sum();
-            decimal totalCharge = place.Charges
-                .Where(item => item.FromGuestsQuantity <= request.GuestsQuantity)
-                .Select(item => item.Procents)
-                .Sum();
-
-            // Просчитываем конечную сумму 
-            decimal totalPrice = (decimal)place.BaseRate * duration * (1 - totalDiscount / 100) * (1 + totalCharge / 100);
-
-            newBookingRequest.TotalPrice = totalPrice;
+            newBookingRequest.TotalPrice = place.GetPrice(duration, request.GuestsQuantity);
 
             var result = await _context.BookingRequests.AddAsync(newBookingRequest);
             await _context.SaveChangesAsync();

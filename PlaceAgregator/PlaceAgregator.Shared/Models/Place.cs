@@ -57,6 +57,5 @@ namespace PlaceAgregator.Shared.Models
         public int? BookingHorizonInDays { get; set; }
 
         #endregion
-
     }
 }
