@@ -6,15 +6,16 @@ import {
     Button,
     Box
 } from '@mui/material';
+import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import HideOnScroll from '../../common/HideOnScroll';
 import AuthDialogButton from '../authentication/AuthDialogButton';
+import { selectIsLoggedIn } from '../authentication/authSlice';
 import MenuButton from './MenuButton';
 
 
 const AppHeader = () => {
-    const isLoggedIn = false;
-    const userLogin = 'Lol';
+    const isLoggedIn = useSelector(selectIsLoggedIn);
 
     return (
         <>
@@ -31,7 +32,7 @@ const AppHeader = () => {
                         <Box sx={{ ml: 'auto' }}>
                             {
                                 isLoggedIn === true ?
-                                    <MenuButton userLogin={userLogin} />
+                                    <MenuButton />
                                     :
                                     <AuthDialogButton/>
                             }

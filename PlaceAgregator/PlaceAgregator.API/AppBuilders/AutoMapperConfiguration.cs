@@ -21,11 +21,14 @@ namespace PlaceAgregator.API.AppBuilders
                 .ForMember(dest => dest.Prohibitions,
                     opt => opt.MapFrom(src => src.ProhibitionIds.Select(item => new Prohibition() { Id = item })));
 
-            cfg.CreateMap<Place, GetPlaceDTO>()
+            cfg.CreateMap<Place, PlaceGetDTO>()
                 .ForMember(dest => dest.EventTypeIds,
                     opt => opt.MapFrom(src => src.EventTypes.Select(item => item.Id)))
                 .ForMember(dest => dest.ProhibitionIds,
                     opt => opt.MapFrom(src => src.Prohibitions.Select(item => item.Id)));
+            
+            cfg.CreateMap<Place, PlaceGetTableRowDTO>();
+
 
             cfg.CreateMap<SheduleDTO, Shedule>();
             cfg.CreateMap<Shedule, SheduleDTO>();
@@ -36,22 +39,15 @@ namespace PlaceAgregator.API.AppBuilders
             cfg.CreateMap<Discount, DiscountGetDTO>();
             cfg.CreateMap<DiscountCreateDTO, Discount>();
 
-            cfg.CreateMap<ServiceItem, ServiceItemGetDTO>();
-            cfg.CreateMap<ServiceItemCreateDTO, ServiceItem>();
-            cfg.CreateMap<ServiceItemUpdateDTO, ServiceItem>();
-
-            cfg.CreateMap<BookingRequest, BookingRequestGetDTO>();
-            cfg.CreateMap<BookingRequestCreateDTO, BookingRequest>();
-            cfg.CreateMap<BookingRequestServiceItemDTO, BookingRequestServiceItem>();
-            cfg.CreateMap<BookingRequestServiceItem, BookingRequestServiceItemGetDTO>()
-                .ForMember(dest => dest.Title, opt => opt.MapFrom(src => src.ServiceItem.Title));
-
             cfg.CreateMap<CommentDTO, Comment>();
             cfg.CreateMap<Comment, CommentGetDTO>()
                 .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.User.UserName));
 
             cfg.CreateMap<AppUser, AppUserGetDTO>();
             cfg.CreateMap<AppUserUpdateDTO, AppUser>();
+
+            cfg.CreateMap<BookingRequestCreateDTO, BookingRequest>();
+            cfg.CreateMap<BookingRequest, BookingRequestGetDTO>();
 
             return cfg;
         }

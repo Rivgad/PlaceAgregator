@@ -127,11 +127,6 @@ namespace PlaceAgregator.EntityFramework
                 "Квартирник",
                 "Презентация"
             };
-            var waterTypes = new List<string>()
-            {
-                "Кулер",
-                "Из под крана"
-            };
 
             var prohibionTypes = new List<string>()
             {
@@ -147,40 +142,10 @@ namespace PlaceAgregator.EntityFramework
                 "приносить свои напитки (включая алкоголь)"
             };
 
-            var buildingTypes = new List<string>()
-            {
-                "Офис" ,
-                "Отель",
-                "Лофт",
-                "Отель"
-            };
-
-            var parkingTypes = new List<string>()
-            {
-                "Рядом со зданием",
-                "Своя парковка",
-                "Парковка дальше 100м от здания"
-            };
-
             foreach (var eventType in eventTypes)
             {
                 if (!context.EventTypes.Any(item => item.Title == eventType))
                     await context.EventTypes.AddAsync(new() { Title = eventType });
-            }
-            foreach (var type in waterTypes)
-            {
-                if (!context.WaterTypes.Any(item => item.Title == type))
-                    await context.WaterTypes.AddAsync(new() { Title = type });
-            }
-            foreach (var type in buildingTypes)
-            {
-                if (!context.BuildingTypes.Any(item => item.Title == type))
-                    await context.BuildingTypes.AddAsync(new() { Title = type });
-            }
-            foreach (var type in parkingTypes)
-            {
-                if (!context.ParkingTypes.Any(item => item.Title == type))
-                    await context.ParkingTypes.AddAsync(new() { Title = type });
             }
             foreach (var type in prohibionTypes)
             {
@@ -230,28 +195,6 @@ namespace PlaceAgregator.EntityFramework
                         eventTypes[1],
                         eventTypes[2]
                     },
-                    ServiceItems = new List<ServiceItem>()
-                    {
-                        new ServiceItem()
-                        {
-                            Id = 1,
-                            MaxQuantity = 2,
-                            PlaceId = 1,
-                            Title = "Прожектор",
-                            Price = 400,
-                            Per = ServiceItem.PerValueType.Piece,
-                            Comment = "Прожектор с HDMI входом"
-                        },
-                        new ServiceItem()
-                        {
-                            Id=2,
-                            MaxQuantity = 1,
-                            Price = 300,
-                            PlaceId = 1,
-                            Title = "Бармен",
-                            Per = ServiceItem.PerValueType.Hour
-                        }
-                    },
                     BookingRequests = new List<BookingRequest>()
                     {
                         new BookingRequest()
@@ -264,22 +207,7 @@ namespace PlaceAgregator.EntityFramework
                             EndDateTime = DateTime.UtcNow.AddDays(15).AddHours(5),
                             GuestsQuantity = 5,
                             Status = BookingRequest.RequestStatus.Created,
-                            Comment = "Хочу того да сего да побольше",
-                            ServiceItems = new List<BookingRequestServiceItem>()
-                            {
-                                new BookingRequestServiceItem()
-                                {
-                                    BookingRequestId = 1,
-                                    ServiceItemId = 1,
-                                    Quantity = 1,
-                                },
-                                new BookingRequestServiceItem()
-                                {
-                                    BookingRequestId = 1,
-                                    ServiceItemId = 2,
-                                    Quantity = 1
-                                }
-                            }
+                            Comment = "Хочу того да сего да побольше"
                         },
                         new BookingRequest()
                         {
@@ -327,9 +255,6 @@ namespace PlaceAgregator.EntityFramework
                             Comment = "Уборка от 20 человек"
                         }
                     },
-                    BuildingTypeId = 1,
-                    WaterTypeId = 1,
-                    ParkingTypeId = 1,
                     IsActive = true,
                     Shedule = new Shedule()
                     {
@@ -338,8 +263,7 @@ namespace PlaceAgregator.EntityFramework
                         Wednesday = true,
                         Friday = true,
                         Thuesday = true
-                    },
-                    ParkingSpace = 20
+                    }
                 },
                 new Place()
                 {
@@ -364,19 +288,6 @@ namespace PlaceAgregator.EntityFramework
                         eventTypes[4],
                         eventTypes[5]
                     },
-                    ServiceItems = new List<ServiceItem>()
-                    {
-                        new ServiceItem()
-                        {
-                            Id = 3,
-                            PlaceId = 2,
-                            Title = "Подушки",
-                            MaxQuantity = 1,
-                            Price = 500,
-                            Per = ServiceItem.PerValueType.Hour,
-                            Comment = "Удобные и мягкие"
-                        }
-                    },
                     BookingRequests = new List<BookingRequest>()
                     {
                         new BookingRequest()
@@ -388,16 +299,7 @@ namespace PlaceAgregator.EntityFramework
                             StartDateTime = DateTime.UtcNow.AddDays(20),
                             EndDateTime = DateTime.UtcNow.AddDays(20).AddHours(2),
                             GuestsQuantity = 10,
-                            Status = BookingRequest.RequestStatus.Created,
-                            ServiceItems = new List<BookingRequestServiceItem>()
-                            {
-                                new BookingRequestServiceItem()
-                                {
-                                    BookingRequestId = 3,
-                                    ServiceItemId = 3,
-                                    Quantity = 1,
-                                },
-                            }
+                            Status = BookingRequest.RequestStatus.Created
                         },
                         new BookingRequest()
                         {
@@ -430,9 +332,6 @@ namespace PlaceAgregator.EntityFramework
                             Procents = 30,
                         }
                     },
-                    BuildingTypeId = 1,
-                    WaterTypeId = 2,
-                    ParkingTypeId = 2,
                     IsActive = true,
                     Shedule = new Shedule()
                     {
@@ -443,8 +342,7 @@ namespace PlaceAgregator.EntityFramework
                         Thuesday = true,
                         Sunday = false,
                         Saturday = false
-                    },
-                    ParkingSpace = 30
+                    }
                 }
             };
 

@@ -9,22 +9,28 @@ import {
     Avatar
 } from '@mui/material';
 import { Link } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { logout, selectUserName } from '../authentication/authSlice';
 
 const MenuButton = (props) => {
-    const { logOut, userLogin } = props
+    const dispatch = useDispatch();
+    const userLogin = useSelector(selectUserName);
 
     const [anchorEl, setAnchorEl] = useState(null);
     const open = Boolean(anchorEl);
+
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
     };
     const handleClose = () => {
         setAnchorEl(null);
     };
-
+    const handleLogoutClick =()=>{
+        dispatch(logout());
+    }
     return (
         <>
-            <Tooltip title="Account settings">
+            <Tooltip title="Профиль">
                 <IconButton
                     onClick={handleClick}
                     size="small"
@@ -72,7 +78,7 @@ const MenuButton = (props) => {
                 transformOrigin={{ horizontal: 'right', vertical: 'top' }}
                 anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
             >
-                <MenuItem component={Link} to='/myProfile'>
+                <MenuItem component={Link} to='/profile'>
                     Профиль
                 </MenuItem>
                 <Divider />
@@ -82,7 +88,11 @@ const MenuButton = (props) => {
                 <MenuItem component={Link} to='/bookings'>
                     Бронирования
                 </MenuItem>
-                <MenuItem onClick={logOut}>
+                <MenuItem component={Link} to='/bookingsHistory'>
+                    История бронирования
+                </MenuItem>
+                <Divider />
+                <MenuItem onClick={handleLogoutClick}>
                     <Typography color='red'>
                         Выйти
                     </Typography>

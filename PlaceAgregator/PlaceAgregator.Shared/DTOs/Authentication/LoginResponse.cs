@@ -10,13 +10,17 @@ namespace PlaceAgregator.Shared.DTOs.Authentication
         [JsonPropertyName("accessToken")]
         public string AccessToken { get; set; }
 
+        [JsonPropertyName("userName")]
+        public string UserName { get; set; }
+
         [JsonPropertyName("roles")]
         public string[] Roles { get; set; }
 
-        public LoginResponse(string accessToken, string[] roles)
+        public LoginResponse(string accessToken, string userName, string[] roles)
         {
             AccessToken = accessToken;
             Roles = roles;
+            UserName = userName;
         }
     }
 }

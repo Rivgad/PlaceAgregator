@@ -38,8 +38,6 @@ namespace PlaceAgregator.API.Controllers
                 return Forbid();
 
             var query = _context.BookingRequests
-                .Include(item => item.ServiceItems)
-                .ThenInclude(item => item.ServiceItem)
                 .Where(item => item.UserId == accountId)
                 .AsQueryable();
 
@@ -78,8 +76,6 @@ namespace PlaceAgregator.API.Controllers
                 .Include(item => item.BookingRequests)
                 .Where(item => item.UserId == accountId)
                 .SelectMany(item => item.BookingRequests)
-                .Include(item => item.ServiceItems)
-                .ThenInclude(item => item.ServiceItem)
                 .AsQueryable();
 
             if (!await query.AnyAsync())
@@ -226,45 +222,6 @@ namespace PlaceAgregator.API.Controllers
         #endregion
 
         /// <summary>
-        /// Calculate and validate service items
-        /// </summary>
-        /// <param name="serviceItems"></param>
-        /// <returns>Total service items prices sum</returns>
-        /// <exception cref="Exception"></exception>
-        private async Task<decimal> CalculateAndValidateOrderPrice(IEnumerable<BookingRequestServiceItem> serviceItems)
-        {
-            var itemQuantityDict = serviceItems
-                .GroupBy(item => item.ServiceItemId)
-                .ToDictionary(t => t.Key, t => t.Select(item => item.Quantity).Sum());
-
-            foreach (var item in itemQuantityDict)
-            {
-                var serviceItem = await _context.ServiceItems.FirstOrDefaultAsync(si => si.Id == item.Key);
-                if (serviceItem == null)
-                    throw new Exception($"Услуга с Id = {item.Key} не существует");
-                if (item.Value > serviceItem.MaxQuantity)
-                    throw new Exception($"Для услуги с Id = {item.Key} максимальное количество шт = {serviceItem.MaxQuantity}");
-            }
-
-            try
-            {
-                IEnumerable<int>? productIds = itemQuantityDict.Select(item => item.Key);
-                var productPriceDict = await _context
-                    .ServiceItems
-                    .Where(item => productIds.Contains(item.Id) == true)
-                    .ToDictionaryAsync(item => item.Id, item => item.Price);
-
-                decimal totalPrice = productPriceDict.Select(item => item.Value * itemQuantityDict[item.Key]).Sum();
-
-                return totalPrice;
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
-        }
-
-        /// <summary>
         /// Checks whether the user is the owner of the place
         /// </summary>
         /// <param name="placeId"></param>
@@ -293,7 +250,6 @@ namespace PlaceAgregator.API.Controllers
         public async Task<IActionResult> GetPrice([FromBody] BookingRequestCreateDTO request)
         {
             var place = await _context.Places
-                .Include(item => item.ServiceItems)
                 .Include(item => item.Charges)
                 .Include(item => item.Discounts)
                 .FirstOrDefaultAsync(item => item.Id == request.PlaceId);
@@ -305,9 +261,13 @@ namespace PlaceAgregator.API.Controllers
                 return BadRequest();
 
             //Обнуление минут и секунд
-            request.StartDateTime = Normalize(request.StartDateTime);
+            request.StartDateTime = request.StartDateTime
+                .DropMinutesAndSeconds()
+                .ToUniversalTime();
 
-            request.EndDateTime = Normalize(request.EndDateTime);
+            request.EndDateTime = request.EndDateTime
+                .DropMinutesAndSeconds()
+                .ToUniversalTime();
 
             //Меняем местами, если диапозон перевернут
             if (request.StartDateTime > request.EndDateTime)
@@ -316,46 +276,10 @@ namespace PlaceAgregator.API.Controllers
             var requestTimeRange = new TimeRange(request.StartDateTime, request.EndDateTime);
             int duration = (int)requestTimeRange.Duration.TotalHours;
 
-            var newBookingRequest = _mapper.Map<BookingRequest>(request);
-
-            decimal serviceItemsTotalPrice = 0;
-            try
-            {
-                serviceItemsTotalPrice += await CalculateAndValidateOrderPrice(newBookingRequest.ServiceItems);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-
-            decimal totalDiscount = place.Discounts
-                .Where(item => item.FromHoursQuantity <= duration)
-                .Select(item => item.Procents)
-                .Sum();
-            decimal totalCharge = place.Charges
-                .Where(item => item.FromGuestsQuantity <= request.GuestsQuantity)
-                .Select(item => item.Procents)
-                .Sum();
-
             // Просчитываем конечную сумму 
-            decimal totalPrice = (decimal)place.BaseRate * duration * (1 - totalDiscount / 100) * (1 + totalCharge / 100);
-            totalPrice += serviceItemsTotalPrice;
+            decimal totalPrice = place.GetPrice(duration, request.GuestsQuantity);
 
             return Ok(new { price = totalPrice });
-        }
-
-        private static DateTime Normalize(DateTime dateTime)
-        {
-            dateTime = new DateTime(
-                year: dateTime.Year,
-                month: dateTime.Month,
-                day: dateTime.Day,
-                hour: dateTime.Hour,
-                minute: 0,
-                second: 0)
-                .ToUniversalTime();
-
-            return dateTime;
         }
 
         /// <summary>
@@ -373,7 +297,6 @@ namespace PlaceAgregator.API.Controllers
                 return Forbid();
 
             var place = await _context.Places
-                .Include(item => item.ServiceItems)
                 .Include(item => item.Charges)
                 .Include(item => item.Discounts)
                 .FirstOrDefaultAsync(item => item.Id == request.PlaceId);
@@ -391,22 +314,12 @@ namespace PlaceAgregator.API.Controllers
                 return BadRequest($"Максимальное количество гостей = {place.Capacity}");
 
             //Обнуление минут и секунд
-            request.StartDateTime = new DateTime(
-                year: request.StartDateTime.Year,
-                month: request.StartDateTime.Month,
-                day: request.StartDateTime.Day,
-                hour: request.StartDateTime.Hour,
-                minute: 0,
-                second: 0)
+            request.StartDateTime = request.StartDateTime
+                .DropMinutesAndSeconds()
                 .ToUniversalTime();
 
-            request.EndDateTime = new DateTime(
-                year: request.EndDateTime.Year,
-                month: request.EndDateTime.Month,
-                day: request.EndDateTime.Day,
-                hour: request.EndDateTime.Hour,
-                minute: 0,
-                second: 0)
+            request.EndDateTime = request.EndDateTime
+                .DropMinutesAndSeconds()
                 .ToUniversalTime();
 
             //Меняем местами, если диапозон перевернут
@@ -461,62 +374,13 @@ namespace PlaceAgregator.API.Controllers
                         return BadRequest("Время уже занято");
                 }
             }
-            // Суммируем одинаковые услуги
-            request.ServiceItems = request.ServiceItems?
-                .GroupBy(item => item.ServiceItemId)
-                .Select(item => new BookingRequestServiceItemDTO()
-                {
-                    ServiceItemId = item.Key,
-                    Quantity = item.Select(item => item.Quantity).Sum()
-                })
-                .ToArray();
-
-            // получаем услуги которые есть у площадки
-            var serviceItemIds = request.ServiceItems?.Select(item => item.ServiceItemId);
-            var validServiceItemIds = place.ServiceItems
-                .Where(item => serviceItemIds
-                .Contains(item.Id))
-                .Select(item => item.Id);
-
-            if (serviceItemIds?.Count() != request.ServiceItems?.Length)
-                return BadRequest("Запись невалидных услуг");
-
-            // записываем только валидные услуги
-            request.ServiceItems = request.ServiceItems?
-                .Where(item => validServiceItemIds
-                .Contains(item.ServiceItemId))
-                .ToArray();
-
 
             var newBookingRequest = _mapper.Map<BookingRequest>(request);
             newBookingRequest.Status = BookingRequest.RequestStatus.Created;
             newBookingRequest.CreationDateTime = DateTime.UtcNow;
             newBookingRequest.UserId = accountId;
 
-            decimal serviceItemsTotalPrice = 0;
-            try
-            {
-                serviceItemsTotalPrice += await CalculateAndValidateOrderPrice(newBookingRequest.ServiceItems);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-
-            decimal totalDiscount = place.Discounts
-                .Where(item => item.FromHoursQuantity <= duration)
-                .Select(item => item.Procents)
-                .Sum();
-            decimal totalCharge = place.Charges
-                .Where(item => item.FromGuestsQuantity <= request.GuestsQuantity)
-                .Select(item => item.Procents)
-                .Sum();
-
-            // Просчитываем конечную сумму 
-            decimal totalPrice = (decimal)place.BaseRate * duration * (1 - totalDiscount / 100) * (1 + totalCharge / 100);
-            totalPrice += serviceItemsTotalPrice;
-
-            newBookingRequest.TotalPrice = totalPrice;
+            newBookingRequest.TotalPrice = place.GetPrice(duration, request.GuestsQuantity);
 
             var result = await _context.BookingRequests.AddAsync(newBookingRequest);
             await _context.SaveChangesAsync();

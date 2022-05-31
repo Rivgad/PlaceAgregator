@@ -8,10 +8,63 @@ import {
     Paper,
     IconButton
 } from '@mui/material'
-import { Delete as DeleteIcon } from '@mui/icons-material';
+import { useDispatch, useSelector } from 'react-redux';
+import { StatusType } from '../../helpers';
+import { acceptBookingRequest, rejectBookingRequests, selectBookingRequestById } from './bookingSlice';
+import ThumbDownIcon from '@mui/icons-material/ThumbDown';
+import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 
-const BookingsTable = ({ rows }) => {
-    
+const BookingTableRow = ({ id }) => {
+    const dispatch = useDispatch();
+    const bookingRequest = useSelector(state => selectBookingRequestById(state, id));
+    const statusIsCreated = bookingRequest.status === 0;
+
+    const handleAcceptClick = ()=>{
+        dispatch(acceptBookingRequest({id}));
+    };
+    const handleRejectClick = ()=>{
+        dispatch(rejectBookingRequests({id}));
+    };  
+
+    return (
+        <TableRow
+            key={bookingRequest.id}
+            sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+        >
+            <TableCell component="th" scope="row">
+                {bookingRequest.id}
+            </TableCell>
+            <TableCell align="right">{bookingRequest.placeId}</TableCell>
+            <TableCell align="right">{StatusType[bookingRequest.status]}</TableCell>
+            <TableCell align="right">{bookingRequest.creationDateTime}</TableCell>
+            <TableCell align="right">{bookingRequest.startDateTime}</TableCell>
+            <TableCell align="right">{bookingRequest.endDateTime}</TableCell>
+            <TableCell align="right">{bookingRequest.guestsQuantity}</TableCell>
+            <TableCell align="right">{bookingRequest.comment}</TableCell>
+            <TableCell align="right">
+                {
+                    statusIsCreated
+                    &&
+                    (<IconButton onClick={handleAcceptClick} aria-label="Принять">
+                        <ThumbUpIcon />
+                    </IconButton>)
+                }
+            </TableCell>
+            <TableCell align="right">
+                {
+                    statusIsCreated
+                    &&
+                    (<IconButton onClick={handleRejectClick} aria-label="Отклонить">
+                        <ThumbDownIcon />
+                    </IconButton>)
+                }
+            </TableCell>
+        </TableRow>
+    );
+}
+
+const BookingsTable = ({ bookingRequestIds }) => {
+
     return (
         <TableContainer component={Paper}>
             <Table sx={{ minWidth: 650 }} aria-label="simple table">
@@ -23,36 +76,14 @@ const BookingsTable = ({ rows }) => {
                         <TableCell align="right">Дата создания</TableCell>
                         <TableCell align="right">Дата начала</TableCell>
                         <TableCell align="right">Дата окончания</TableCell>
-                        <TableCell align="right">Дата осмотра площадки</TableCell>
                         <TableCell align="right">Количество гостей</TableCell>
                         <TableCell align="right">Комментарий</TableCell>
-                        <TableCell align="right">Действия</TableCell>
+                        <TableCell align="right">Принять</TableCell>
+                        <TableCell align="right">Отклонить</TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {rows.map((row) => (
-                        <TableRow
-                            key={row.id}
-                            sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                        >
-                            <TableCell component="th" scope="row">
-                                {row.id}
-                            </TableCell>
-                            <TableCell align="right">{row.placeId}</TableCell>
-                            <TableCell align="right">{row.status}</TableCell>
-                            <TableCell align="right">{row.creationDateTime}</TableCell>
-                            <TableCell align="right">{row.startDateTime}</TableCell>
-                            <TableCell align="right">{row.endDateTime}</TableCell>
-                            <TableCell align="right">{row.enrollDateTime}</TableCell>
-                            <TableCell align="right">{row.guestsCount}</TableCell>
-                            <TableCell align="right">{row.comment}</TableCell>
-                            <TableCell align="right">
-                                <IconButton aria-label="delete">
-                                    <DeleteIcon />
-                                </IconButton>
-                            </TableCell>
-                        </TableRow>
-                    ))}
+                    {bookingRequestIds?.map((id) => <BookingTableRow key={id} id={id} />)}
                 </TableBody>
             </Table>
         </TableContainer>

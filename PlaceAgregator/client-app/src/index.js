@@ -4,9 +4,15 @@ import ReactDOM from 'react-dom/client';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 
+import store from './store';
+
 import './index.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import App from './App';
+import { Provider } from 'react-redux';
+import { fetchTypes } from './features/typesSlice';
+
+import { SnackbarProvider } from 'notistack';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
@@ -31,22 +37,26 @@ export const themeOptions = {
         }
     },
 };
-
+store.dispatch(fetchTypes());
 const theme = createTheme(themeOptions);
 
-const Ind = ()=>{
-    
+const Ind = () => {
 
-    return(
+
+    return (
         <React.StrictMode>
-        <ThemeProvider theme={theme}>
-            <CssBaseline />
-            <App/>
-        </ThemeProvider>
-    </React.StrictMode>
+            <Provider store={store}>
+                <ThemeProvider theme={theme}>
+                    <CssBaseline />
+                    <SnackbarProvider maxSnack={3}>
+                        <App />
+                    </SnackbarProvider>
+                </ThemeProvider>
+            </Provider>
+        </React.StrictMode>
     );
 }
 
 root.render(
-    <Ind/>
+    <Ind />
 );

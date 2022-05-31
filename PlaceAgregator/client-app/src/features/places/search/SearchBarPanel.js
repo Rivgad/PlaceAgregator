@@ -1,76 +1,86 @@
-import { Box, Button, Grid, IconButton, MenuItem, TextField } from "@mui/material";
+import { Box, Grid, IconButton, InputLabel, TextField } from "@mui/material";
 import { useState } from "react";
 import SearchIcon from '@mui/icons-material/Search';
+import { useDispatch, useSelector } from "react-redux";
+import { fetchPlaces } from "../placesSlice";
+import { selectEventTypes } from './../../typesSlice';
+import { Form } from "react-bootstrap";
 
-const SelectFieldInput = (props) => {
-    let { options, ...other } = props;
-
-    const [selectedValue, setValue] = useState('')
-
-    const handleChange = (event) => {
-        setValue(event.target.id);
-    };
-
-    return (
-        <TextField
-            variant='outlined'
-            select
-            fullWidth
-            id={selectedValue}
-            onChange={handleChange}
-            {...other}
-        >
-            {options.map((item) => (
-                <MenuItem key={item.id} id={item.id}>
-                    {item.label}
-                </MenuItem>
-            ))}
-        </TextField>
-    );
-}
+const guestsQuantities = [
+    null, 5, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100
+]
 
 const SearchBarPanel = (props) => {
-    const eventTypes = [
-        {
-            id: 'USD',
-            label: '$',
-        },
-        {
-            id: 'EUR',
-            label: '€',
-        },
-        {
-            id: 'BTC',
-            label: '฿',
-        },
-        {
-            id: 'JPY',
-            label: '¥',
-        },
-    ]
+    const dispatch = useDispatch();
+    const handleSearchClick = () => {
+        dispatch(fetchPlaces(
+            {
+                search: searchField,
+                minCapacity: guestsQuantity
+            }
+        ))
+    }
+    const [eventType, setEventType] = useState('');
+    const [guestsQuantity, setGuestsQuantity] = useState('');
+    const [searchField, setSearchField] = useState('');
+    const eventTypes = useSelector(selectEventTypes);
     return (
         <>
-
             <Grid container spacing={2} direction='row' alignItems='center'>
                 <Grid item xs={12} md={12} sm={12}>
                     <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                        <TextField id="input-with-sx" fullWidth label="Поиск" variant="outlined" />
-                        <IconButton>
+                        <TextField
+                            value={searchField}
+                            onChange={(event) => setSearchField(event.target.value)}
+                            id="input-with-sx"
+                            fullWidth
+                            label="Поиск"
+                            variant="outlined"
+                        />
+                        <IconButton onClick={handleSearchClick}>
                             <SearchIcon />
                         </IconButton>
                     </Box>
                 </Grid>
                 <Grid item xs={12} md={3} sm={6}>
-                    <SelectFieldInput options={eventTypes} label='Ваше событие' />
+                    <InputLabel>Вид мероприятия</InputLabel>
+                    <Form.Select value={eventType} onChange={(event) => setEventType(event.target.value)}>
+                        {
+                            eventTypes?.map((item) => <option key={item.id} value={item.Id}>{item.title}</option>)
+                        }
+                    </Form.Select>
                 </Grid>
                 <Grid item xs={12} md={3} sm={6}>
-                    <SelectFieldInput options={eventTypes} label='Количество гостей' />
+                    <InputLabel>Количество гостей</InputLabel>
+                    <Form.Select value={guestsQuantity} onChange={(event) => setGuestsQuantity(event.target.value)}>
+                        {
+                            guestsQuantities?.map((item) => <option key={item} value={item}>{item}</option>)
+                        }
+                    </Form.Select>
                 </Grid>
                 <Grid item xs={12} md={3} sm={6}>
-                    <SelectFieldInput options={eventTypes} label='Время' />
+                    <TextField
+                        id="end-date-field"
+                        type="datetime-local"
+                        placeholder='Дата и время начала'
+                        label='Дата и время начала'
+                        InputLabelProps={{
+                            shrink: true,
+                        }}
+                        fullWidth
+                    />
                 </Grid>
                 <Grid item xs={12} md={3} sm={6}>
-                    <Button fullWidth variant='contained' size='large' onClick={props.openDrawer}>Все фильтры</Button>
+                    <TextField
+                        id="end-date-field"
+                        type="datetime-local"
+                        placeholder='Дата и время конца'
+                        label='Дата и время конца'
+                        InputLabelProps={{
+                            shrink: true,
+                        }}
+                        fullWidth
+                    />
                 </Grid>
             </Grid>
 

@@ -32,12 +32,7 @@ const UsersTable = (props) => {
                                 <TableCell align='right'>{row.familyName}</TableCell>
                                 <TableCell align='right'>{row.patronimyc}</TableCell>
                                 <TableCell align='center'>
-                                    {
-                                        row.isBlocked === true ?
-                                            <Button onClick={()=>handleClickUnblock(row.id)} variant='contained'>Разблокировать</Button>
-                                            :
-                                            <Button onClick={()=>handleClickBlock(row.id)} variant='contained' color='error'>Заблокировать</Button>
-                                    }
+                                    <Button onClick={() => handleClickBlock(row.id)} variant='contained' color='error'>Удалить</Button>
                                 </TableCell>
                             </TableRow>
                         ))
