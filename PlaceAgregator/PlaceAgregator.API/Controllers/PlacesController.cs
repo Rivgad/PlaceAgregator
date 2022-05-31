@@ -247,7 +247,7 @@ namespace PlaceAgregator.API.Controllers
                 .Include(item => item.BookingRequests)
                 .AsQueryable();
 
-            query = query.Where(item => item.IsBlocked == false || item.IsActive == true);
+            query = query.Where(item => item.IsBlocked == false && item.IsActive == true);
 
             if (filter.MinCapacity != null)
                 query = query.Where(item => item.Capacity >= filter.MinCapacity);
@@ -258,16 +258,41 @@ namespace PlaceAgregator.API.Controllers
             if (filter.MinRating != null)
                 query = query.Where(item => item.Rating >= filter.MinRating);
 
-            if (filter.Address != null)
-                query = query.Where(item => item.Address.ToLower().Contains(filter.Address.ToLower()));
+            if (filter.Search != null)
+                query = query.Where(item => 
+                item.City.ToLower().Contains(filter.Search.ToLower()) ||
+                item.Address.ToLower().Contains(filter.Search.ToLower()) ||
+                item.Title.ToLower().Contains(filter.Search.ToLower()) ||
+                item.Description.ToLower().Contains(filter.Search.ToLower()));
 
-            if (filter.City != null)
-                query = query.Where(item => item.City.ToLower().Contains(filter.City.ToLower()));
-
-            if (filter.MaxRate != null)
-                query = query.Where(item => item.BaseRate <= filter.MaxRate);
+            if (filter.MaxBaseRate != null)
+                query = query.Where(item => item.BaseRate <= filter.MaxBaseRate);
 
             return await query.Select(item => _mapper.Map<PlaceCardInfo>(item)).ToListAsync();
+        }
+
+        [Authorize(Roles = "user")]
+        [HttpPost("{id}/ToggleIsActive")]
+        [Produces(typeof(PlaceGetTableRowDTO))]
+        public async Task<IActionResult> TogglePlaceIsActive(int id)
+        {
+            string? accountId = User.FindFirst(ClaimTypes.Sid)?.Value;
+
+            var place = await _context.Places
+                .FirstOrDefaultAsync(item => item.Id == id && item.IsBlocked == false);
+
+            if (place == null)
+                return NotFound();
+
+            if (accountId != null && place.UserId == accountId)
+            {
+                place.IsActive = !place.IsActive;
+                _context.Update(place);
+                await _context.SaveChangesAsync();
+                return Ok(_mapper.Map<PlaceGetTableRowDTO>(place));
+            }
+
+            return BadRequest("Вы не являетесь владельцем площадки");
         }
 
         [HttpGet("{id}")]
@@ -287,11 +312,18 @@ namespace PlaceAgregator.API.Controllers
             if (place == null)
                 return NotFound();
 
+            string? accountId = User.FindFirst(ClaimTypes.Sid)?.Value;
+            if (place.IsActive == false && accountId != null && place.UserId != accountId)
+            {
+                return NotFound();
+            }
+
             return Ok(_mapper.Map<PlaceGetDTO>(place));
         }
 
         [Authorize(Roles = "user")]
         [HttpGet("myPlaces")]
+        [Produces(typeof(PlaceGetTableRowDTO[]))]
         public async Task<IActionResult> GetUserPlaces()
         {
             string? accountId = User.FindFirst(ClaimTypes.Sid)?.Value;
@@ -300,7 +332,7 @@ namespace PlaceAgregator.API.Controllers
 
             var places = await _context.Places.Where(item => item.UserId == accountId).ToListAsync();
 
-            return Ok(places.Select(item => new { id = item.Id, title = item.Title, rating = item.Rating, isBlocked = item.IsBlocked }));
+            return Ok(places.Select(item => _mapper.Map<PlaceGetTableRowDTO>(item)));
         }
 
         [HttpDelete("{id}")]
@@ -327,14 +359,19 @@ namespace PlaceAgregator.API.Controllers
         [Authorize(Roles = "user")]
         [HttpPost]
         [Produces(typeof(PlaceGetDTO))]
-        public async Task<IActionResult> CreatePlaceAsync([FromForm] PlaceCreateDTO place)
+        public async Task<IActionResult> CreatePlaceAsync([FromBody] PlaceCreateDTO place)
         {
             string? accountId = User.FindFirst(ClaimTypes.Sid)?.Value;
             if (accountId == null)
                 return BadRequest();
 
-            Place newPlace = _mapper.Map<Place>(place);
-            newPlace.UserId = accountId;
+            Place newPlace = new Place()
+            {
+                UserId = accountId,
+                Title = place.Title,
+                City = place.City,
+                Address = place.Address,
+            };
 
             var result = await _context.Places.AddAsync(newPlace);
             await _context.SaveChangesAsync();
@@ -346,7 +383,7 @@ namespace PlaceAgregator.API.Controllers
         [Authorize(Roles = "user")]
         [HttpPut("{id}")]
         [Produces(typeof(PlaceGetDTO))]
-        public async Task<IActionResult> UpdatePlaceAsync(int id, [FromForm] PlaceUpdateDTO placeDTO)
+        public async Task<IActionResult> UpdatePlaceAsync(int id, [FromBody] PlaceUpdateDTO placeDTO)
         {
             var place = await _context.Places.FirstOrDefaultAsync(item => item.Id == id && item.IsBlocked == false);
             if (place == null)
@@ -370,7 +407,12 @@ namespace PlaceAgregator.API.Controllers
 
             await _context.SaveChangesAsync();
 
-            return Ok(placeDTO);
+            place = await _context.Places.FirstOrDefaultAsync(item => item.Id == id);
+
+            if (place == null)
+                return BadRequest();
+
+            return Ok(_mapper.Map<PlaceGetDTO>(place));
         }
 
         #endregion

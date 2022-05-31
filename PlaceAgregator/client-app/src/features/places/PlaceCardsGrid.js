@@ -1,22 +1,17 @@
 import { Grid } from "@mui/material";
+import { useSelector } from "react-redux";
 import PlaceCard from "./PlaceCard";
+import { selectPlaceIds } from "./placesSlice";
 
 const PlaceCardsGrid = (props) => {
+    const placeIds = useSelector(selectPlaceIds);
+
     return (
         <Grid container flexDirection="row wrap" spacing={2} displayPrint="flex-wrap" justifyContent="center" alignItems="center">
-            {props.data?.map((item) => {
+            {placeIds?.map((id) => {
                 return (
-                    <Grid item key={item.id} xs={12} md={4} lg={4} sm={6}>
-                        <PlaceCard
-                            id={item.id}
-                            image={item.photo}
-                            rating={item.rating}
-                            capacity={item.capacity}
-                            area={item.area}
-                            title={item.title}
-                            price={item.baseRate}
-                            address={item.address}
-                        />
+                    <Grid item key={id} xs={12} md={4} lg={4} sm={6}>
+                        <PlaceCard id={id} />
                     </Grid>
                 )
             })}

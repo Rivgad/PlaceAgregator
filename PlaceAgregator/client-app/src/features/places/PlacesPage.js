@@ -1,35 +1,26 @@
-import { useState } from 'react'
+import { useEffect } from 'react'
 import {
     Box,
-    Container,
-    SwipeableDrawer
+    Container
 } from '@mui/material';
 import PlaceCardsGrid from './PlaceCardsGrid';
-import Filters from './search/Filters';
 import SearchBarPanel from './search/SearchBarPanel';
+import { useDispatch } from 'react-redux';
+import { fetchPlaces } from './placesSlice';
 
 const PlacesPage = () => {
-    const [state, setState] = useState(
-        false
-    );
-    const toggleDrawer = (isOpen) => {
-        setState(isOpen)
-    }
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+        dispatch(fetchPlaces({}))
+    }, [dispatch])
     return (
         <>
             <Container sx={{ py: 2 }} maxWidth="lg">
                 <Box sx={{ my: 5 }}>
-                    <SearchBarPanel openDrawer={() => toggleDrawer(true)} />
+                    <SearchBarPanel />
                 </Box>
-                <SwipeableDrawer
-                    anchor='right'
-                    disableBackdropTransition
-                    onClose={() => toggleDrawer(false)}
-                    onOpen={() => toggleDrawer(true)}
-                    open={state}>
-                    <Filters onClose={() => toggleDrawer(false)} />
-                </SwipeableDrawer>
-                <PlaceCardsGrid />
+                <PlaceCardsGrid/>
             </Container>
         </>
     )

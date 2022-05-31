@@ -5,15 +5,15 @@ import {
 } from '@mui/material'
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchBookingRequests, selectBookingRequestIds } from './bookingSlice';
-import BookingsTable from './BookingsTable';
+import BookingsHistoryTable from './BookingsHistoryTable';
+import { fetchHistory, selectBookingRequestHistoryIds } from './bookingSlice';
 
-const BookingsPage = () => {
+const BookingsHistoryPage = () => {
     const dispatch = useDispatch();
-    const bookingRequestIds = useSelector(selectBookingRequestIds);
+    const bookingRequestIds = useSelector(selectBookingRequestHistoryIds);
 
     useEffect(() => {
-        dispatch(fetchBookingRequests({orderBy:'creationDateTime', desc: false}));
+        dispatch(fetchHistory({orderBy:'creationDateTime'}));
     }, [dispatch])
     return (
         <>
@@ -21,11 +21,11 @@ const BookingsPage = () => {
                 <Grid sx={{ py: 4 }} container spacing={4}>
                     <Grid item xs={12}>
                         <Typography variant='h5'>
-                            Бронирования
+                            История бронирований
                         </Typography>
                     </Grid>
                     <Grid item xs={12} md={12}>
-                        <BookingsTable bookingRequestIds={bookingRequestIds} />
+                        <BookingsHistoryTable bookingRequestIds={bookingRequestIds} />
                     </Grid>
                 </Grid>
             </Container>
@@ -33,4 +33,4 @@ const BookingsPage = () => {
     );
 }
 
-export default BookingsPage;
+export default BookingsHistoryPage;

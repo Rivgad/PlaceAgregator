@@ -10,9 +10,10 @@ import { useDispatch, useSelector } from 'react-redux';
 import { object, string } from 'yup';
 import { Formik } from 'formik';
 import { RequestStatus } from '../../helpers';
+import { login } from './authSlice';
 
 const schema = object({
-    login: string().required('Введите логин'),
+    email: string().required('Введите логин или email'),
     password: string().required('Введите пароль')
 })
 
@@ -21,11 +22,10 @@ const SignInForm = (props) => {
     const { openSignUp } = props;
     const status = useSelector(state => state.auth.status);
     const isLoading = status === RequestStatus.Loading;
-    const isError = status ===RequestStatus.Failed;
-    
-    const handleSubmit = ({login, password})=>
-    {
-        console.log(login, password)
+    const isError = status === RequestStatus.Failed;
+
+    const handleSubmit = ({ email, password }) => {
+        dispatch(login({ email, password }));
     }
     return (
         <>
@@ -36,34 +36,33 @@ const SignInForm = (props) => {
                 Авторизация
             </Typography>
             <Formik
-            validationSchema={schema}
-            onSubmit={handleSubmit}
-            initialValues={{
-                login: '',
-                password: ''
-            }}
-        >
-            {({
-                handleSubmit,
-                handleChange,
-                setFieldValue,
-                values,
-                errors,
-            }) => (
+                validationSchema={schema}
+                onSubmit={handleSubmit}
+                initialValues={{
+                    email: '',
+                    password: ''
+                }}
+            >
+                {({
+                    handleSubmit,
+                    handleChange,
+                    values,
+                    errors,
+                }) => (
                     <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
                         <TextField
                             margin="normal"
                             required
                             fullWidth
-                            id="login"
+                            id="email"
                             label="Логин/Email"
-                            name="login"
-                            value={values.login}
+                            name="email"
+                            value={values.email}
                             onChange={handleChange}
-                            autoComplete="login"
+                            autoComplete="email"
                             autoFocus
-                            error={errors.login != null}
-                            helperText={errors.login}
+                            error={errors.email != null || isError}
+                            helperText={errors.email}
                         />
                         <TextField
                             margin="normal"
@@ -75,7 +74,7 @@ const SignInForm = (props) => {
                             label="Пароль"
                             type="password"
                             id="password"
-                            error={errors.password != null}
+                            error={errors.password != null || isError}
                             helperText={errors.password}
                             autoComplete="current-password"
                         />
@@ -89,10 +88,10 @@ const SignInForm = (props) => {
                             Войти
                         </LoadingButton>
                     </Box>
-            )}
+                )}
 
-        </Formik>
-            
+            </Formik>
+
             <Grid container >
                 <Link component='button'
                     onClick={openSignUp}

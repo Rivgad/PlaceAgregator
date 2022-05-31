@@ -1,2 +1,3 @@
 import RequestStatus from './requestStatusTypes'
-export { RequestStatus }
+import StatusType from './bookingRequestStatus'
+export { RequestStatus, StatusType }

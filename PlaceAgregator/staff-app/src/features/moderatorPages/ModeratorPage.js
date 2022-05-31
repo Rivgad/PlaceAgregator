@@ -3,7 +3,6 @@ import { Box, Container } from '@mui/material';
 import { Route, Routes } from 'react-router-dom';
 import ModeratorPageHeader from './ModeratorPageHeader';
 import PlacesEditPage from './places/PlacesEditPage';
-import RequestsPage from './requests/RequestsPage';
 import CommentsPage from './comments/CommentsPage';
 
 
@@ -15,7 +14,6 @@ const ModeratorPage = () => {
                 <Routes>
                     <Route index element={<PlacesEditPage/>} />
                     <Route path='places' element={<PlacesEditPage/>} />
-                    <Route path='requests' element={<RequestsPage/>} />
                     <Route path='comments' element={<CommentsPage/>} />
                     <Route
                         path="*"

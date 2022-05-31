@@ -26,6 +26,9 @@ namespace PlaceAgregator.API.AppBuilders
                     opt => opt.MapFrom(src => src.EventTypes.Select(item => item.Id)))
                 .ForMember(dest => dest.ProhibitionIds,
                     opt => opt.MapFrom(src => src.Prohibitions.Select(item => item.Id)));
+            
+            cfg.CreateMap<Place, PlaceGetTableRowDTO>();
+
 
             cfg.CreateMap<SheduleDTO, Shedule>();
             cfg.CreateMap<Shedule, SheduleDTO>();
@@ -42,6 +45,9 @@ namespace PlaceAgregator.API.AppBuilders
 
             cfg.CreateMap<AppUser, AppUserGetDTO>();
             cfg.CreateMap<AppUserUpdateDTO, AppUser>();
+
+            cfg.CreateMap<BookingRequestCreateDTO, BookingRequest>();
+            cfg.CreateMap<BookingRequest, BookingRequestGetDTO>();
 
             return cfg;
         }

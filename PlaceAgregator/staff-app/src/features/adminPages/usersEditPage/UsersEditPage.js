@@ -1,6 +1,7 @@
 import { Grid, Typography } from '@mui/material';
 import { useState } from 'react';
 import UsersTable from './UsersTable';
+import axios from "axios";
 
 const createUser = (id, login, firstName, familyName, patronimyc, isBlocked) =>{
     return {id, login, firstName, familyName, patronimyc, isBlocked}
@@ -10,6 +11,10 @@ const usersData= [
     createUser(2, 'user2', 'Имя 2', 'Фамилия 2', 'Отчество 2', true),
     createUser(3, 'user3', 'Имя 3', 'Фамилия 3', '', true),
 ]
+
+const fetchUsers = async()=>{
+    return await axios.get();
+}
 
 const UsersEditPage = (props) => {
     const [users, setUsers] = useState(usersData); 

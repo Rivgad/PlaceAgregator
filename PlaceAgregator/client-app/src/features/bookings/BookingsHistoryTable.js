@@ -10,22 +10,16 @@ import {
 } from '@mui/material'
 import { useDispatch, useSelector } from 'react-redux';
 import { StatusType } from '../../helpers';
-import { acceptBookingRequest, rejectBookingRequests, selectBookingRequestById } from './bookingSlice';
-import ThumbDownIcon from '@mui/icons-material/ThumbDown';
-import ThumbUpIcon from '@mui/icons-material/ThumbUp';
+import { cancelBookingRequest, selectBookingRequestHistoryById } from './bookingSlice';
+import CancelIcon from '@mui/icons-material/Cancel';
 
-const BookingTableRow = ({ id }) => {
+const BookingHistoryTableRow = ({ id }) => {
     const dispatch = useDispatch();
-    const bookingRequest = useSelector(state => selectBookingRequestById(state, id));
-    const statusIsCreated = bookingRequest.status === 0;
-
-    const handleAcceptClick = ()=>{
-        dispatch(acceptBookingRequest({id}));
+    const bookingRequest = useSelector(state => selectBookingRequestHistoryById(state, id));
+    const createdOrAccepted = bookingRequest.status === 0 || bookingRequest.status === 1;
+    const handleCancelClick = ()=>{
+        dispatch(cancelBookingRequest({id}));
     };
-    const handleRejectClick = ()=>{
-        dispatch(rejectBookingRequests({id}));
-    };  
-
     return (
         <TableRow
             key={bookingRequest.id}
@@ -43,19 +37,10 @@ const BookingTableRow = ({ id }) => {
             <TableCell align="right">{bookingRequest.comment}</TableCell>
             <TableCell align="right">
                 {
-                    statusIsCreated
+                    createdOrAccepted
                     &&
-                    (<IconButton onClick={handleAcceptClick} aria-label="Принять">
-                        <ThumbUpIcon />
-                    </IconButton>)
-                }
-            </TableCell>
-            <TableCell align="right">
-                {
-                    statusIsCreated
-                    &&
-                    (<IconButton onClick={handleRejectClick} aria-label="Отклонить">
-                        <ThumbDownIcon />
+                    (<IconButton onClick={handleCancelClick} aria-label="Отменить">
+                        <CancelIcon />
                     </IconButton>)
                 }
             </TableCell>
@@ -63,7 +48,7 @@ const BookingTableRow = ({ id }) => {
     );
 }
 
-const BookingsTable = ({ bookingRequestIds }) => {
+const BookingsHistoryTable = ({ bookingRequestIds }) => {
 
     return (
         <TableContainer component={Paper}>
@@ -78,16 +63,15 @@ const BookingsTable = ({ bookingRequestIds }) => {
                         <TableCell align="right">Дата окончания</TableCell>
                         <TableCell align="right">Количество гостей</TableCell>
                         <TableCell align="right">Комментарий</TableCell>
-                        <TableCell align="right">Принять</TableCell>
-                        <TableCell align="right">Отклонить</TableCell>
+                        <TableCell align="right">Действия</TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {bookingRequestIds?.map((id) => <BookingTableRow key={id} id={id} />)}
+                    {bookingRequestIds?.map((id) => <BookingHistoryTableRow key={id} id={id} />)}
                 </TableBody>
             </Table>
         </TableContainer>
     );
 }
 
-export default BookingsTable;
+export default BookingsHistoryTable;

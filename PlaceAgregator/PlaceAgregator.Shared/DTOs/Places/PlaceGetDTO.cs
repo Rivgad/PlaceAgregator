@@ -40,6 +40,10 @@ namespace PlaceAgregator.Shared.DTOs.Places
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public string? Title { get; set; }
 
+        [JsonPropertyName("rating")]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public decimal? Rating { get; set; }
+
         [JsonPropertyName("baseRate")]
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public decimal? BaseRate { get; set; }

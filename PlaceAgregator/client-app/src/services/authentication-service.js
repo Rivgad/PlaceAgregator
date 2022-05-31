@@ -1,8 +1,10 @@
+import authHeader from './authHeader';
+
 const axios = require('axios').default;
 
 const login = (login, password) => {
     return axios
-    .post("/api/Auth/Login", { login, password })
+    .post("/api/Auth/Login", { login: login, password })
     .then((request) => {
       if (request.data.accessToken) {
         localStorage.setItem("user", JSON.stringify(request.data));
@@ -12,9 +14,9 @@ const login = (login, password) => {
     .catch((error) => { throw Error(error) } )
 };
 
-const registration = (login, password, passwordConfirm) => {
+const registration = (email, userName, password, confirmPassword) => {
     return axios
-    .post("/api/Auth/Registration", { login, password })
+    .post("/api/Auth/Registration", { email, userName, password, confirmPassword })
     .then((request) => {
       return request.data;
     })
@@ -24,6 +26,21 @@ const registration = (login, password, passwordConfirm) => {
     })
 };
 
+const getUserInfo = async () => {
+  return await axios.get('/api/Profile',
+    {
+      headers: authHeader()
+    });
+}
+
+const updateUserInfo = async (userName, email, firstName, lastName, patronimyc) => {
+  return await axios.post('/api/Profile',
+    {userName, email, firstName, lastName, patronimyc},
+    {
+      headers: authHeader()
+    });
+}
+
 const logout = () => {
   localStorage.removeItem("user");
 };
@@ -32,6 +49,8 @@ const authService = {
   login,
   registration,
   logout,
+  getUserInfo,
+  updateUserInfo
 };
 
 export default authService;
