@@ -1,8 +1,8 @@
-const Status = {
+const RequestStatus = {
     Idle: 'idle',
     Loading: 'loading',
     Succeeded: 'succeeded',
     Failed: 'failed',
 }
 
-export default Status;
+export default RequestStatus;
