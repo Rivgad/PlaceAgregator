@@ -39,9 +39,7 @@ const Comment = (props) => {
                 <CardHeader
                     sx={{ alignItems: 'center' }}
                     avatar={
-                        <Avatar sx={{ width: 40, height: 40, mx: 'auto' }}>
-                            H
-                        </Avatar>
+                        <Avatar sx={{ width: 32, height: 32 }}>{userName[0].toUpperCase()}</Avatar>
                     }
                     title={userName}
                     subheader={dateString}
@@ -195,7 +193,7 @@ const PlaceHeader = (props) => {
 
                     <LeftRightComponent spacing={2}>
                         <Avatar>{place?.owner?.userName?.slice(0, 1)}</Avatar>
-                        <p>{ place?.owner?.userName } {place?.owner?.firstName} {place?.owner?.familyName}</p>
+                        <p>{ place?.owner?.userName } {place?.owner?.firstName} {place?.owner?.lastName}</p>
                     </LeftRightComponent>
                 </CardContent>
             </Card>
