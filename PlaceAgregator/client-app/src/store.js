@@ -6,6 +6,7 @@ import discountsReducer from './features/places/edit/discountsSlice';
 import myPlacesReducer from './features/places/myPlaces/myPlacesSlice';
 import placesReducer from './features/places/placesSlice';
 import typesReducer from './features/typesSlice';
+import usersReducer from './features/staff/features/adminPages/usersEditPage/usersSlice' 
 
 const store = configureStore({
     reducer: {
@@ -15,7 +16,8 @@ const store = configureStore({
         myPlaces: myPlacesReducer,
         bookings: bookingReducer,
         charges: chargesReducer,
-        discounts: discountsReducer
+        discounts: discountsReducer,
+        users:usersReducer
     }
 })
 

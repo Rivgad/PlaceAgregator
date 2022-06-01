@@ -36,19 +36,34 @@ namespace PlaceAgregator.API.Controllers
                 query = query.OrderBy(filter.OrderBy, filter.Desc ?? true);
             }
 
-            if (!string.IsNullOrEmpty(filter.Email))
-                query = query.Where(item => item.Email.ToLower().Contains(filter.Email.ToLower()));
-
-            if (!string.IsNullOrEmpty(filter.UserId))
-                query = query.Where(item => item.Id.ToLower().Contains(filter.UserId.ToLower()));
-
-            if (!string.IsNullOrEmpty(filter.UserName))
-                query = query.Where(item => item.UserName.ToLower().Contains(filter.UserName.ToLower()));
+            if (!string.IsNullOrEmpty(filter.Search))
+                query = query.Where(item =>
+                item.Email.ToLower().Contains(filter.Search.ToLower()) ||
+                item.FirstName.ToLower().Contains(filter.Search.ToLower()) ||
+                item.LastName.ToLower().Contains(filter.Search.ToLower()) ||
+                item.Patronimyc.ToLower().Contains(filter.Search.ToLower()) ||
+                item.UserName.ToLower().Contains(filter.Search.ToLower()));
 
             if (filter.Page != null && filter.PageSize != null)
                 query = query.Skip((int)((filter.Page - 1) * filter.PageSize)).Take((int)filter.PageSize);
 
             return await query.Select(item => _mapper.Map<AppUserGetDTO>(item)).ToListAsync();
+        }
+
+        [Authorize(Roles = "admin")]
+        [HttpDelete("{id}")]
+        [Produces(typeof(EntityDTO))]
+        public async Task<IActionResult> DeleteUser(string id)
+        {
+            var user = await _userManager.FindByIdAsync(id);
+            if (user == null)
+                return NotFound();
+            
+            var result = await _userManager.DeleteAsync(user);
+            if (result.Succeeded)
+                return Ok(new { id = id });
+
+            return BadRequest(result.Errors);
         }
 
         [Authorize(Roles = "admin")]
@@ -99,19 +114,6 @@ namespace PlaceAgregator.API.Controllers
             user = await _userManager.FindByIdAsync(userId);
 
             return Ok(_mapper.Map<AppUserGetDTO>(user));
-        }
-
-        [Authorize(Roles = "admin")]
-        [HttpPost("[Action]/{userId}")]
-        public async Task<IActionResult> DeleteUser(string userId)
-        {
-            var user = await _userManager.FindByIdAsync(userId);
-            if (user == null)
-                return NotFound();
-
-            await _userManager.DeleteAsync(user);
-
-            return Ok(new { id = userId });
         }
     }
 }

@@ -132,3 +132,5 @@ export const selectIsLoggedIn = state => state.auth.isLoggedIn;
 export const selectUserName = state => state.auth.user.userName;
 
 export const selectUser = state => state.auth.user;
+
+export const selectUserInRole = (state, role) => state.auth.user.roles.includes(role); 

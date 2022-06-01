@@ -1,4 +1,4 @@
-import { BrowserRouter, Navigate, Outlet, Route, Routes, useLocation } from "react-router-dom";
+import { BrowserRouter, Navigate, Outlet, Route, Routes } from "react-router-dom";
 
 import AppHeader from "./features/header/AppHeader";
 import PlaceEditPage from "./features/places/edit/Page";
@@ -14,10 +14,12 @@ import BookingsPage from "./features/bookings/BookingsPage";
 import StaffApp from "./features/staff/StaffApp";
 import { useSelector } from "react-redux";
 import { selectUser } from "./features/authentication/authSlice";
+import useNotifier from "./features/notifications/useNotifier";
 
 const AppLayout = () => {
+    useNotifier();
     const user = useSelector(selectUser);
-    if (user && user.roles.some(role => ['admin'].includes(role))) {
+    if (user && user.roles.some(role => ['admin', 'manager'].includes(role))) {
         return (<Navigate to='staff' />);
     }
 
@@ -70,7 +72,7 @@ const App = () => {
                         <Route path="profile/:id" element={<UserProfile />} />
                         <Route path="login" element={<AuthPage />} />
                     </Route>
-                    <Route path='staff' element={
+                    <Route path='staff/*' element={
                         <RequireAuth roles={['admin', 'manager']}>
                             <StaffApp />
                         </RequireAuth>
