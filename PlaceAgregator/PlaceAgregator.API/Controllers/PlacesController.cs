@@ -99,8 +99,12 @@ namespace PlaceAgregator.API.Controllers
             if (place.UserId != accountId)
                 return Forbid();
 
-            Discount newDiscount = _mapper.Map<Discount>(discount);
-            newDiscount.PlaceId = place.Id;
+            Discount newDiscount = new Discount()
+            {
+                PlaceId = id,
+                FromHoursQuantity = discount.FromHoursQuantity,
+                Procents = discount.Procents,
+            };
 
             newDiscount = _context.Discounts.Add(newDiscount).Entity;
             await _context.SaveChangesAsync();

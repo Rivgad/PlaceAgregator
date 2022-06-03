@@ -1,8 +1,8 @@
 import { createAsyncThunk, createSelector, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
-import { RequestStatus } from "../../../helpers";
-import authHeader from "../../../services/authHeader";
-import { deletePlace, fetchPlace } from "../myPlaces/myPlacesSlice";
+import { RequestStatus } from "../../../../helpers";
+import authHeader from "../../../../services/authHeader";
+import { deletePlace, fetchPlace } from "../../myPlaces/myPlacesSlice";
 
 export const createDiscount = createAsyncThunk(
     "discounts/createDiscount",

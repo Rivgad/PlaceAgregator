@@ -1,8 +1,8 @@
 import { createAsyncThunk, createSelector, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
-import { RequestStatus } from "../../../helpers";
-import authHeader from "../../../services/authHeader";
-import { deletePlace, fetchPlace } from "../myPlaces/myPlacesSlice";
+import { RequestStatus } from "../../../../helpers";
+import authHeader from "../../../../services/authHeader";
+import { deletePlace, fetchPlace } from "../../myPlaces/myPlacesSlice";
 
 export const createCharge = createAsyncThunk(
     "charges/createCharge",
@@ -44,6 +44,7 @@ const chargesSlice = createSlice({
         [createCharge.fulfilled]: (state, action) => {
             let charge = action.payload;
             state.entities[charge.id] = charge;
+            state.status = RequestStatus.Succeeded;
         },
         [createCharge.rejected]: (state, action) => {
             state.status = RequestStatus.Failed;
@@ -55,6 +56,7 @@ const chargesSlice = createSlice({
         [deleteCharge.fulfilled]: (state, action) => {
             let { id } = action.payload;
             delete state.entities[id];
+            state.status = RequestStatus.Succeeded;
         },
         [deleteCharge.rejected]: (state, action) => {
             state.status = RequestStatus.Failed;
@@ -69,6 +71,7 @@ const chargesSlice = createSlice({
                 newCharges[charge.id] = charge;
             });
             state.entities = newCharges;
+            state.status = RequestStatus.Succeeded;
         },
         [fetchPlace.rejected]: (state, action) => {
             state.status = RequestStatus.Failed;

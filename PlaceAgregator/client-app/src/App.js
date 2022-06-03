@@ -47,7 +47,7 @@ const App = () => {
                                 </RequireAuth>
                             }
                         />
-                        <Route path="places/:id/edit"
+                        <Route path="places/:id/edit/*"
                             element={
                                 <RequireAuth>
                                     <PlaceEditPage />
