@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlaceAgregator.EntityFramework;
+using PlaceAgregator.Shared.DTOs;
 using PlaceAgregator.Shared.DTOs.Places;
 using PlaceAgregator.Shared.Extensions;
 using PlaceAgregator.Shared.Models;
@@ -198,11 +199,14 @@ namespace PlaceAgregator.API.Controllers
 
         #region Blocking
 
-        [Authorize(Roles = "manager, admin")]
+        [Authorize(Roles = $"{RoleConstants.Moderator}, {RoleConstants.Admin}")]
         [HttpPost("{id?}/[Action]")]
+        [Produces(typeof(PlaceMinimalInfoDTO))]
         public async Task<IActionResult> BlockPlace(int id)
         {
-            var place = await _context.Places.FirstOrDefaultAsync(item => item.Id == id);
+            var place = await _context.Places
+                .Include(item=>item.User)
+                .FirstOrDefaultAsync(item => item.Id == id);
 
             if (place == null)
                 return NotFound();
@@ -211,14 +215,17 @@ namespace PlaceAgregator.API.Controllers
             _context.Update(place);
             await _context.SaveChangesAsync();
 
-            return Ok(new { id = id });
+            return Ok(_mapper.Map<PlaceMinimalInfoDTO>(place));
         }
 
-        [Authorize(Roles = "manager, admin")]
+        [Authorize(Roles = $"{RoleConstants.Moderator}, {RoleConstants.Admin}")]
         [HttpPost("{id?}/[Action]")]
+        [Produces(typeof(PlaceMinimalInfoDTO))]
         public async Task<IActionResult> UnblockPlace(int id)
         {
-            var place = await _context.Places.FirstOrDefaultAsync(item => item.Id == id);
+            var place = await _context.Places
+                .Include(item=>item.User)
+                .FirstOrDefaultAsync(item => item.Id == id);
 
             if (place == null)
                 return NotFound();
@@ -227,7 +234,7 @@ namespace PlaceAgregator.API.Controllers
             _context.Update(place);
             await _context.SaveChangesAsync();
 
-            return Ok(new { id = id });
+            return Ok(_mapper.Map<PlaceMinimalInfoDTO>(place));
         }
 
         #endregion
@@ -244,9 +251,30 @@ namespace PlaceAgregator.API.Controllers
             return Ok(new PagesQuantityResponse((int)pagesCount));
         }
 
+        [Authorize(Roles = RoleConstants.Moderator)]
+        [HttpGet("[Action]")]
+        [Produces(typeof(PlaceMinimalInfoDTO[]))]
+        public async Task<IEnumerable<PlaceMinimalInfoDTO>> GetInfoAboutBlocked([FromQuery] FilterWithSearchDTO filter)
+        {
+            var query = _context.Places
+                .Include(item=>item.User)
+                .AsQueryable();
+
+            if (filter.Search != null)
+                query = query.Where(item =>
+                item.City.ToLower().Contains(filter.Search.ToLower()) ||
+                item.Address.ToLower().Contains(filter.Search.ToLower()) ||
+                item.Title.ToLower().Contains(filter.Search.ToLower()) ||
+                item.Description.ToLower().Contains(filter.Search.ToLower()) ||
+                filter.Search.Contains(item.Id.ToString()) 
+                );
+
+            return await query.Select(item => _mapper.Map<PlaceMinimalInfoDTO>(item)).ToListAsync();
+        }
+        
         [HttpGet]
         [Produces(typeof(PlaceCardInfo[]))]
-        public async Task<IEnumerable<PlaceCardInfo>> GetAllAsync([FromQuery] PlaceFilterDTO filter)
+        public async Task<IEnumerable<PlaceCardInfo>> GetAllNotBlockedAndActiveAsync([FromQuery] PlaceFilterDTO filter)
         {
             var query = _context.Places
                 .Include(item => item.BookingRequests)

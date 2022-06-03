@@ -1,23 +1,20 @@
-import React from 'react';
 import { Container } from '@mui/material';
 import { Route, Routes } from 'react-router-dom';
 import PlacesEditPage from './places/PlacesEditPage';
 import CommentsPage from './comments/CommentsPage';
 
-
-const ManagerPage = () => {
+const ModeratorPage = () => {
     return (
         <>
             <Container sx={{ py: 4 }} maxWidth="lg">
                 <Routes>
-                    <Route index element={<PlacesEditPage/>} />
-                    <Route path='places' element={<PlacesEditPage/>} />
-                    <Route path='comments' element={<CommentsPage/>} />
+                    <Route index element={<PlacesEditPage />} />
+                    <Route path='places' element={<PlacesEditPage />} />
+                    <Route path='comments' element={<CommentsPage />} />
                 </Routes>
             </Container>
         </>
     );
 };
 
-
-export default ManagerPage;
+export default ModeratorPage;
