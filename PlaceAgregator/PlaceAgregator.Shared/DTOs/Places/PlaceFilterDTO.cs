@@ -2,10 +2,8 @@
 
 namespace PlaceAgregator.Shared.DTOs.Places
 {
-    public class PlaceFilterDTO : BaseFilterDTO
+    public class PlaceFilterDTO : FilterWithSearchDTO
     {
-        [JsonPropertyName("search")]
-        public string? Search { get; set; }
 
         [JsonPropertyName("minCapacity")]
         public int? MinCapacity { get; set; }

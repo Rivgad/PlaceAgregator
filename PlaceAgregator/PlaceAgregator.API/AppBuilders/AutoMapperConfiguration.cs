@@ -28,7 +28,7 @@ namespace PlaceAgregator.API.AppBuilders
                     opt => opt.MapFrom(src => src.Prohibitions.Select(item => item.Id)));
             
             cfg.CreateMap<Place, PlaceGetTableRowDTO>();
-
+            cfg.CreateMap<Place, PlaceMinimalInfoDTO>();
 
             cfg.CreateMap<SheduleDTO, Shedule>();
             cfg.CreateMap<Shedule, SheduleDTO>();
