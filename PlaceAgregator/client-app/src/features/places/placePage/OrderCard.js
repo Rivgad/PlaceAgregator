@@ -9,7 +9,7 @@ import { useSnackbar } from 'notistack';
 import { selectIsLoggedIn } from "../../authentication/authSlice";
 import { useLocation, useNavigate } from "react-router-dom";
 
-const OrderCard = (props) => {
+const OrderCard = () => {
     const navigate = useNavigate();
     let location = useLocation();
     const { enqueueSnackbar } = useSnackbar();

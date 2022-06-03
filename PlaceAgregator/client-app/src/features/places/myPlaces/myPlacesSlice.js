@@ -94,6 +94,9 @@ const myPlacesSlice = createSlice({
     reducers: {
         onCreateInformationGet(state, action) {
             state.createStatus = RequestStatus.Idle;
+        },
+        onPhotoChanged(state, action){
+            state.currentPlace.photo = action.payload;
         }
     },
     extraReducers: {
@@ -178,11 +181,11 @@ const myPlacesSlice = createSlice({
 
 export default myPlacesSlice.reducer;
 
+export const { onCreateInformationGet, onPhotoChanged } = myPlacesSlice.actions;
+
 export const selectCurrentPlace = state => state.myPlaces.currentPlace;
 
 const selectPlaceEntities = state => state.myPlaces.entities;
-
-export const { onCreateInformationGet } = myPlacesSlice.actions;
 
 export const selectPlaces = createSelector(
     selectPlaceEntities,
