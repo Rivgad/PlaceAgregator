@@ -3,22 +3,18 @@ import {
     Grid,
     Typography
 } from '@mui/material'
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchBookingRequests, selectBookingRequestIds } from './bookingSlice';
 import BookingsTable from './BookingsTable';
 
-const StatusType = { Rejected:'Отклонена', Accepted:'Принята', Pending:'На рассмотрении' }
+const BookingsPage = () => {
+    const dispatch = useDispatch();
+    const bookingRequestIds = useSelector(selectBookingRequestIds);
 
-function createData(id, placeId, status, creationDateTime, startDateTime, endDateTime, enrollDateTime, guestsCount, comment) {
-    return { id, placeId, status, creationDateTime, startDateTime, endDateTime, enrollDateTime, guestsCount, comment };
-}
-const rows = [
-    createData(12, 14, StatusType.Pending, '02.05.2022 14:30', '05.05.2022 12:00', '05.05.2022 18:00', '04.05.2022 12:00', 10, 'Рассмотри пж...'),
-    createData(13, 14, StatusType.Pending, '02.05.2022 14:30', '05.05.2022 12:00', '05.05.2022 18:00', '04.05.2022 12:00', 10, 'Рассмотри пж...'),
-    createData(14, 14, StatusType.Pending, '02.05.2022 14:30', '05.05.2022 12:00', '05.05.2022 18:00', '04.05.2022 12:00', 10, 'Рассмотри пж...'),
-    createData(15, 14, StatusType.Pending, '02.05.2022 14:30', '05.05.2022 12:00', '05.05.2022 18:00', '04.05.2022 12:00', 10, 'Рассмотри пж...'),
-    createData(16, 14, StatusType.Pending, '02.05.2022 14:30', '05.05.2022 12:00', '05.05.2022 18:00', '04.05.2022 12:00', 10, '')
-]
-
-const BookingsPage = (props) => {
+    useEffect(() => {
+        dispatch(fetchBookingRequests({orderBy:'creationDateTime', desc: false}));
+    }, [dispatch])
     return (
         <>
             <Container sx={{ py: 2 }} maxWidth="lg">
@@ -29,7 +25,7 @@ const BookingsPage = (props) => {
                         </Typography>
                     </Grid>
                     <Grid item xs={12} md={12}>
-                        <BookingsTable rows={rows} />
+                        <BookingsTable bookingRequestIds={bookingRequestIds} />
                     </Grid>
                 </Grid>
             </Container>

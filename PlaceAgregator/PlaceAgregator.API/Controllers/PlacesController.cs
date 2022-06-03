@@ -6,6 +6,7 @@ using PlaceAgregator.EntityFramework;
 using PlaceAgregator.Shared.DTOs.Places;
 using PlaceAgregator.Shared.Extensions;
 using PlaceAgregator.Shared.Models;
+using PlaceAgregator.Shared.Models.Enums;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Security.Claims;
@@ -28,7 +29,7 @@ namespace PlaceAgregator.API.Controllers
 
         #region Charges
 
-        [Authorize(Roles = "user")]
+        [Authorize(Roles = RoleConstants.User)]
         [HttpPost("{id?}/Charges")]
         [Produces(typeof(ChargeGetDTO))]
         public async Task<IActionResult> AddCharge(int id, [FromBody] ChargeCreateDTO charge)
@@ -53,7 +54,7 @@ namespace PlaceAgregator.API.Controllers
             return Ok(_mapper.Map<ChargeGetDTO>(newCharge));
         }
 
-        [Authorize(Roles = "user")]
+        [Authorize(Roles = RoleConstants.User)]
         [HttpDelete("{id?}/Charges/{chargeId?}")]
         public async Task<IActionResult> DeleteCharge(int id, int chargeId)
         {
@@ -82,7 +83,7 @@ namespace PlaceAgregator.API.Controllers
 
         #region Discounts
 
-        [Authorize(Roles = "user")]
+        [Authorize(Roles = RoleConstants.User)]
         [HttpPost("{id?}/Discounts")]
         [Produces(typeof(DiscountGetDTO))]
         public async Task<IActionResult> AddDiscount(int id, [FromBody] DiscountCreateDTO discount)
@@ -107,7 +108,7 @@ namespace PlaceAgregator.API.Controllers
             return Ok(_mapper.Map<DiscountGetDTO>(newDiscount));
         }
 
-        [Authorize(Roles = "user")]
+        [Authorize(Roles = RoleConstants.User)]
         [HttpDelete("{id?}/Discounts/{discountId?}")]
         public async Task<IActionResult> DeleteDiscount(int id, int discountId)
         {
@@ -134,95 +135,9 @@ namespace PlaceAgregator.API.Controllers
 
         #endregion
 
-        #region ServiceItems
-
-        [Authorize(Roles = "user")]
-        [HttpPost("{placeId}/ServiceItems")]
-        [Produces(typeof(ServiceItemGetDTO))]
-        public async Task<IActionResult> CreateServiceItem(int placeId, [FromForm] ServiceItemCreateDTO serviceItem)
-        {
-            var place = await _context.Places.FirstOrDefaultAsync(item => item.Id == placeId && item.IsBlocked == false);
-            if (place == null)
-                return NotFound();
-
-            string? accountId = User.FindFirst(ClaimTypes.Sid)?.Value;
-            if (accountId == null)
-                return Forbid();
-
-            if (place.UserId != accountId)
-                return Forbid();
-
-            var newServiceItem = _mapper.Map<ServiceItem>(serviceItem);
-            newServiceItem.PlaceId = place.Id;
-
-            newServiceItem = _context.ServiceItems.Add(newServiceItem).Entity;
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction(nameof(CreateServiceItem), _mapper.Map<ServiceItemGetDTO>(newServiceItem));
-        }
-
-        [Authorize(Roles = "user")]
-        [HttpPut("{placeId}/ServiceItems/{itemId}")]
-        [Produces(typeof(ServiceItemGetDTO))]
-        public async Task<IActionResult> UpdateServiceItem(int placeId, int itemId, [FromForm] ServiceItemUpdateDTO serviceItem)
-        {
-            var place = await _context.Places
-                .Include(item => item.ServiceItems)
-                .FirstOrDefaultAsync(item => item.Id == placeId && item.IsBlocked == false);
-            if (place == null)
-                return NotFound();
-
-            string? accountId = User.FindFirst(ClaimTypes.Sid)?.Value;
-            if (accountId == null)
-                return Forbid();
-
-            if (place.UserId != accountId)
-                return Forbid();
-
-            var existedServiceItem = place.ServiceItems?.FirstOrDefault(item => item.Id == itemId);
-            if (existedServiceItem == null)
-                return NotFound();
-
-            _mapper.Map(serviceItem, existedServiceItem);
-
-            existedServiceItem = _context.ServiceItems.Update(existedServiceItem).Entity;
-            await _context.SaveChangesAsync();
-
-            return Ok(_mapper.Map<ServiceItemGetDTO>(existedServiceItem));
-        }
-
-        [Authorize(Roles = "user")]
-        [HttpDelete("{placeId}/ServiceItems/{itemId}")]
-        public async Task<IActionResult> DeleteServiceItem(int placeId, int itemId)
-        {
-            var place = await _context.Places
-                .Include(item => item.ServiceItems)
-                .FirstOrDefaultAsync(item => item.Id == placeId && item.IsBlocked == false);
-            if (place == null)
-                return NotFound();
-
-            string? accountId = User.FindFirst(ClaimTypes.Sid)?.Value;
-            if (accountId == null)
-                return Forbid();
-
-            if (place.UserId != accountId)
-                return Forbid();
-
-            var serviceItem = place.ServiceItems?.FirstOrDefault(item => item.Id == itemId);
-            if (serviceItem == null)
-                return NotFound();
-
-            _context.ServiceItems.Remove(serviceItem);
-            await _context.SaveChangesAsync();
-
-            return Ok(new { id = serviceItem.Id });
-        }
-
-        #endregion
-
         #region Photo
 
-        [Authorize(Roles = "user")]
+        [Authorize(Roles = RoleConstants.User)]
         [HttpPost("{id?}/Photos")]
         public async Task<IActionResult> AddPhoto(int id, [FromBody] byte[] base64Code)
         {
@@ -247,7 +162,7 @@ namespace PlaceAgregator.API.Controllers
             return Ok(photo.Entity);
         }
 
-        [Authorize(Roles = "user")]
+        [Authorize(Roles = RoleConstants.User)]
         [HttpDelete("{id?}/Photos/{photoId?}")]
         public async Task<IActionResult> DeletePhoto(int id, int photoId)
         {
@@ -333,7 +248,7 @@ namespace PlaceAgregator.API.Controllers
                 .Include(item => item.BookingRequests)
                 .AsQueryable();
 
-            query = query.Where(item => item.IsBlocked == false || item.IsActive == true);
+            query = query.Where(item => item.IsBlocked == false && item.IsActive == true);
 
             if (filter.MinCapacity != null)
                 query = query.Where(item => item.Capacity >= filter.MinCapacity);
@@ -344,20 +259,45 @@ namespace PlaceAgregator.API.Controllers
             if (filter.MinRating != null)
                 query = query.Where(item => item.Rating >= filter.MinRating);
 
-            if (filter.Address != null)
-                query = query.Where(item => item.Address.ToLower().Contains(filter.Address.ToLower()));
+            if (filter.Search != null)
+                query = query.Where(item => 
+                item.City.ToLower().Contains(filter.Search.ToLower()) ||
+                item.Address.ToLower().Contains(filter.Search.ToLower()) ||
+                item.Title.ToLower().Contains(filter.Search.ToLower()) ||
+                item.Description.ToLower().Contains(filter.Search.ToLower()));
 
-            if (filter.City != null)
-                query = query.Where(item => item.City.ToLower().Contains(filter.City.ToLower()));
-
-            if (filter.MaxRate != null)
-                query = query.Where(item => item.BaseRate <= filter.MaxRate);
+            if (filter.MaxBaseRate != null)
+                query = query.Where(item => item.BaseRate <= filter.MaxBaseRate);
 
             return await query.Select(item => _mapper.Map<PlaceCardInfo>(item)).ToListAsync();
         }
 
+        [Authorize(Roles = RoleConstants.User)]
+        [HttpPost("{id}/ToggleIsActive")]
+        [Produces(typeof(PlaceGetTableRowDTO))]
+        public async Task<IActionResult> TogglePlaceIsActive(int id)
+        {
+            string? accountId = User.FindFirst(ClaimTypes.Sid)?.Value;
+
+            var place = await _context.Places
+                .FirstOrDefaultAsync(item => item.Id == id && item.IsBlocked == false);
+
+            if (place == null)
+                return NotFound();
+
+            if (accountId != null && place.UserId == accountId)
+            {
+                place.IsActive = !place.IsActive;
+                _context.Update(place);
+                await _context.SaveChangesAsync();
+                return Ok(_mapper.Map<PlaceGetTableRowDTO>(place));
+            }
+
+            return BadRequest("Вы не являетесь владельцем площадки");
+        }
+
         [HttpGet("{id}")]
-        [ProducesResponseType(200, Type = typeof(GetPlaceDTO))]
+        [ProducesResponseType(200, Type = typeof(PlaceGetDTO))]
         [ProducesResponseType(400)]
         public async Task<IActionResult> GetPlaceAsync(int id)
         {
@@ -368,17 +308,23 @@ namespace PlaceAgregator.API.Controllers
                 .Include(item => item.Photos)
                 .Include(item => item.EventTypes)
                 .Include(item => item.Prohibitions)
-                .Include(item => item.ServiceItems)
                 .FirstOrDefaultAsync(item => item.Id == id && item.IsBlocked == false);
 
             if (place == null)
                 return NotFound();
 
-            return Ok(_mapper.Map<GetPlaceDTO>(place));
+            string? accountId = User.FindFirst(ClaimTypes.Sid)?.Value;
+            if (place.IsActive == false && accountId != null && place.UserId != accountId)
+            {
+                return NotFound();
+            }
+
+            return Ok(_mapper.Map<PlaceGetDTO>(place));
         }
 
-        [Authorize(Roles = "user")]
+        [Authorize(Roles = RoleConstants.User)]
         [HttpGet("myPlaces")]
+        [Produces(typeof(PlaceGetTableRowDTO[]))]
         public async Task<IActionResult> GetUserPlaces()
         {
             string? accountId = User.FindFirst(ClaimTypes.Sid)?.Value;
@@ -387,11 +333,11 @@ namespace PlaceAgregator.API.Controllers
 
             var places = await _context.Places.Where(item => item.UserId == accountId).ToListAsync();
 
-            return Ok(places.Select(item => new { id = item.Id, title = item.Title, rating = item.Rating, isBlocked = item.IsBlocked }));
+            return Ok(places.Select(item => _mapper.Map<PlaceGetTableRowDTO>(item)));
         }
 
         [HttpDelete("{id}")]
-        [Authorize(Roles = "user")]
+        [Authorize(Roles = RoleConstants.User)]
         public async Task<IActionResult> DeleteAsync(int id)
         {
             var place = await _context.Places.FirstOrDefaultAsync(item => item.Id == id);
@@ -411,29 +357,34 @@ namespace PlaceAgregator.API.Controllers
             return Ok(new { id = id });
         }
 
-        [Authorize(Roles = "user")]
+        [Authorize(Roles = RoleConstants.User)]
         [HttpPost]
-        [Produces(typeof(GetPlaceDTO))]
-        public async Task<IActionResult> CreatePlaceAsync([FromForm] PlaceCreateDTO place)
+        [Produces(typeof(PlaceGetDTO))]
+        public async Task<IActionResult> CreatePlaceAsync([FromBody] PlaceCreateDTO place)
         {
             string? accountId = User.FindFirst(ClaimTypes.Sid)?.Value;
             if (accountId == null)
                 return BadRequest();
 
-            Place newPlace = _mapper.Map<Place>(place);
-            newPlace.UserId = accountId;
+            Place newPlace = new Place()
+            {
+                UserId = accountId,
+                Title = place.Title,
+                City = place.City,
+                Address = place.Address,
+            };
 
             var result = await _context.Places.AddAsync(newPlace);
             await _context.SaveChangesAsync();
             newPlace = result.Entity;
 
-            return Ok(_mapper.Map<GetPlaceDTO>(newPlace));
+            return Ok(_mapper.Map<PlaceGetDTO>(newPlace));
         }
 
-        [Authorize(Roles = "user")]
+        [Authorize(Roles = RoleConstants.User)]
         [HttpPut("{id}")]
-        [Produces(typeof(GetPlaceDTO))]
-        public async Task<IActionResult> UpdatePlaceAsync(int id, [FromForm] PlaceUpdateDTO placeDTO)
+        [Produces(typeof(PlaceGetDTO))]
+        public async Task<IActionResult> UpdatePlaceAsync(int id, [FromBody] PlaceUpdateDTO placeDTO)
         {
             var place = await _context.Places.FirstOrDefaultAsync(item => item.Id == id && item.IsBlocked == false);
             if (place == null)
@@ -455,15 +406,14 @@ namespace PlaceAgregator.API.Controllers
             if (place.Prohibitions != null)
                 _context.AttachRange(place.Prohibitions);
 
-            if (place.BuildingTypeId != null)
-                _context.Attach(place.BuildingTypeId);
-            if (place.ParkingTypeId != null)
-                _context.AttachRange(place.ParkingTypeId);
-            if (place.WaterTypeId != null)
-                _context.AttachRange(place.WaterTypeId);
             await _context.SaveChangesAsync();
 
-            return Ok(placeDTO);
+            place = await _context.Places.FirstOrDefaultAsync(item => item.Id == id);
+
+            if (place == null)
+                return BadRequest();
+
+            return Ok(_mapper.Map<PlaceGetDTO>(place));
         }
 
         #endregion

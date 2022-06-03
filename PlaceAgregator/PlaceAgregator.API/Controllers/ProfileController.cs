@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using PlaceAgregator.Shared.DTOs.Authentication;
 using PlaceAgregator.Shared.DTOs.Users;
 using PlaceAgregator.Shared.Models;
+using PlaceAgregator.Shared.Models.Enums;
 using System.Security.Claims;
 
 namespace PlaceAgregator.API.Controllers
@@ -38,7 +39,7 @@ namespace PlaceAgregator.API.Controllers
             return Ok(_mapper.Map<AppUserGetDTO>(user));
         }
 
-        [Authorize(Roles = "user, admin")]
+        [Authorize(Roles = $"{RoleConstants.User}, {RoleConstants.Admin}")]
         [HttpPost]
         public async Task<IActionResult> UpdateUserInfo(AppUserUpdateDTO appUser)
         {

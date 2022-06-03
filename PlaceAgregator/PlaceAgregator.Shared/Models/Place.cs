@@ -16,27 +16,11 @@ namespace PlaceAgregator.Shared.Models
         [JsonIgnore]
         public AppUser User { get; set; }
 
-        public int? WaterTypeId { get; set; }
-
-        [JsonIgnore]
-        public WaterType? WaterType { get; set; }
-
-        public int? BuildingTypeId { get; set; }
-
-        [JsonIgnore]
-        public BuildingType? BuildingType { get; set; }
-
-        public int? ParkingTypeId { get; set; }
-
-        [JsonIgnore]
-        public ParkingType? ParkingType { get; set; }
-
         #endregion
 
         #region Relations
 
         public IEnumerable<BookingRequest>? BookingRequests { get; set; }
-        public IEnumerable<ServiceItem>? ServiceItems { get; set; }
         public IEnumerable<Comment>? Comments { get; set; }
         public IEnumerable<PlacePhoto>? Photos { get; set; }
         public IEnumerable<Prohibition>? Prohibitions { get; set; }
@@ -70,34 +54,8 @@ namespace PlaceAgregator.Shared.Models
 
         public decimal? Area { get; set; }
 
-        public decimal? CellingHeight { get; set; }
-
-        public int? SocketsQuantity { get; set; }
-
-        public int? MaleToiletsQuantity { get; set; }
-
-        public int? FemaleToiletsQuantity { get; set; }
-
-        public int? SharedToiletsQuantity { get; set; }
-
-        public int? ParkingSpace { get; set; }
-
-        public int? Floor { get; set; }
-
-        public int? FloorsQuantity { get; set; }
-
-        [Required]
-        public bool HasElevator { get; set; } = false;
-
-        [Required]
-        public bool HasFreightElevator { get; set; } = false;
-
-        [Required]
-        public bool HasDisabledEntrance { get; set; } = false;
-
         public int? BookingHorizonInDays { get; set; }
 
         #endregion
-
     }
 }

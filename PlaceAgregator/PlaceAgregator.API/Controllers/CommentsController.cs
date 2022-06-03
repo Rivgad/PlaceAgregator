@@ -9,6 +9,7 @@ using PlaceAgregator.Shared.Models;
 using System.ComponentModel.DataAnnotations;
 using PlaceAgregator.Shared.Extensions;
 using System.Security.Claims;
+using PlaceAgregator.Shared.Models.Enums;
 
 namespace PlaceAgregator.API.Controllers
 {
@@ -38,7 +39,7 @@ namespace PlaceAgregator.API.Controllers
             return result;
         }
 
-        [Authorize(Roles = "user")]
+        [Authorize(Roles = RoleConstants.User)]
         [HttpPost("Places/{placeId:int}/[controller]")]
         [Produces(typeof(CommentGetDTO))]
         public async Task<IActionResult> CreateOrUpdate(int placeId, [FromBody] CommentDTO comment)
@@ -83,7 +84,7 @@ namespace PlaceAgregator.API.Controllers
             return Ok(_mapper.Map<CommentGetDTO>(existedComment));
         }
 
-        [Authorize(Roles = "user")]
+        [Authorize(Roles = RoleConstants.User)]
         [HttpDelete("Places/{placeId:int}/[controller]")]
         public async Task<IActionResult> Delete(int placeId)
         {
@@ -107,7 +108,7 @@ namespace PlaceAgregator.API.Controllers
             return Ok();
         }
 
-        [Authorize(Roles = "manager")]
+        [Authorize(Roles = RoleConstants.Moderator)]
         [HttpGet("[controller]")]
         public async Task<IEnumerable<CommentGetDTO>> GetAll([FromQuery] CommentFilterDTO filter)
         {
@@ -140,7 +141,7 @@ namespace PlaceAgregator.API.Controllers
             return result;
         }
 
-        [Authorize(Roles = "manager")]
+        [Authorize(Roles = RoleConstants.Moderator)]
         [HttpPost("Places/{placeId:int}/[controller]/{userId}/[Action]")]
         [Produces(typeof(CommentGetDTO))]
         public async Task<IActionResult> Block(int placeId, string userId)
@@ -158,7 +159,7 @@ namespace PlaceAgregator.API.Controllers
             return Ok(_mapper.Map<CommentGetDTO>(comment));
         }
 
-        [Authorize(Roles = "manager")]
+        [Authorize(Roles = RoleConstants.Moderator)]
         [HttpPost("Places/{placeId:int}/[controller]/{userId}/[Action]")]
         [Produces(typeof(CommentGetDTO))]
         public async Task<IActionResult> Unblock(int placeId, string userId)

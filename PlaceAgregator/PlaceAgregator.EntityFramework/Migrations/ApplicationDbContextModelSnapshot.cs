@@ -34,7 +34,7 @@ namespace PlaceAgregator.EntityFramework.Migrations
 
                     b.HasIndex("PlacesId");
 
-                    b.ToTable("EventTypePlace");
+                    b.ToTable("EventTypePlace", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -284,25 +284,7 @@ namespace PlaceAgregator.EntityFramework.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("BookingRequests");
-                });
-
-            modelBuilder.Entity("PlaceAgregator.Shared.Models.BookingRequestServiceItem", b =>
-                {
-                    b.Property<int>("ServiceItemId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("BookingRequestId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("Quantity")
-                        .HasColumnType("integer");
-
-                    b.HasKey("ServiceItemId", "BookingRequestId");
-
-                    b.HasIndex("BookingRequestId");
-
-                    b.ToTable("BookingRequestServiceItems");
+                    b.ToTable("BookingRequests", (string)null);
                 });
 
             modelBuilder.Entity("PlaceAgregator.Shared.Models.Charge", b =>
@@ -329,7 +311,7 @@ namespace PlaceAgregator.EntityFramework.Migrations
 
                     b.HasIndex("PlaceId");
 
-                    b.ToTable("Charges");
+                    b.ToTable("Charges", (string)null);
                 });
 
             modelBuilder.Entity("PlaceAgregator.Shared.Models.Comment", b =>
@@ -359,7 +341,7 @@ namespace PlaceAgregator.EntityFramework.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Comments");
+                    b.ToTable("Comments", (string)null);
                 });
 
             modelBuilder.Entity("PlaceAgregator.Shared.Models.Discount", b =>
@@ -383,7 +365,7 @@ namespace PlaceAgregator.EntityFramework.Migrations
 
                     b.HasIndex("PlaceId");
 
-                    b.ToTable("Discounts");
+                    b.ToTable("Discounts", (string)null);
                 });
 
             modelBuilder.Entity("PlaceAgregator.Shared.Models.Place", b =>
@@ -407,14 +389,8 @@ namespace PlaceAgregator.EntityFramework.Migrations
                     b.Property<int?>("BookingHorizonInDays")
                         .HasColumnType("integer");
 
-                    b.Property<int?>("BuildingTypeId")
-                        .HasColumnType("integer");
-
                     b.Property<int?>("Capacity")
                         .HasColumnType("integer");
-
-                    b.Property<decimal?>("CellingHeight")
-                        .HasColumnType("numeric");
 
                     b.Property<string>("City")
                         .IsRequired()
@@ -423,50 +399,17 @@ namespace PlaceAgregator.EntityFramework.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("text");
 
-                    b.Property<int?>("FemaleToiletsQuantity")
-                        .HasColumnType("integer");
-
-                    b.Property<int?>("Floor")
-                        .HasColumnType("integer");
-
-                    b.Property<int?>("FloorsQuantity")
-                        .HasColumnType("integer");
-
-                    b.Property<bool>("HasDisabledEntrance")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("HasElevator")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("HasFreightElevator")
-                        .HasColumnType("boolean");
-
                     b.Property<bool>("IsActive")
                         .HasColumnType("boolean");
 
                     b.Property<bool>("IsBlocked")
                         .HasColumnType("boolean");
 
-                    b.Property<int?>("MaleToiletsQuantity")
-                        .HasColumnType("integer");
-
-                    b.Property<int?>("ParkingSpace")
-                        .HasColumnType("integer");
-
-                    b.Property<int?>("ParkingTypeId")
-                        .HasColumnType("integer");
-
                     b.Property<byte[]>("Photo")
                         .HasColumnType("bytea");
 
                     b.Property<decimal>("Rating")
                         .HasColumnType("numeric");
-
-                    b.Property<int?>("SharedToiletsQuantity")
-                        .HasColumnType("integer");
-
-                    b.Property<int?>("SocketsQuantity")
-                        .HasColumnType("integer");
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -476,20 +419,11 @@ namespace PlaceAgregator.EntityFramework.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int?>("WaterTypeId")
-                        .HasColumnType("integer");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("BuildingTypeId");
-
-                    b.HasIndex("ParkingTypeId");
 
                     b.HasIndex("UserId");
 
-                    b.HasIndex("WaterTypeId");
-
-                    b.ToTable("Places");
+                    b.ToTable("Places", (string)null);
                 });
 
             modelBuilder.Entity("PlaceAgregator.Shared.Models.PlacePhoto", b =>
@@ -511,58 +445,7 @@ namespace PlaceAgregator.EntityFramework.Migrations
 
                     b.HasIndex("PlaceId");
 
-                    b.ToTable("PlacePhotos");
-                });
-
-            modelBuilder.Entity("PlaceAgregator.Shared.Models.ServiceItem", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Comment")
-                        .HasColumnType("text");
-
-                    b.Property<int>("MaxQuantity")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("Per")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("PlaceId")
-                        .HasColumnType("integer");
-
-                    b.Property<decimal>("Price")
-                        .HasColumnType("numeric");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("PlaceId");
-
-                    b.ToTable("ServiceItems");
-                });
-
-            modelBuilder.Entity("PlaceAgregator.Shared.Models.Types.BuildingType", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("BuildingTypes");
+                    b.ToTable("PlacePhotos", (string)null);
                 });
 
             modelBuilder.Entity("PlaceAgregator.Shared.Models.Types.EventType", b =>
@@ -579,24 +462,7 @@ namespace PlaceAgregator.EntityFramework.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("EventTypes");
-                });
-
-            modelBuilder.Entity("PlaceAgregator.Shared.Models.Types.ParkingType", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("ParkingTypes");
+                    b.ToTable("EventTypes", (string)null);
                 });
 
             modelBuilder.Entity("PlaceAgregator.Shared.Models.Types.Prohibition", b =>
@@ -613,24 +479,7 @@ namespace PlaceAgregator.EntityFramework.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Prohibitions");
-                });
-
-            modelBuilder.Entity("PlaceAgregator.Shared.Models.Types.WaterType", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("WaterTypes");
+                    b.ToTable("Prohibitions", (string)null);
                 });
 
             modelBuilder.Entity("PlaceProhibition", b =>
@@ -645,7 +494,7 @@ namespace PlaceAgregator.EntityFramework.Migrations
 
                     b.HasIndex("ProhibitionsId");
 
-                    b.ToTable("PlaceProhibition");
+                    b.ToTable("PlaceProhibition", (string)null);
                 });
 
             modelBuilder.Entity("EventTypePlace", b =>
@@ -733,25 +582,6 @@ namespace PlaceAgregator.EntityFramework.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("PlaceAgregator.Shared.Models.BookingRequestServiceItem", b =>
-                {
-                    b.HasOne("PlaceAgregator.Shared.Models.BookingRequest", "BookingRequest")
-                        .WithMany("ServiceItems")
-                        .HasForeignKey("BookingRequestId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("PlaceAgregator.Shared.Models.ServiceItem", "ServiceItem")
-                        .WithMany("BookingRequestServiceItems")
-                        .HasForeignKey("ServiceItemId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("BookingRequest");
-
-                    b.Navigation("ServiceItem");
-                });
-
             modelBuilder.Entity("PlaceAgregator.Shared.Models.Charge", b =>
                 {
                     b.HasOne("PlaceAgregator.Shared.Models.Place", "Place")
@@ -795,25 +625,13 @@ namespace PlaceAgregator.EntityFramework.Migrations
 
             modelBuilder.Entity("PlaceAgregator.Shared.Models.Place", b =>
                 {
-                    b.HasOne("PlaceAgregator.Shared.Models.Types.BuildingType", "BuildingType")
-                        .WithMany("Places")
-                        .HasForeignKey("BuildingTypeId");
-
-                    b.HasOne("PlaceAgregator.Shared.Models.Types.ParkingType", "ParkingType")
-                        .WithMany("Places")
-                        .HasForeignKey("ParkingTypeId");
-
                     b.HasOne("PlaceAgregator.Shared.Models.AppUser", "User")
                         .WithMany("Places")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("PlaceAgregator.Shared.Models.Types.WaterType", "WaterType")
-                        .WithMany("Places")
-                        .HasForeignKey("WaterTypeId");
-
-                    b.OwnsOne("PlaceAgregator.Shared.Models.Shedule", "Shedule", b1 =>
+                    b.OwnsOne("PlaceAgregator.Shared.Models.Place.Shedule#PlaceAgregator.Shared.Models.Shedule", "Shedule", b1 =>
                         {
                             b1.Property<int>("PlaceId")
                                 .HasColumnType("integer");
@@ -848,38 +666,21 @@ namespace PlaceAgregator.EntityFramework.Migrations
 
                             b1.HasKey("PlaceId");
 
-                            b1.ToTable("Places");
+                            b1.ToTable("Places", (string)null);
 
                             b1.WithOwner()
                                 .HasForeignKey("PlaceId");
                         });
 
-                    b.Navigation("BuildingType");
-
-                    b.Navigation("ParkingType");
-
                     b.Navigation("Shedule");
 
                     b.Navigation("User");
-
-                    b.Navigation("WaterType");
                 });
 
             modelBuilder.Entity("PlaceAgregator.Shared.Models.PlacePhoto", b =>
                 {
                     b.HasOne("PlaceAgregator.Shared.Models.Place", "Place")
                         .WithMany("Photos")
-                        .HasForeignKey("PlaceId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Place");
-                });
-
-            modelBuilder.Entity("PlaceAgregator.Shared.Models.ServiceItem", b =>
-                {
-                    b.HasOne("PlaceAgregator.Shared.Models.Place", "Place")
-                        .WithMany("ServiceItems")
                         .HasForeignKey("PlaceId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -911,11 +712,6 @@ namespace PlaceAgregator.EntityFramework.Migrations
                     b.Navigation("Places");
                 });
 
-            modelBuilder.Entity("PlaceAgregator.Shared.Models.BookingRequest", b =>
-                {
-                    b.Navigation("ServiceItems");
-                });
-
             modelBuilder.Entity("PlaceAgregator.Shared.Models.Place", b =>
                 {
                     b.Navigation("BookingRequests");
@@ -927,28 +723,6 @@ namespace PlaceAgregator.EntityFramework.Migrations
                     b.Navigation("Discounts");
 
                     b.Navigation("Photos");
-
-                    b.Navigation("ServiceItems");
-                });
-
-            modelBuilder.Entity("PlaceAgregator.Shared.Models.ServiceItem", b =>
-                {
-                    b.Navigation("BookingRequestServiceItems");
-                });
-
-            modelBuilder.Entity("PlaceAgregator.Shared.Models.Types.BuildingType", b =>
-                {
-                    b.Navigation("Places");
-                });
-
-            modelBuilder.Entity("PlaceAgregator.Shared.Models.Types.ParkingType", b =>
-                {
-                    b.Navigation("Places");
-                });
-
-            modelBuilder.Entity("PlaceAgregator.Shared.Models.Types.WaterType", b =>
-                {
-                    b.Navigation("Places");
                 });
 #pragma warning restore 612, 618
         }

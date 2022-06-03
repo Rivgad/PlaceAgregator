@@ -1,9 +1,13 @@
-﻿namespace PlaceAgregator.Shared.DTOs.Users
+﻿using System.Text.Json.Serialization;
+
+namespace PlaceAgregator.Shared.DTOs.Users
 {
     public class UserFilterDTO : BaseFilterDTO
     {
-        public string? UserName { get; set; }
-        public string? UserId { get; set; }
-        public string? Email { get; set; }
+        [JsonPropertyName("search")]
+        public string? Search { get; set; }
+
+        [JsonPropertyName("role")]
+        public string? Role { get; set; }
     }
 }

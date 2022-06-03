@@ -34,8 +34,5 @@ namespace PlaceAgregator.Shared.DTOs.Booking
 
         [JsonPropertyName("comment")]
         public string? Comment { get; set; }
-
-        [JsonPropertyName("serviceItems")]
-        public BookingRequestServiceItemGetDTO[]? ServiceItems { get; set; }
     }
 }

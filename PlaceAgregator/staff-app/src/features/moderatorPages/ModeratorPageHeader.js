@@ -7,7 +7,6 @@ const ModeratorPageHeader = (props) => {
             <Paper variant='outlined' sx={{mb:2}}>
                 <Toolbar>
                     <Button LinkComponent={Link} to='places'>Площадки</Button>
-                    <Button LinkComponent={Link} to='requests'>Заявки</Button>
                     <Button LinkComponent={Link} to='comments'>Отзывы</Button>
                 </Toolbar>
             </Paper>
