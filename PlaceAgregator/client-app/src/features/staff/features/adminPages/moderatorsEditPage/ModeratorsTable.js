@@ -1,8 +1,10 @@
-import { Delete as DeleteIcon, Edit as EditIcon } from '@mui/icons-material';
-import { IconButton, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
+import { useSelector } from 'react-redux';
+import { selectModeratorIds } from './moderatorsSlice';
+import ModeratorsTableRow from './ModeratorsTableRow';
 
-const ModeratorsTable = (props) => {
-    let { moderatorsData, handleClickEdit, handleClickDelete } = props;
+const ModeratorsTable = ({handleClickEdit}) => {
+    const moderatorIds = useSelector(selectModeratorIds);
     return (
         <TableContainer>
             <Table>
@@ -10,38 +12,15 @@ const ModeratorsTable = (props) => {
                     <TableRow>
                         <TableCell>ID</TableCell>
                         <TableCell>Логин</TableCell>
-                        <TableCell align='right'>Имя</TableCell>
                         <TableCell align='right'>Фамилия</TableCell>
+                        <TableCell align='right'>Имя</TableCell>
                         <TableCell align='right'>Отчество</TableCell>
                         <TableCell align='center'>Действия</TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
                     {
-                        moderatorsData.map((row) => (
-                            <TableRow key={row.id}
-                                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                            >
-                                <TableCell
-                                    component="th"
-                                    scope="row"
-                                >
-                                    {row.id}
-                                </TableCell>
-                                <TableCell >{row.login}</TableCell>
-                                <TableCell align='right'>{row.firstName}</TableCell>
-                                <TableCell align='right'>{row.familyName}</TableCell>
-                                <TableCell align='right'>{row.patronimyc}</TableCell>
-                                <TableCell align='center'>
-                                    <IconButton onClick={() => handleClickEdit(row.id)} variant='contained'>
-                                        <EditIcon />
-                                    </IconButton>
-                                    <IconButton onClick={() => handleClickDelete(row.id)} variant='contained' color='error'>
-                                        <DeleteIcon />
-                                    </IconButton>
-                                </TableCell>
-                            </TableRow>
-                        ))
+                        moderatorIds?.map((id) => <ModeratorsTableRow key={id} id={id} handleClickEdit={handleClickEdit} />)
                     }
                 </TableBody>
             </Table>

@@ -1,30 +1,36 @@
-import { Button, Grid, Typography } from '@mui/material';
-import React from 'react';
+import { Grid, Typography } from '@mui/material';
+import React, { useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
+import CreateModeratorDialog from './CreateModeratorDialog';
+import { fetchModerators } from './moderatorsSlice';
 import ModeratorsTable from './ModeratorsTable'
-
-const createModerator = (id, login, firstName, familyName, patronimyc, isBlocked) =>{
-    return {id, login, firstName, familyName, patronimyc, isBlocked}
-}
-const moderatorsData= [
-    createModerator(1, 'user1', 'Имя 1', 'Фамилия 1', 'Отчество 1', false),
-    createModerator(2, 'user2', 'Имя 2', 'Фамилия 2', 'Отчество 2', true),
-    createModerator(3, 'user3', 'Имя 3', 'Фамилия 3', '', true),
-]
+import UpdateModeratorDialog from './UpdateModeratorDialog';
 
 const ModeratorEditPage = () => {
+    const dispatch = useDispatch();
+    const [open, setOpen] = useState(false);
+    const [userId, setUserId] = useState('');
+    const handleClickEdit = (id) => {
+        setUserId(id);
+        setOpen(true);
+    };
+    const handleClose = () => setOpen(false);
+    useEffect(() => {
+        dispatch(fetchModerators({}));
+    }, [dispatch])
+
     return (
         <>
+            <UpdateModeratorDialog open={open} id={userId} handleClose={handleClose} />
             <Grid container spacing={2} sx={{ my: 2 }}>
                 <Grid container item xs={12}>
                     <Typography variant='h5' >
                         Модераторы
                     </Typography>
-                    <Button sx={{ml:'auto'}} variant='contained' >
-                        Добавить нового модератора
-                    </Button>
+                    <CreateModeratorDialog />
                 </Grid>
                 <Grid item xs={12}>
-                    <ModeratorsTable moderatorsData={moderatorsData}/>
+                    <ModeratorsTable handleClickEdit={handleClickEdit} />
                 </Grid>
 
             </Grid>
