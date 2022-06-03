@@ -9,6 +9,7 @@ using PlaceAgregator.Shared.DTOs.Users;
 using PlaceAgregator.Shared.Extensions;
 using PlaceAgregator.Shared.Models;
 using PlaceAgregator.Shared.Models.Enums;
+using System.Security.Claims;
 
 namespace PlaceAgregator.API.Controllers
 {
@@ -17,15 +18,17 @@ namespace PlaceAgregator.API.Controllers
     public class UsersController : ControllerBase
     {
         private readonly UserManager<AppUser> _userManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IMapper _mapper;
 
-        public UsersController(UserManager<AppUser> userManager, IMapper mapper)
+        public UsersController(UserManager<AppUser> userManager, IMapper mapper, RoleManager<IdentityRole> roleManager)
         {
             _userManager = userManager;
             _mapper = mapper;
+            _roleManager = roleManager;
         }
 
-        [Authorize(Roles = "admin")]
+        [Authorize(Roles = RoleConstants.Admin)]
         [HttpGet]
         public async Task<IEnumerable<AppUserGetDTO>> GetAll([FromQuery] UserFilterDTO filter)
         {
@@ -34,6 +37,17 @@ namespace PlaceAgregator.API.Controllers
             if (filter.OrderBy != null)
             {
                 query = query.OrderBy(filter.OrderBy, filter.Desc ?? true);
+            }
+
+            if(filter.Role != null)
+            {
+                Role role;
+                if (Enum.TryParse(filter.Role, true, out role))
+                {
+                    var roleId = (await _roleManager.FindByNameAsync(role.GetDescriptionAttribute())).Id;
+
+                    query = query.Where(item => item.Roles.Any(r => r.RoleId == roleId));
+                }
             }
 
             if (!string.IsNullOrEmpty(filter.Search))
@@ -50,11 +64,16 @@ namespace PlaceAgregator.API.Controllers
             return await query.Select(item => _mapper.Map<AppUserGetDTO>(item)).ToListAsync();
         }
 
-        [Authorize(Roles = "admin")]
+        [Authorize(Roles = RoleConstants.Admin)]
         [HttpDelete("{id}")]
         [Produces(typeof(EntityDTO))]
         public async Task<IActionResult> DeleteUser(string id)
         {
+            string? accountId = User.FindFirst(ClaimTypes.Sid)?.Value;
+
+            if (id == accountId)
+                return BadRequest("Вы не можете удалить себя");
+
             var user = await _userManager.FindByIdAsync(id);
             if (user == null)
                 return NotFound();
@@ -66,7 +85,7 @@ namespace PlaceAgregator.API.Controllers
             return BadRequest(result.Errors);
         }
 
-        [Authorize(Roles = "admin")]
+        [Authorize(Roles = RoleConstants.Admin)]
         [HttpPost("[Action]")]
         [Produces(typeof(AppUserGetDTO))]
         public async Task<IActionResult> CreateModerator(RegistrationRequest request)
@@ -80,7 +99,7 @@ namespace PlaceAgregator.API.Controllers
             if (result.Succeeded)
             {
                 newModerator = await _userManager.FindByNameAsync(request.UserName);
-                await _userManager.AddToRoleAsync(newModerator, Role.Manager.GetDescriptionAttribute());
+                await _userManager.AddToRoleAsync(newModerator, Role.Moderator.GetDescriptionAttribute());
 
                 return CreatedAtAction(nameof(CreateModerator), _mapper.Map<AppUserGetDTO>(newModerator));
             }
@@ -90,7 +109,7 @@ namespace PlaceAgregator.API.Controllers
             }
         }
 
-        [Authorize(Roles = "admin")]
+        [Authorize(Roles = RoleConstants.Admin)]
         [HttpPost("[Action]/{userId}")]
         [Produces(typeof(AppUserGetDTO))]
         public async Task<IActionResult> UpdateModerator(string userId, [FromBody] AppUserUpdateDTO appUser)
@@ -99,8 +118,8 @@ namespace PlaceAgregator.API.Controllers
             if (user == null)
                 return NotFound();
 
-            if (!await _userManager.IsInRoleAsync(user, Role.Manager.GetDescriptionAttribute()))
-                return BadRequest($"Пользователь не имеет роль {Role.Manager.GetDescriptionAttribute()}");
+            if (!await _userManager.IsInRoleAsync(user, RoleConstants.Moderator))
+                return BadRequest($"Пользователь не имеет роль {RoleConstants.Moderator}");
 
             user.UserName = appUser.UserName;
             user.Email = appUser.Email;

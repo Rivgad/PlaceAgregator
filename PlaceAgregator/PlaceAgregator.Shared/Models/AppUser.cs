@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PlaceAgregator.Shared.Models
 {
@@ -11,5 +12,6 @@ namespace PlaceAgregator.Shared.Models
         public IEnumerable<Comment>? Comments { get; set; }
         public IEnumerable<Place>? Places { get; set; }
         public IEnumerable<BookingRequest>? BookingRequests { get; set; }
+        public virtual IEnumerable<IdentityUserRole<string>> Roles { get; set; }
     }
 }

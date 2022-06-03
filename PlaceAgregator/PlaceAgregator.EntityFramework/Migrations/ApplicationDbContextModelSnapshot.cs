@@ -34,7 +34,7 @@ namespace PlaceAgregator.EntityFramework.Migrations
 
                     b.HasIndex("PlacesId");
 
-                    b.ToTable("EventTypePlace");
+                    b.ToTable("EventTypePlace", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -284,7 +284,7 @@ namespace PlaceAgregator.EntityFramework.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("BookingRequests");
+                    b.ToTable("BookingRequests", (string)null);
                 });
 
             modelBuilder.Entity("PlaceAgregator.Shared.Models.Charge", b =>
@@ -311,7 +311,7 @@ namespace PlaceAgregator.EntityFramework.Migrations
 
                     b.HasIndex("PlaceId");
 
-                    b.ToTable("Charges");
+                    b.ToTable("Charges", (string)null);
                 });
 
             modelBuilder.Entity("PlaceAgregator.Shared.Models.Comment", b =>
@@ -341,7 +341,7 @@ namespace PlaceAgregator.EntityFramework.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Comments");
+                    b.ToTable("Comments", (string)null);
                 });
 
             modelBuilder.Entity("PlaceAgregator.Shared.Models.Discount", b =>
@@ -365,7 +365,7 @@ namespace PlaceAgregator.EntityFramework.Migrations
 
                     b.HasIndex("PlaceId");
 
-                    b.ToTable("Discounts");
+                    b.ToTable("Discounts", (string)null);
                 });
 
             modelBuilder.Entity("PlaceAgregator.Shared.Models.Place", b =>
@@ -423,7 +423,7 @@ namespace PlaceAgregator.EntityFramework.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Places");
+                    b.ToTable("Places", (string)null);
                 });
 
             modelBuilder.Entity("PlaceAgregator.Shared.Models.PlacePhoto", b =>
@@ -445,7 +445,7 @@ namespace PlaceAgregator.EntityFramework.Migrations
 
                     b.HasIndex("PlaceId");
 
-                    b.ToTable("PlacePhotos");
+                    b.ToTable("PlacePhotos", (string)null);
                 });
 
             modelBuilder.Entity("PlaceAgregator.Shared.Models.Types.EventType", b =>
@@ -462,7 +462,7 @@ namespace PlaceAgregator.EntityFramework.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("EventTypes");
+                    b.ToTable("EventTypes", (string)null);
                 });
 
             modelBuilder.Entity("PlaceAgregator.Shared.Models.Types.Prohibition", b =>
@@ -479,7 +479,7 @@ namespace PlaceAgregator.EntityFramework.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Prohibitions");
+                    b.ToTable("Prohibitions", (string)null);
                 });
 
             modelBuilder.Entity("PlaceProhibition", b =>
@@ -494,7 +494,7 @@ namespace PlaceAgregator.EntityFramework.Migrations
 
                     b.HasIndex("ProhibitionsId");
 
-                    b.ToTable("PlaceProhibition");
+                    b.ToTable("PlaceProhibition", (string)null);
                 });
 
             modelBuilder.Entity("EventTypePlace", b =>
@@ -631,7 +631,7 @@ namespace PlaceAgregator.EntityFramework.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.OwnsOne("PlaceAgregator.Shared.Models.Shedule", "Shedule", b1 =>
+                    b.OwnsOne("PlaceAgregator.Shared.Models.Place.Shedule#PlaceAgregator.Shared.Models.Shedule", "Shedule", b1 =>
                         {
                             b1.Property<int>("PlaceId")
                                 .HasColumnType("integer");
@@ -666,7 +666,7 @@ namespace PlaceAgregator.EntityFramework.Migrations
 
                             b1.HasKey("PlaceId");
 
-                            b1.ToTable("Places");
+                            b1.ToTable("Places", (string)null);
 
                             b1.WithOwner()
                                 .HasForeignKey("PlaceId");
