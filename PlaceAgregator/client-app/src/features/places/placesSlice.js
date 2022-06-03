@@ -55,8 +55,8 @@ const placesSlice = createSlice({
     extraReducers: {
         [fetchPlaces.fulfilled]: (state, action) => {
             const newEntities = {};
-            action.payload.forEach((product) => {
-                newEntities[product.id] = product;
+            action.payload.forEach((place) => {
+                newEntities[place.id] = place;
             });
             state.entities = newEntities;
             state.status = RequestStatus.Succeeded;

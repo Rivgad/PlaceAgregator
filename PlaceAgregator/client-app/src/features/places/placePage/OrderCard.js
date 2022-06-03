@@ -6,13 +6,17 @@ import { selectCurrentPlace } from "../placesSlice";
 import axios from 'axios';
 import authHeader from "../../../services/authHeader";
 import { useSnackbar } from 'notistack';
+import { selectIsLoggedIn } from "../../authentication/authSlice";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const OrderCard = (props) => {
+    const navigate = useNavigate();
+    let location = useLocation();
     const { enqueueSnackbar } = useSnackbar();
     const [isCounted, setIsCounted] = useState(false);
     const place = useSelector(selectCurrentPlace);
     const { baseRate } = place;
-
+    const isLoggedIn = useSelector(selectIsLoggedIn);
     const [startDateTime, setStartDateTime] = useState('');
     const [endDateTime, setEndDateTime] = useState('');
     const [guestsQuantity, setGuestsQuantity] = useState('');
@@ -49,6 +53,11 @@ const OrderCard = (props) => {
     const handleSubmit = () => {
         if (startDateTime === "" || endDateTime === "" || guestsQuantity === "") {
             setIsError(true);
+            return;
+        }
+        if(!isLoggedIn)
+        {
+            navigate('/login', { state: { from: location }, replace: true });
             return;
         }
         axios.post(

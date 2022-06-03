@@ -25,7 +25,24 @@ namespace PlaceAgregator.EntityFramework
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            base.OnModelCreating(modelBuilder);
+
             modelBuilder.ApplyUtcDateTimeConverter();
+
+            modelBuilder.Entity<AppUser>(user =>
+            {
+                user.HasMany(item => item.Roles)
+                    .WithOne()
+                    .HasForeignKey(item => item.UserId)
+                    .IsRequired();
+            });
+            modelBuilder.Entity<IdentityRole>(role =>
+            {
+                role.HasMany<IdentityUserRole<string>>()
+                    .WithOne()
+                    .HasForeignKey(item => item.RoleId)
+                    .IsRequired();
+            });
 
             modelBuilder.Entity<Place>()
                 .OwnsOne(item => item.Shedule);
@@ -55,7 +72,6 @@ namespace PlaceAgregator.EntityFramework
                     j.Property(item => item.IsBlocked).HasDefaultValue(false);
                 });
 
-            base.OnModelCreating(modelBuilder);
         }
     }
 }

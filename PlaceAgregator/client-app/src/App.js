@@ -1,4 +1,4 @@
-import { BrowserRouter, Outlet, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Navigate, Outlet, Route, Routes } from "react-router-dom";
 
 import AppHeader from "./features/header/AppHeader";
 import PlaceEditPage from "./features/places/edit/Page";
@@ -11,20 +11,44 @@ import AuthPage from "./features/authentication/AuthPage";
 import MyPlacesPage from "./features/places/myPlaces/MyPlacesPage";
 import BookingsHistoryPage from "./features/bookings/BookingsHistoryPage";
 import BookingsPage from "./features/bookings/BookingsPage";
+import StaffApp from "./features/staff/StaffApp";
+import { useDispatch, useSelector } from "react-redux";
+import { selectUser } from "./features/authentication/authSlice";
+import useNotifier from "./features/notifications/useNotifier";
+import { useEffect } from "react";
+import { enqueueSnackbar } from "./features/notifications/notificationsSlice";
+
+const AppLayout = () => {
+    const dispatch = useDispatch();
+    useNotifier();
+    useEffect(()=>{
+        dispatch(enqueueSnackbar({message: 'Failed fetching data.',
+        options: {
+            key: new Date().getTime() + Math.random(),
+            variant: 'warning',
+            
+        },}));
+    },[dispatch]);
+
+    const user = useSelector(selectUser);
+    if (user && user.roles.some(role => ['admin', 'manager'].includes(role))) {
+        return (<Navigate to='staff' />);
+    }
+
+    return (
+        <>
+            <AppHeader />
+            <Outlet />
+        </>
+    )
+}
 
 const App = () => {
     return (
         <>
             <BrowserRouter>
                 <Routes>
-                    <Route path='/'
-                        element={
-                            <>
-                                <AppHeader />
-                                <Outlet />
-                            </>
-                        }
-                    >
+                    <Route path='/' element={<AppLayout />}>
                         <Route index element={<PlacesPage />} />
                         <Route path="places" element={<PlacesPage />} />
                         <Route path="places/:id" element={<PlacePage />} />
@@ -60,6 +84,11 @@ const App = () => {
                         <Route path="profile/:id" element={<UserProfile />} />
                         <Route path="login" element={<AuthPage />} />
                     </Route>
+                    <Route path='staff/*' element={
+                        <RequireAuth to="/" roles={['admin', 'manager']}>
+                            <StaffApp />
+                        </RequireAuth>
+                    } />
                 </Routes>
             </BrowserRouter>
         </>

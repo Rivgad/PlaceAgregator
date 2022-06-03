@@ -73,12 +73,12 @@ namespace PlaceAgregator.EntityFramework
                 EmailConfirmed = true
             };
 
-            string defaultManagerUserName = "manager";
-            string defaultManagerEmail = "manager@test.com";
-            var defaultManager = new AppUser
+            string defaultModeratorUserName = "moderator";
+            string defaultModeratorEmail = "moderator@test.com";
+            var defaultModerator = new AppUser
             {
-                UserName = defaultManagerUserName,
-                Email = defaultManagerEmail,
+                UserName = defaultModeratorUserName,
+                Email = defaultModeratorEmail,
                 EmailConfirmed = true
             };
 
@@ -94,7 +94,7 @@ namespace PlaceAgregator.EntityFramework
             List<KeyValuePair<Role, AppUser>> defaultUsersDict = new();
             defaultUsersDict.Add(new(Role.User, defaultLessor));
             defaultUsersDict.Add(new(Role.User, defaultRenter));
-            defaultUsersDict.Add(new(Role.Manager, defaultManager));
+            defaultUsersDict.Add(new(Role.Moderator, defaultModerator));
             defaultUsersDict.Add(new(Role.Admin, defaultAdmin));
 
             foreach (var roleUserPair in defaultUsersDict)

@@ -7,6 +7,7 @@ using PlaceAgregator.EntityFramework;
 using PlaceAgregator.Shared.DTOs.Booking;
 using PlaceAgregator.Shared.Extensions;
 using PlaceAgregator.Shared.Models;
+using PlaceAgregator.Shared.Models.Enums;
 using System.Data;
 using System.Security.Claims;
 
@@ -26,7 +27,7 @@ namespace PlaceAgregator.API.Controllers
 
         #region Get handles
 
-        [Authorize(Roles = "user")]
+        [Authorize(Roles = RoleConstants.User)]
         [HttpGet("History")]
         [Produces(typeof(BookingRequestGetDTO[]))]
         [ProducesResponseType(403)]
@@ -58,7 +59,7 @@ namespace PlaceAgregator.API.Controllers
             return Ok(result);
         }
 
-        [Authorize(Roles = "user")]
+        [Authorize(Roles = RoleConstants.User)]
         [HttpGet]
         [Produces(typeof(BookingRequestGetDTO[]))]
         [ProducesResponseType(403)]
@@ -111,7 +112,7 @@ namespace PlaceAgregator.API.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        [Authorize(Roles = "user")]
+        [Authorize(Roles = RoleConstants.User)]
         [HttpPost("{id}/[Action]")]
         [Produces(typeof(BookingRequestGetDTO))]
         public async Task<IActionResult> Cancel(int id)
@@ -157,7 +158,7 @@ namespace PlaceAgregator.API.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        [Authorize(Roles = "user")]
+        [Authorize(Roles = RoleConstants.User)]
         [HttpPost("{id}/[Action]")]
         [Produces(typeof(BookingRequestGetDTO))]
         public async Task<IActionResult> Accept(int id)
@@ -191,7 +192,7 @@ namespace PlaceAgregator.API.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        [Authorize(Roles = "user")]
+        [Authorize(Roles = RoleConstants.User)]
         [HttpPost("{id}/[Action]")]
         [Produces(typeof(BookingRequestGetDTO))]
         public async Task<IActionResult> Reject(int id)
@@ -287,7 +288,7 @@ namespace PlaceAgregator.API.Controllers
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        [Authorize(Roles = "user")]
+        [Authorize(Roles = RoleConstants.User)]
         [HttpPost]
         [Produces(typeof(BookingRequestGetDTO))]
         public async Task<IActionResult> CreateBookingRequest([FromBody] BookingRequestCreateDTO request)

@@ -6,6 +6,7 @@ using PlaceAgregator.EntityFramework;
 using PlaceAgregator.Shared.DTOs.Places;
 using PlaceAgregator.Shared.Extensions;
 using PlaceAgregator.Shared.Models;
+using PlaceAgregator.Shared.Models.Enums;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Security.Claims;
@@ -28,7 +29,7 @@ namespace PlaceAgregator.API.Controllers
 
         #region Charges
 
-        [Authorize(Roles = "user")]
+        [Authorize(Roles = RoleConstants.User)]
         [HttpPost("{id?}/Charges")]
         [Produces(typeof(ChargeGetDTO))]
         public async Task<IActionResult> AddCharge(int id, [FromBody] ChargeCreateDTO charge)
@@ -53,7 +54,7 @@ namespace PlaceAgregator.API.Controllers
             return Ok(_mapper.Map<ChargeGetDTO>(newCharge));
         }
 
-        [Authorize(Roles = "user")]
+        [Authorize(Roles = RoleConstants.User)]
         [HttpDelete("{id?}/Charges/{chargeId?}")]
         public async Task<IActionResult> DeleteCharge(int id, int chargeId)
         {
@@ -82,7 +83,7 @@ namespace PlaceAgregator.API.Controllers
 
         #region Discounts
 
-        [Authorize(Roles = "user")]
+        [Authorize(Roles = RoleConstants.User)]
         [HttpPost("{id?}/Discounts")]
         [Produces(typeof(DiscountGetDTO))]
         public async Task<IActionResult> AddDiscount(int id, [FromBody] DiscountCreateDTO discount)
@@ -107,7 +108,7 @@ namespace PlaceAgregator.API.Controllers
             return Ok(_mapper.Map<DiscountGetDTO>(newDiscount));
         }
 
-        [Authorize(Roles = "user")]
+        [Authorize(Roles = RoleConstants.User)]
         [HttpDelete("{id?}/Discounts/{discountId?}")]
         public async Task<IActionResult> DeleteDiscount(int id, int discountId)
         {
@@ -136,7 +137,7 @@ namespace PlaceAgregator.API.Controllers
 
         #region Photo
 
-        [Authorize(Roles = "user")]
+        [Authorize(Roles = RoleConstants.User)]
         [HttpPost("{id?}/Photos")]
         public async Task<IActionResult> AddPhoto(int id, [FromBody] byte[] base64Code)
         {
@@ -161,7 +162,7 @@ namespace PlaceAgregator.API.Controllers
             return Ok(photo.Entity);
         }
 
-        [Authorize(Roles = "user")]
+        [Authorize(Roles = RoleConstants.User)]
         [HttpDelete("{id?}/Photos/{photoId?}")]
         public async Task<IActionResult> DeletePhoto(int id, int photoId)
         {
@@ -271,7 +272,7 @@ namespace PlaceAgregator.API.Controllers
             return await query.Select(item => _mapper.Map<PlaceCardInfo>(item)).ToListAsync();
         }
 
-        [Authorize(Roles = "user")]
+        [Authorize(Roles = RoleConstants.User)]
         [HttpPost("{id}/ToggleIsActive")]
         [Produces(typeof(PlaceGetTableRowDTO))]
         public async Task<IActionResult> TogglePlaceIsActive(int id)
@@ -321,7 +322,7 @@ namespace PlaceAgregator.API.Controllers
             return Ok(_mapper.Map<PlaceGetDTO>(place));
         }
 
-        [Authorize(Roles = "user")]
+        [Authorize(Roles = RoleConstants.User)]
         [HttpGet("myPlaces")]
         [Produces(typeof(PlaceGetTableRowDTO[]))]
         public async Task<IActionResult> GetUserPlaces()
@@ -336,7 +337,7 @@ namespace PlaceAgregator.API.Controllers
         }
 
         [HttpDelete("{id}")]
-        [Authorize(Roles = "user")]
+        [Authorize(Roles = RoleConstants.User)]
         public async Task<IActionResult> DeleteAsync(int id)
         {
             var place = await _context.Places.FirstOrDefaultAsync(item => item.Id == id);
@@ -356,7 +357,7 @@ namespace PlaceAgregator.API.Controllers
             return Ok(new { id = id });
         }
 
-        [Authorize(Roles = "user")]
+        [Authorize(Roles = RoleConstants.User)]
         [HttpPost]
         [Produces(typeof(PlaceGetDTO))]
         public async Task<IActionResult> CreatePlaceAsync([FromBody] PlaceCreateDTO place)
@@ -380,7 +381,7 @@ namespace PlaceAgregator.API.Controllers
             return Ok(_mapper.Map<PlaceGetDTO>(newPlace));
         }
 
-        [Authorize(Roles = "user")]
+        [Authorize(Roles = RoleConstants.User)]
         [HttpPut("{id}")]
         [Produces(typeof(PlaceGetDTO))]
         public async Task<IActionResult> UpdatePlaceAsync(int id, [FromBody] PlaceUpdateDTO placeDTO)
