@@ -161,7 +161,7 @@ const bookingsSlice = createSlice({
 
         [cancelBookingRequest.fulfilled]: (state, action) => {
             const updatedEntity = action.payload;
-            state.entities[updatedEntity.id] = updatedEntity;
+            state.history[updatedEntity.id] = updatedEntity;
             state.status = RequestStatus.Succeeded;
         },
         [cancelBookingRequest.rejected]: (state, action) => {
