@@ -38,7 +38,6 @@ const notificationsSlice = createSlice({
                 },
             };
             notificationsSlice.caseReducers.enqueueSnackbar(state, action);
-            console.log(text);
         })
     }
 });

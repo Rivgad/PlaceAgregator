@@ -8,6 +8,7 @@ import usersReducer from './features/staff/features/adminPages/usersEditPage/use
 import notificationsReducer from './features/notifications/notificationsSlice';
 import chargesSlice from './features/places/edit/charges/chargesSlice';
 import discountsSlice from './features/places/edit/discounts/discountsSlice';
+import moderatorsSlice from './features/staff/features/adminPages/moderatorsEditPage/moderatorsSlice';
 
 const store = configureStore({
     reducer: {
@@ -19,7 +20,8 @@ const store = configureStore({
         charges: chargesSlice,
         discounts: discountsSlice,
         users:usersReducer,
-        notifications:notificationsReducer
+        notifications:notificationsReducer,
+        moderators:moderatorsSlice
     }
 })
 
