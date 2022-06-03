@@ -8,7 +8,7 @@ const adminPages = [
     { title: 'Модераторы', path: 'moderators' },
     { title: 'Пользователи', path: 'users' },
 ];
-const managerPages = [
+const moderatorPages = [
     { title: 'Площадки', path: 'places' },
     { title: 'Комментарии', path: 'comments' },
 ];
@@ -23,7 +23,7 @@ const AppHeader = () => {
         pages = adminPages;
     }
     if (userIsModerator) {
-        pages = managerPages;
+        pages = moderatorPages;
     }
     const handleLogoutClick = () => {
         dispatch(logout());

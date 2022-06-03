@@ -5,7 +5,7 @@ import PlacesEditPage from './places/PlacesEditPage';
 import CommentsPage from './comments/CommentsPage';
 
 
-const ManagerPage = () => {
+const ModeratorPage = () => {
     return (
         <>
             <Container sx={{ py: 4 }} maxWidth="lg">
@@ -20,4 +20,4 @@ const ManagerPage = () => {
 };
 
 
-export default ManagerPage;
+export default ModeratorPage;
