@@ -6,6 +6,7 @@ import { RequestStatus } from "../../../helpers";
 import { createPlace } from "./myPlacesSlice";
 import LoadingButton from '@mui/lab/LoadingButton';
 import { CloseButton } from "../../../common";
+import { useState } from "react";
 
 const schema = object({
     city: string().required('Введите название города'),
@@ -13,25 +14,27 @@ const schema = object({
     address: string().required('Введите название площадки')
 })
 
-const CreatePlaceDialog = ({ openDialog, closeDialog, dialogOpen }) => {
+const CreatePlaceDialog = () => {
+    const [open, setOpen] = useState(false);
+    const handleOpen = () => setOpen(true);
+    const handleClose = () => setOpen(false);
     const dispatch = useDispatch();
 
     const status = useSelector(state => state.myPlaces.createStatus);
     const isLoading = status === RequestStatus.Loading;
     const isError = status === RequestStatus.Failed;
-    
+
     const handleSubmit = ({ city, address, title }) => {
         dispatch(createPlace({ city, address, title }));
     }
-    const createState = useSelector(state=> state.myPlaces.createState);
 
     return (
         <>
-            <Button onClick={openDialog} sx={{ ml: 'auto' }} variant='contained' size='large'>
+            <Button onClick={handleOpen} sx={{ ml: 'auto' }} variant='contained' size='large'>
                 Добавить новую площадку
             </Button>
-            <Dialog open={dialogOpen} onClose={closeDialog}>
-                <CloseButton onClose={closeDialog} />
+            <Dialog open={open} onClose={handleClose}>
+                <CloseButton onClose={handleClose} />
                 <DialogContent>
                     <Container component="main" maxWidth="lg" sx={{
                         my: 4,

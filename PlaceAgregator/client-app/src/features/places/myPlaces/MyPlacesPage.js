@@ -9,7 +9,7 @@ import CreatePlaceDialog from './CreatePlaceDialog';
 import { useDispatch } from 'react-redux';
 import { fetchPlaces } from './myPlacesSlice';
 
-const MyPlacesPage = ({ openChargeDialog, closeChargeDialog, dialogChargeOpen }) => {
+const MyPlacesPage = () => {
     const dispatch = useDispatch();
 
     useEffect(() => {
@@ -23,11 +23,7 @@ const MyPlacesPage = ({ openChargeDialog, closeChargeDialog, dialogChargeOpen })
                     <Typography variant='h4'>
                         Мои площадки
                     </Typography>
-                    <CreatePlaceDialog
-                        dialogOpen={dialogChargeOpen}
-                        openDialog={openChargeDialog}
-                        closeDialog={closeChargeDialog}
-                    />
+                    <CreatePlaceDialog/>
                 </Stack>
                 <PlacesTable />
             </Container>
