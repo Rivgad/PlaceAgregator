@@ -8,14 +8,11 @@ import {
 } from '@mui/material'
 
 import MainPanel from './MainPanel';
-import { useParams } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
-import { fetchPlace, selectCurrentPlace, updatePlace } from '../myPlaces/myPlacesSlice';
-import ChargesTable from './ChargesTable';
-import DiscountsTable from './DiscountsTable';
-import { RequestStatus } from '../../../helpers';
-import { selectChargeIds } from './chargesSlice';
-import { selectDiscountIds } from './discountsSlice';
+import { Route, Routes, useNavigate, useParams } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { fetchPlace } from '../myPlaces/myPlacesSlice';
+import ChargesPage from './charges/ChargesPage';
+import DiscountsPage from './discounts/DiscountsPage';
 
 
 function a11yProps(index) {
@@ -25,49 +22,22 @@ function a11yProps(index) {
     };
 }
 
-const panels = [
-    MainPanel,
-    DiscountsTable,
-    ChargesTable,
-]
-
 const PlaceEditPage = () => {
-    const [photo, setPhoto] = useState('');
+    const navigate = useNavigate();
 
     const dispatch = useDispatch();
     let { id: placeId } = useParams();
 
-    useEffect(()=>{
-        dispatch(fetchPlace({id:placeId}));
+    useEffect(() => {
+        dispatch(fetchPlace({ id: placeId }));
     }, [dispatch, placeId])
     const [panelIndex, setPanelIndex] = useState(0);
 
-    const chargeIds = useSelector(selectChargeIds);
-    const discountIds = useSelector(selectDiscountIds);
-
     const handleTabChange = (event, newValue) => {
-        setPanelIndex(newValue);
+        navigate(`${newValue}`);
+        setPanelIndex(newValue)
     };
-    
-    const place = useSelector(selectCurrentPlace);
-    const status = useSelector(state => state.myPlaces.updateStatus);
-    const isLoading = status === RequestStatus.Loading;
 
-    const handlePhotoUpload =  (file)  => {
-        const reader = new FileReader()
-        reader.onload = () => {
-            var result = reader.result.slice(23);
-            setPhoto(result);
-        }
-        reader.readAsDataURL(file)
-    }
-    
-    const handleSubmit = (data) => {
-        let res = {...data, photo}
-        let placeId = place.id;
-        dispatch(updatePlace({ id:placeId, ...res } ));
-    }
-    
     return (
         <Container sx={{ py: 2 }} maxWidth="lg">
             <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
@@ -78,15 +48,12 @@ const PlaceEditPage = () => {
                 </Tabs>
             </Box>
             <Grid sx={{ py: 4 }} >
-                {
-                    panels[panelIndex]({handleSubmit, 
-                        place, 
-                        photo, 
-                        isLoading, 
-                        handlePhotoUpload,
-                        chargeIds, 
-                        discountIds})
-                }
+                <Routes>
+                    <Route index element={<MainPanel />} />
+                    <Route path='/0' element={<MainPanel />} />
+                    <Route path='/1' element={<DiscountsPage />} />
+                    <Route path='/2' element={<ChargesPage />} />
+                </Routes>
             </Grid>
         </Container>
     );

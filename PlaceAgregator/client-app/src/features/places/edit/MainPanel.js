@@ -14,6 +14,10 @@ import { Formik } from 'formik';
 import { Image } from 'react-bootstrap';
 import { array, boolean, number, object, string } from 'yup';
 import LoadingButton from '@mui/lab/LoadingButton';
+import { useDispatch, useSelector } from 'react-redux';
+import { selectCurrentPlace, updatePlace } from '../myPlaces/myPlacesSlice';
+import { RequestStatus } from '../../../helpers';
+import { useState } from 'react';
 
 const schema = object({
     title: string().required('Введите название площадки'),
@@ -46,7 +50,28 @@ const schema = object({
 })
 
 
-const MainPanel = ({handleSubmit, place, photo, isLoading, handlePhotoUpload}) => {
+const MainPanel = () => {
+    const dispatch = useDispatch();
+    const [photo, setPhoto] = useState('');
+    const place = useSelector(selectCurrentPlace);
+    const status = useSelector(state => state.myPlaces.updateStatus);
+    const isLoading = status === RequestStatus.Loading;
+
+    const handlePhotoUpload =  (file)  => {
+        const reader = new FileReader()
+        reader.onload = () => {
+            var result = reader.result.slice(23);
+            setPhoto(result);
+        }
+        reader.readAsDataURL(file)
+    }
+
+    const handleSubmit = (data) => {
+        let res = {...data, photo}
+        let placeId = place.id;
+        dispatch(updatePlace({ id:placeId, ...res } ));
+    }
+
     return (
         <>
             <Formik
@@ -238,13 +263,20 @@ const MainPanel = ({handleSubmit, place, photo, isLoading, handlePhotoUpload}) =
                             </Grid>
                             <Grid container item xs={12}>
                                 <label htmlFor="icon-button-file">
-                                    <Input onChange={(e) =>{
-                                                e.preventDefault();
-                                                handlePhotoUpload(e.target.files[0])
-                                        }} accept="image/*" id="icon-button-file" type="file" />
-                                    <IconButton color="primary" aria-label="upload picture" component="span">
-                                        <PhotoCamera />
-                                    </IconButton>
+                                    <FormControlLabel
+                                        label="Загрузить фотографию"
+                                        control={
+                                            <>
+                                                <Input onChange={(e) => {
+                                                    e.preventDefault();
+                                                    handlePhotoUpload(e.target.files[0])
+                                                }} accept="image/*" id="icon-button-file" type="file" hidden/>
+                                                <IconButton color="primary" aria-label="upload picture" component="span">
+                                                    <PhotoCamera />
+                                                </IconButton>
+                                            </>
+                                        }
+                                    />
                                 </label>
                             </Grid>
                             <Grid container item xs={6}>
@@ -261,7 +293,7 @@ const MainPanel = ({handleSubmit, place, photo, isLoading, handlePhotoUpload}) =
                             variant="contained"
                             sx={{ mt: 3, mb: 2 }}
                         >
-                            Загрузить
+                            Сохранить
                         </LoadingButton>
                     </Box>
 
