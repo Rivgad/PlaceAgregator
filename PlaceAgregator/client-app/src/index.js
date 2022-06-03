@@ -44,7 +44,7 @@ const Ind = () => {
 
 
     return (
-        <React.StrictMode>
+
             <Provider store={store}>
                 <ThemeProvider theme={theme}>
                     <CssBaseline />
@@ -53,7 +53,7 @@ const Ind = () => {
                     </SnackbarProvider>
                 </ThemeProvider>
             </Provider>
-        </React.StrictMode>
+
     );
 }
 

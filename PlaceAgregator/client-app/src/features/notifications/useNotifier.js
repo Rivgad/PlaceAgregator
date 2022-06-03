@@ -7,7 +7,7 @@ let displayed = [];
 
 const useNotifier = () => {
     const dispatch = useDispatch();
-    const notifications = useSelector(store => store.notifications || []);
+    const notifications = useSelector(store => store.notifications.notifications || []);
     const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
     const storeDisplayed = (id) => {
@@ -33,6 +33,7 @@ const useNotifier = () => {
             enqueueSnackbar(message, {
                 key,
                 ...options,
+                autoHideDuration: 3000,
                 onClose: (event, reason, myKey) => {
                     if (options.onClose) {
                         options.onClose(event, reason, myKey);
@@ -40,7 +41,7 @@ const useNotifier = () => {
                 },
                 onExited: (event, myKey) => {
                     // remove this snackbar from redux store
-                    dispatch(removeSnackbar({ myKey }));
+                    dispatch(removeSnackbar({ key: myKey }));
                     removeDisplayed(myKey);
                 },
             });

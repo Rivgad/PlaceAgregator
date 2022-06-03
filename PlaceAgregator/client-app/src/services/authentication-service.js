@@ -11,7 +11,7 @@ const login = (login, password) => {
       }
       return request.data;
     })
-    .catch((error) => { throw Error(error) } )
+    .catch((error) => { throw error } )
 };
 
 const registration = (email, userName, password, confirmPassword) => {

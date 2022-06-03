@@ -84,16 +84,6 @@ const authSlice = createSlice({
             state.isLoggedIn = false;
             state.user = null;
             state.status = RequestStatus.Failed
-            const text = action.payload?.errors[0]?.description;
-            
-            enqueueSnackbar({
-                message: text,
-                options: {
-                    key: new Date().getTime() + Math.random(),
-                    variant: 'warning'
-                },
-            });
-            console.log(text);
         },
         [login.pending]: (state, action) => {
             state.status = RequestStatus.Loading

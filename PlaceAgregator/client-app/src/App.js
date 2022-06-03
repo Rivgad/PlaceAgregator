@@ -12,12 +12,23 @@ import MyPlacesPage from "./features/places/myPlaces/MyPlacesPage";
 import BookingsHistoryPage from "./features/bookings/BookingsHistoryPage";
 import BookingsPage from "./features/bookings/BookingsPage";
 import StaffApp from "./features/staff/StaffApp";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { selectUser } from "./features/authentication/authSlice";
 import useNotifier from "./features/notifications/useNotifier";
+import { useEffect } from "react";
+import { enqueueSnackbar } from "./features/notifications/notificationsSlice";
 
 const AppLayout = () => {
+    const dispatch = useDispatch();
     useNotifier();
+    useEffect(()=>{
+        dispatch(enqueueSnackbar({message: 'Failed fetching data.',
+        options: {
+            key: new Date().getTime() + Math.random(),
+            variant: 'warning',
+            
+        },}));
+    },[dispatch]);
 
     const user = useSelector(selectUser);
     if (user && user.roles.some(role => ['admin', 'manager'].includes(role))) {
