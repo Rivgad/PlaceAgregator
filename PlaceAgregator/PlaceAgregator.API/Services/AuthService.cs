@@ -59,7 +59,7 @@ namespace PlaceAgregator.API.Services
                     Succeeded = false,
                     Errors = new[]
                     {
-                        new ResponseError(LoginErrors.UserNotFound, $"Пользователь с не найден")
+                        new ResponseError(LoginErrors.UserNotFound, $"Пользователь не найден")
                     }
                 };
 
