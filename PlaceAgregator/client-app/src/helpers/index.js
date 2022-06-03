@@ -1,4 +1,4 @@
-import RequestStatus from './requestStatusTypes'
-import StatusType from './bookingRequestStatus'
+import RequestStatus from './requestStatusTypes';
+import StatusType from './bookingRequestStatus';
 
 export { StatusType, RequestStatus }
