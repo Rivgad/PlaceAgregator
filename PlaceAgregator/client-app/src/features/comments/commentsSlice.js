@@ -3,8 +3,8 @@ import axios from "axios";
 import { RequestStatus } from "../../helpers";
 import authHeader from "../../services/authHeader";
 
-export const fetchComments = createAsyncThunk(
-    "comments/fetchComments",
+export const fetchAllComments = createAsyncThunk(
+    "comments/fetchAllComments",
     async (
         {
             isBlocked = null,
@@ -30,6 +30,14 @@ export const fetchComments = createAsyncThunk(
                 },
                 headers: authHeader()
             });
+        return response.data;
+    }
+);
+
+export const fetchComments = createAsyncThunk(
+    "comments/fetchComments",
+    async ({ placeId }) => {
+        let response = await axios.get(`/api/Places/${placeId}/Comments`);
         return response.data;
     }
 );
@@ -67,6 +75,24 @@ const commentsSlice = createSlice({
     name: "comments",
     initialState,
     extraReducers: {
+        [fetchAllComments.fulfilled]: (state, action) => {
+            const newEntities = {};
+            action.payload.forEach((comment) => {
+                const key = `${comment.placeId}/${comment.userId}`
+                newEntities[key] = comment;
+            });
+            state.entities = newEntities;
+            state.status = RequestStatus.Succeeded;
+        },
+        [fetchAllComments.rejected]: (state, action) => {
+            state.status = RequestStatus.Failed;
+            state.entities = {};
+        },
+        [fetchAllComments.pending]: (state, action) => {
+            state.status = RequestStatus.Loading;
+            state.entities = {};
+        },
+
         [fetchComments.fulfilled]: (state, action) => {
             const newEntities = {};
             action.payload.forEach((comment) => {
@@ -84,7 +110,7 @@ const commentsSlice = createSlice({
             state.status = RequestStatus.Loading;
             state.entities = {};
         },
-
+        
         [blockComment.fulfilled]: (state, action) => {
             const updatedComment = action.payload;
             const key = `${updatedComment.placeId}/${updatedComment.userId}`;

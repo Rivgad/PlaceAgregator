@@ -1,101 +1,21 @@
 import { useEffect } from 'react';
 import {
     Grid,
-    Avatar,
-    Card,
-    CardContent,
     Container,
     Typography,
     Stack,
     Divider,
-    Link,
-    Breadcrumbs,
-    Rating,
-    CardHeader,
-    Paper,
-    CardMedia,
-    Skeleton
+    Paper
 } from '@mui/material';
 import { useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux'
 import { fetchPlace, selectCurrentPlace } from '../placesSlice';
 import OrderCard from './OrderCard';
 import { selectProhibitionById } from '../../typesSlice';
+import Comments from '../../comments/Comments';
+import PlaceHeader from './PlaceHeader';
 
-const LeftRightComponent = (props) => {
-    const { spacing = 2, children, ...others } = props
-    return (
-        <Stack alignItems='center' direction="row" spacing={spacing} {...others}>
-            {children}
-        </Stack>
-    );
-}
-
-const Comment = (props) => {
-    const { userName, date, text, rating } = props
-    let dateString = new Date(date).toLocaleString();
-    return (
-            <Card>
-                <CardHeader
-                    sx={{ alignItems: 'center' }}
-                    avatar={
-                        <Avatar sx={{ width: 32, height: 32 }}>{userName[0].toUpperCase()}</Avatar>
-                    }
-                    title={userName}
-                    subheader={dateString}
-                    action={
-                        <Rating
-                            name='rating'
-                            size='small'
-                            defaultValue={0}
-                            precision={0.1}
-                            value={rating ?? 0}
-                            readOnly />
-                    }
-                >
-
-                </CardHeader>
-                <CardContent>
-                    <Typography variant='body1' xs={12}>
-                        {text}
-                    </Typography>
-                </CardContent>
-            </Card>
-    )
-}
-
-const Comments = (props) => {
-    const place = useSelector(selectCurrentPlace);
-    const { comments } = place;
-    return (
-        <>
-            <Stack direction='row' alignItems='center'>
-                <Typography variant='h6'>Отзывы</Typography>
-                <Rating
-                    sx={{ ml: 'auto' }}
-                    name='rating'
-                    defaultValue={0}
-                    precision={0.5}
-                    value={place?.rating ?? 0}
-                    readOnly={true} />
-            </Stack>
-
-            <Stack spacing={2}>
-                {
-                    comments?.map((item) => {
-                        return (
-                            <div key={item.userId}>
-                                <Comment text={item.text} userName={item.userName} date={item.lastEditTime} rating={item.rating} />
-                            </div>
-                        );
-                    })
-                }
-            </Stack>
-        </>
-    );
-}
-
-const PlaceParams = (props) => {
+const PlaceParams = () => {
     const place = useSelector(selectCurrentPlace);
 
     return (
@@ -143,61 +63,6 @@ const PlaceDesciption = (props) => {
             </Paper>
         </>
     )
-}
-
-const PlaceHeader = (props) => {
-    const place = useSelector(selectCurrentPlace);
-
-    return (
-        <>
-            <Breadcrumbs sx={{ my: 1 }} aria-label="breadcrumb">
-                <Link underline="hover" color="inherit" href="/">
-                    Площадки
-                </Link>
-                <Link
-                    underline="hover"
-                    color="inherit"
-                    href="/places"
-                >
-                    {place?.city}
-                </Link>
-                <Typography color="text.primary">{place?.title}</Typography>
-            </Breadcrumbs>
-            <Grid  item xs={12} id='photo-container'>
-                {
-                    place?.photo ? 
-                    <CardMedia  sx={{ minHeight: 350 }} component='img' src={`data:image/png;base64,${place?.photo}`} alt='Фото площадки' />
-                    :
-                    <Skeleton sx={{height:500}}/>
-                }
-            </Grid>
-
-            <Typography variant='h1' fontSize='40px'>
-                {place?.title}
-            </Typography>
-            <Typography variant='body1'>
-                Адрес площадки: {place?.address}
-            </Typography>
-            <Stack alignItems='center' direction="row" spacing={2}>
-                <Rating
-                    name='rating'
-                    defaultValue={0}
-                    precision={0.1}
-                    value={place?.rating ?? 0}
-                    readOnly />
-            </Stack>
-
-            <Card>
-                <CardContent component={Stack} direction='row' alignItems='center'>
-
-                    <LeftRightComponent spacing={2}>
-                        <Avatar>{place?.owner?.userName?.slice(0, 1)}</Avatar>
-                        <p>{ place?.owner?.userName } {place?.owner?.firstName} {place?.owner?.lastName}</p>
-                    </LeftRightComponent>
-                </CardContent>
-            </Card>
-        </>
-    );
 }
 
 const PlacePage = (props) => {
