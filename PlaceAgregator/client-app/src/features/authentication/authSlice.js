@@ -1,7 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { RequestStatus } from "../../helpers";
 import authService from "../../services/authentication-service";
-import { enqueueSnackbar } from "../notifications/notificationsSlice";
 
 const user = JSON.parse(localStorage.getItem("user"));
 
