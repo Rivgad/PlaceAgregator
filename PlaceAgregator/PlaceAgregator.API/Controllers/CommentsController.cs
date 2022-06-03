@@ -123,10 +123,10 @@ namespace PlaceAgregator.API.Controllers
                 query = query.Where(item => item.User.UserName.ToLower().Contains(filter.UserName.ToLower()));
 
             if (!string.IsNullOrEmpty(filter.UserId))
-                query = query.Where(item => item.User.Id == filter.UserId);
+                query = query.Where(item => item.User.Id.Contains(filter.UserId));
 
             if (filter.PlaceId != null)
-                query = query.Where(item => item.PlaceId == filter.PlaceId);
+                query = query.Where(item => item.PlaceId.ToString().Contains(filter.PlaceId.ToString()));
 
             if (filter.OrderBy != null)
             {

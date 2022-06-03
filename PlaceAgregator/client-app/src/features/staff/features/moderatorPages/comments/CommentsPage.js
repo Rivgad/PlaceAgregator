@@ -1,31 +1,14 @@
 import { Grid, Typography } from "@mui/material";
-import { useState } from "react";
+import { useEffect } from "react";
+import { useDispatch } from "react-redux";
+import { fetchComments } from "../../../../comments/commentsSlice";
 import CommentsTable from "./CommentsTable";
 
-const createComment = (id, userId, placeId, text, creationDateTime) =>{
-    return {id, userId, placeId, text, creationDateTime}
-}
-const commentsData= [
-    createComment(1, 4, 3, 'LoremIpsum', '03.05.2022'),
-    createComment(2, 5, 4, 'LoremIpsum', '03.05.2022'),
-    createComment(3, 6, 3, 'LoremIpsum', '03.05.2022'),
-    createComment(4, 7, 4, 'LoremIpsum', '03.05.2022'),
-    createComment(5, 8, 4, 'LoremIpsum', '03.05.2022')
-
-]
-
-const CommentsPage = (props) => {
-    const [comments, setComments] = useState(commentsData); 
-
-    const deleteComment = (id)=>{
-        setComments((prevRows)=>{
-            return prevRows.filter((row)=> row.id !== id);
-        })
-    }
-    
-    const handleClickDelete = (id)=>{
-        deleteComment(id);
-    } 
+const CommentsPage = () => {
+    const dispatch = useDispatch();
+    useEffect(() => {
+        dispatch(fetchComments({}))
+    }, [dispatch]);
 
     return (
         <>
@@ -36,7 +19,7 @@ const CommentsPage = (props) => {
                     </Typography>
                 </Grid>
                 <Grid item xs={12}>
-                    <CommentsTable comments={comments} handleClickDelete={handleClickDelete}/>
+                    <CommentsTable />
                 </Grid>
             </Grid>
         </>

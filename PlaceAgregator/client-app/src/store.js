@@ -4,11 +4,12 @@ import bookingReducer from './features/bookings/bookingSlice';
 import myPlacesReducer from './features/places/myPlaces/myPlacesSlice';
 import placesReducer from './features/places/placesSlice';
 import typesReducer from './features/typesSlice';
-import usersReducer from './features/staff/features/adminPages/usersEditPage/usersSlice' 
+import usersReducer from './features/staff/features/adminPages/usersEditPage/usersSlice'
 import notificationsReducer from './features/notifications/notificationsSlice';
 import chargesSlice from './features/places/edit/charges/chargesSlice';
 import discountsSlice from './features/places/edit/discounts/discountsSlice';
 import moderatorsSlice from './features/staff/features/adminPages/moderatorsEditPage/moderatorsSlice';
+import commentsSlice from './features/comments/commentsSlice';
 
 const store = configureStore({
     reducer: {
@@ -19,9 +20,10 @@ const store = configureStore({
         bookings: bookingReducer,
         charges: chargesSlice,
         discounts: discountsSlice,
-        users:usersReducer,
-        notifications:notificationsReducer,
-        moderators:moderatorsSlice
+        users: usersReducer,
+        notifications: notificationsReducer,
+        moderators: moderatorsSlice,
+        comments: commentsSlice
     }
 })
 

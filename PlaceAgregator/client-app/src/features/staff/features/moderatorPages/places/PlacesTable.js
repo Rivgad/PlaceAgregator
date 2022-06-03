@@ -13,7 +13,7 @@ const PlacesTable = (props) => {
                     <TableRow>
                         <TableCell>ID</TableCell>
                         <TableCell>Название</TableCell>
-                        <TableCell>Действия</TableCell>
+                        <TableCell></TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
