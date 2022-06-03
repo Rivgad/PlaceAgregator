@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { RequestStatus } from "../../helpers";
 import authService from "../../services/authentication-service";
+import { enqueueSnackbar } from "../notifications/notificationsSlice";
 
 const user = JSON.parse(localStorage.getItem("user"));
 
@@ -8,10 +9,13 @@ export const login = createAsyncThunk(
     "auth/login",
     async ({ email, password }, thunkAPI) => {
         try {
-            const data = await authService.login(email, password);
+            const data = await authService.login(email, password)
+                .catch(error => {
+                    throw error;
+                });
             return { user: data };
         } catch (error) {
-            return thunkAPI.rejectWithValue();
+            return thunkAPI.rejectWithValue(error.response?.data);
         }
     }
 );
@@ -80,6 +84,16 @@ const authSlice = createSlice({
             state.isLoggedIn = false;
             state.user = null;
             state.status = RequestStatus.Failed
+            const text = action.payload?.errors[0]?.description;
+            
+            enqueueSnackbar({
+                message: text,
+                options: {
+                    key: new Date().getTime() + Math.random(),
+                    variant: 'warning'
+                },
+            });
+            console.log(text);
         },
         [login.pending]: (state, action) => {
             state.status = RequestStatus.Loading
