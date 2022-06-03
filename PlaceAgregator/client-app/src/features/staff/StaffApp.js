@@ -6,12 +6,12 @@ import ManagerPage from "./features/managerPages/ManagerPage";
 
 const App = () => {
     const userIsAdmin = useSelector(state => selectUserInRole(state, 'admin'));
-    const userIsManager = useSelector(state => selectUserInRole(state, 'manager'));
+    const userIsModerator = useSelector(state => selectUserInRole(state, 'moderator'));
 
     let Component = AdminPage;
     if (userIsAdmin)
         Component = AdminPage;
-    else if (userIsManager)
+    else if (userIsModerator)
         Component = ManagerPage;
 
     return (

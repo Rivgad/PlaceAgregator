@@ -18,7 +18,7 @@ import useNotifier from "./features/notifications/useNotifier";
 
 const AppLayout = () => {
     const user = useSelector(selectUser);
-    if (user && user.roles.some(role => ['admin', 'manager'].includes(role))) {
+    if (user && user.roles.some(role => ['admin', 'moderator'].includes(role))) {
         return (<Navigate to='staff' />);
     }
 
@@ -73,7 +73,7 @@ const App = () => {
                         <Route path="login" element={<AuthPage />} />
                     </Route>
                     <Route path='staff/*' element={
-                        <RequireAuth to="/" roles={['admin', 'manager']}>
+                        <RequireAuth to="/" roles={['admin', 'moderator']}>
                             <StaffApp />
                         </RequireAuth>
                     } />
