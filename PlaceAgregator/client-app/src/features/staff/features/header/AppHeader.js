@@ -16,13 +16,13 @@ const managerPages = [
 const AppHeader = () => {
     const dispatch = useDispatch();
     const userIsAdmin = useSelector(state => selectUserInRole(state, 'admin'));
-    const userIsManager = useSelector(state => selectUserInRole(state, 'manager'));
+    const userIsModerator = useSelector(state => selectUserInRole(state, 'moderator'));
 
     let pages = [];
     if (userIsAdmin) {
         pages = adminPages;
     }
-    if (userIsManager) {
+    if (userIsModerator) {
         pages = managerPages;
     }
     const handleLogoutClick = () => {
