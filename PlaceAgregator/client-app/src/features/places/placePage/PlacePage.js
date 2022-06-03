@@ -140,7 +140,6 @@ const PlaceDesciption = (props) => {
                 <Typography>
                     {description}
                 </Typography>
-
             </Paper>
         </>
     )
@@ -227,7 +226,7 @@ const PlacePage = (props) => {
                         </Stack>
                     </Grid>
                     <Grid order='10' item xs={12} md={4} lg={4} sx={{ minWidth: 375 }}>
-                        <OrderCard baseRate={place.baseRate} />
+                        <OrderCard />
                     </Grid>
                 </Grid>
             </Container>

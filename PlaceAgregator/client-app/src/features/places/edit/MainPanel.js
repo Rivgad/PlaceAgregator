@@ -15,9 +15,8 @@ import { Image } from 'react-bootstrap';
 import { array, boolean, number, object, string } from 'yup';
 import LoadingButton from '@mui/lab/LoadingButton';
 import { useDispatch, useSelector } from 'react-redux';
-import { selectCurrentPlace, updatePlace } from '../myPlaces/myPlacesSlice';
+import { onPhotoChanged, selectCurrentPlace, updatePlace } from '../myPlaces/myPlacesSlice';
 import { RequestStatus } from '../../../helpers';
-import { useState } from 'react';
 
 const schema = object({
     title: string().required('Введите название площадки'),
@@ -52,7 +51,6 @@ const schema = object({
 
 const MainPanel = () => {
     const dispatch = useDispatch();
-    const [photo, setPhoto] = useState('');
     const place = useSelector(selectCurrentPlace);
     const status = useSelector(state => state.myPlaces.updateStatus);
     const isLoading = status === RequestStatus.Loading;
@@ -61,13 +59,13 @@ const MainPanel = () => {
         const reader = new FileReader()
         reader.onload = () => {
             var result = reader.result.slice(23);
-            setPhoto(result);
+            dispatch(onPhotoChanged(result));
         }
         reader.readAsDataURL(file)
     }
 
     const handleSubmit = (data) => {
-        let res = {...data, photo}
+        let res = {...data }
         let placeId = place.id;
         dispatch(updatePlace({ id:placeId, ...res } ));
     }
@@ -86,7 +84,7 @@ const MainPanel = () => {
                     capacity: place?.capacity ?? '',
                     area: place?.area ?? '',
                     bookingHorizonInDays: place.bookingHorizonInDays ?? '',
-                    photo: photo ?? '',
+                    photo: place?.photo ?? '',
                     description: place?.description ?? '',
                     shedule: place?.shedule ?? {
                         monday: false,
