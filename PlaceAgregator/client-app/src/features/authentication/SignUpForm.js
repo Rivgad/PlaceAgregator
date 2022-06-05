@@ -1,16 +1,15 @@
-import * as React from 'react';
 import Avatar from '@mui/material/Avatar';
-import LoadingButton from '@mui/lab/LoadingButton';
 import TextField from '@mui/material/TextField';
 import Link from '@mui/material/Link';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
+import LoadingButton from '@mui/lab/LoadingButton';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
-import { Formik } from 'formik';
-import { object, ref, string } from 'yup';
-import { RequestStatus } from '../../helpers';
 import { useDispatch, useSelector } from 'react-redux';
+import { object, ref, string } from 'yup';
+import { Formik } from 'formik';
+import { RequestStatus } from '../../helpers';
 import { registration } from './authSlice';
 
 const schema = object({
@@ -22,20 +21,24 @@ const schema = object({
 })
 
 const SignUpForm = (props) => {
-    const dispatch = useDispatch();
-
     const { openSignIn } = props;
-    const handleSubmit = ({ email, userName, password, confirmPassword }) => {
-        console.log({email, userName, password, confirmPassword});
-        dispatch(registration({email, userName, password, confirmPassword}))
-    }
+    const dispatch = useDispatch();
 
     const status = useSelector(state => state.auth.status);
     const isLoading = status === RequestStatus.Loading;
     const isError = status === RequestStatus.Failed;
 
+    const handleSubmit = ({ email, userName, password, confirmPassword }) => {
+        dispatch(registration({ email, userName, password, confirmPassword }))
+    }
+
     return (
-        <>
+        <Box sx={{
+            maxWidth:500,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+        }}>
             <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
                 <LockOutlinedIcon />
             </Avatar>
@@ -59,66 +62,60 @@ const SignUpForm = (props) => {
                     errors,
                 }) => (
                     <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
-                        <Grid container spacing={2}>
-                            <Grid item xs={12}>
-                                <TextField
-                                    error={errors.userName != null || isError}
-                                    helperText={errors.userName}
-                                    value={values.userName}
-                                    onChange={handleChange}
-                                    required
-                                    fullWidth
-                                    autoFocus
-                                    id="userName"
-                                    label="Имя пользователя"
-                                    name="userName"
-                                    autoComplete="login"
-                                />
-                            </Grid>
-                            <Grid item xs={12}>
-                                <TextField
-                                    error={errors.email != null || isError}
-                                    helperText={errors.email}
-                                    value={values.email}
-                                    onChange={handleChange}
-                                    required
-                                    fullWidth
-                                    id="email"
-                                    label="email-адрес"
-                                    name="email"
-                                    autoComplete="email"
-                                />
-                            </Grid>
-                            <Grid item xs={12}>
-                                <TextField
-                                    error={errors.password != null || isError}
-                                    helperText={errors.password}
-                                    value={values.password}
-                                    onChange={handleChange}
-                                    required
-                                    fullWidth
-                                    name="password"
-                                    label="Пароль"
-                                    type="password"
-                                    id="password"
-                                    autoComplete="new-password"
-                                />
-                            </Grid>
-                            <Grid item xs={12}>
-                                <TextField
-                                    error={errors.confirmPassword != null || isError}
-                                    helperText={errors.confirmPassword}
-                                    value={values.confirmPassword}
-                                    onChange={handleChange}
-                                    required
-                                    fullWidth
-                                    name="confirmPassword"
-                                    label="Повторите пароль"
-                                    type="password"
-                                    id="passwordConfirm"
-                                />
-                            </Grid>
-                        </Grid>
+                        <TextField
+                            id="userName"
+                            name="userName"
+                            onChange={handleChange}
+                            error={errors.userName != null || isError}
+                            value={values.userName}
+                            helperText={errors.userName}
+                            autoComplete="login"
+                            required
+                            label="Имя пользователя"
+                            margin="normal"
+                            fullWidth
+                            autoFocus
+                        />
+                        <TextField
+                            error={errors.email != null || isError}
+                            helperText={errors.email}
+                            value={values.email}
+                            onChange={handleChange}
+                            required
+                            fullWidth
+                            id="email"
+                            label="email-адрес"
+                            name="email"
+                            margin="normal"
+                            autoComplete="email"
+                        />
+                        <TextField
+                            error={errors.password != null || isError}
+                            helperText={errors.password}
+                            value={values.password}
+                            onChange={handleChange}
+                            required
+                            fullWidth
+                            name="password"
+                            label="Пароль"
+                            type="password"
+                            id="password"
+                            margin="normal"
+                            autoComplete="new-password"
+                        />
+                        <TextField
+                            error={errors.confirmPassword != null || isError}
+                            helperText={errors.confirmPassword}
+                            value={values.confirmPassword}
+                            onChange={handleChange}
+                            required
+                            fullWidth
+                            name="confirmPassword"
+                            label="Повторите пароль"
+                            type="password"
+                            margin="normal"
+                            id="passwordConfirm"
+                        />
                         <LoadingButton
                             loading={isLoading}
                             onSubmit={handleSubmit}
@@ -142,7 +139,7 @@ const SignUpForm = (props) => {
                     {"У вас уже есть учетная запись? Войти"}
                 </Link>
             </Grid>
-        </>
+        </Box>
     );
 }
 
