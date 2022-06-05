@@ -10,16 +10,15 @@ namespace PlaceAgregator.UnitTests
         {
             [Description("test1")]
             Test1,
-            [Description("test2")]
-            Test3,
             [Description("TEST10")]
             Test10,
         }
 
         [Fact]
-        public void GetDescriptionAttribute_InputEnumTest1_ReturnsTest1()
+        public void GetDescriptionAttribute_EnumTest1_Returnedtest1()
         {
             string expectedValue = "test1";
+
             TestEnum value = TestEnum.Test1;
             string actualValue = value.GetDescriptionAttribute();
 
@@ -27,18 +26,10 @@ namespace PlaceAgregator.UnitTests
         }
 
         [Fact]
-        public void GetDescriptionAttribute_InputEnumTest3_ReturnsTest2()
-        {
-            string expectedValue = "test2";
-            TestEnum value = TestEnum.Test3;
-            string actualValue = value.GetDescriptionAttribute();
-
-            Assert.Equal(expectedValue, actualValue);
-        }
-        [Fact]
-        public void GetDescriptionAttribute_InputEnumTest10_ReturnsTEST10()
+        public void GetDescriptionAttribute_EnumTest10_ReturnsTEST10()
         {
             string expectedValue = "TEST10";
+
             TestEnum value = TestEnum.Test10;
             string actualValue = value.GetDescriptionAttribute();
 
