@@ -25,7 +25,9 @@ const BookingTableRow = ({ id }) => {
     const handleRejectClick = ()=>{
         dispatch(rejectBookingRequests({id}));
     };  
-
+    const creationDateTime = new Date(bookingRequest?.creationDateTime)?.toLocaleString();
+    const startDateTime = new Date(bookingRequest?.startDateTime)?.toLocaleString();
+    const endDateTime = new Date(bookingRequest?.endDateTime)?.toLocaleString();
     return (
         <TableRow
             key={bookingRequest.id}
@@ -36,9 +38,9 @@ const BookingTableRow = ({ id }) => {
             </TableCell>
             <TableCell align="right">{bookingRequest.placeId}</TableCell>
             <TableCell align="right">{StatusType[bookingRequest.status]}</TableCell>
-            <TableCell align="right">{bookingRequest.creationDateTime}</TableCell>
-            <TableCell align="right">{bookingRequest.startDateTime}</TableCell>
-            <TableCell align="right">{bookingRequest.endDateTime}</TableCell>
+            <TableCell align="right">{creationDateTime}</TableCell>
+            <TableCell align="right">{startDateTime}</TableCell>
+            <TableCell align="right">{endDateTime}</TableCell>
             <TableCell align="right">{bookingRequest.guestsQuantity}</TableCell>
             <TableCell align="right">{bookingRequest.comment}</TableCell>
             <TableCell align="right">
@@ -83,7 +85,7 @@ const BookingsTable = ({ bookingRequestIds }) => {
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {bookingRequestIds?.map((id) => <BookingTableRow key={id} id={id} />)}
+                    {bookingRequestIds?.sort((a, b) => b - a).map((id) => <BookingTableRow key={id} id={id} />)}
                 </TableBody>
             </Table>
         </TableContainer>
