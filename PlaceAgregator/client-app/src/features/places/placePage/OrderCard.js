@@ -1,5 +1,5 @@
 
-import { Button, Card, CardContent, Stack, TextField, Typography } from "@mui/material";
+import { Button, Card, CardContent, InputLabel, Stack, TextField, Typography } from "@mui/material";
 import { useState } from "react";
 import { useSelector } from "react-redux";
 import { selectCurrentPlace } from "../placesSlice";
@@ -8,6 +8,11 @@ import authHeader from "../../../services/authHeader";
 import { useSnackbar } from 'notistack';
 import { selectIsLoggedIn } from "../../authentication/authSlice";
 import { useLocation, useNavigate } from "react-router-dom";
+
+import ru from 'date-fns/locale/ru';
+import DatePicker, { registerLocale } from "react-datepicker";
+
+registerLocale('ru', ru);
 
 const OrderCard = () => {
     const navigate = useNavigate();
@@ -55,6 +60,11 @@ const OrderCard = () => {
             setIsError(true);
             return;
         }
+        const formattedStartDate = formatDate(new Date(startDateTime).toLocaleString()) + 'Z';
+        const formattedEndDate = formatDate(new Date(endDateTime).toLocaleString()) + 'Z';
+        console.log(formattedStartDate)
+        console.log(formattedEndDate)
+
         if(!isLoggedIn)
         {
             navigate('/login', { state: { from: location }, replace: true });
@@ -64,8 +74,8 @@ const OrderCard = () => {
             '/api/BookingRequests/',
             {
                 placeId: place.id,
-                startDateTime: startDateTime,
-                endDateTime: endDateTime,
+                startDateTime: formattedStartDate,
+                endDateTime: formattedEndDate,
                 guestsQuantity: guestsQuantity,
                 comment: comment
             },
@@ -90,6 +100,16 @@ const OrderCard = () => {
                 setIsError(true);
             });
     }
+    const formatDate =(dateTime)=>{
+        let dt = new Date(dateTime);
+        dt.setMinutes(0);
+        let currentDate = dt.toISOString().substring(0,10);
+        let arr = currentDate.split('-');
+        currentDate = `${arr[0]}-${arr[2]}-${arr[1]}`;
+        var currentTime = dt.toLocaleString().substring(12,17);
+        let str = `${currentDate}T${currentTime}`
+        return str;
+    }
 
     return (
         <>
@@ -104,31 +124,29 @@ const OrderCard = () => {
                         </Typography>
                     </div>
                     <Stack sx={{ my: 2 }} spacing={2}>
-                        <TextField
-                            error={isError}
-                            id="start-date-field"
-                            type="datetime-local"
-                            placeholder='Дата и время начала'
-                            label='Дата и время начала'
-                            value={startDateTime}
-                            onChange={(event) => setStartDateTime(event.target.value)}
-                            InputLabelProps={{
-                                shrink: true,
-                            }}
-                            fullWidth
+                        <InputLabel>Дата и время начала</InputLabel>
+                        <DatePicker
+                        id="end-date-field"
+                            selected={startDateTime}
+                            onChange={(date) => setStartDateTime(date)}
+                            locale="ru"
+                            timeFormat="p"
+                            minDate={new Date()}
+                            timeIntervals={60}
+                            inline
+                            showTimeSelect
                         />
-                        <TextField
-                            error={isError}
-                            id="end-date-field"
-                            type="datetime-local"
-                            placeholder='Дата и время окончания'
-                            label='Дата и время начала'
-                            value={endDateTime}
-                            onChange={(event) => setEndDateTime(event.target.value)}
-                            InputLabelProps={{
-                                shrink: true,
-                            }}
-                            fullWidth
+                        <InputLabel>Дата и время окончания</InputLabel>
+                        <DatePicker
+                        id="start-date-field"
+                            selected={endDateTime}
+                            onChange={(date) => setEndDateTime(date)}
+                            locale="ru"
+                            timeFormat="p"
+                            minDate={new Date()}
+                            timeIntervals={60}
+                            inline
+                            showTimeSelect
                         />
                         <TextField
                             error={isError}
