@@ -1,14 +1,36 @@
-import { Box, Grid, IconButton, InputLabel, TextField } from "@mui/material";
+import { Box, Grid, IconButton, TextField, Slider, Autocomplete, FormControl, Typography } from "@mui/material";
 import { useState } from "react";
 import SearchIcon from '@mui/icons-material/Search';
 import { useDispatch, useSelector } from "react-redux";
 import { fetchPlaces } from "../placesSlice";
 import { selectEventTypes } from './../../typesSlice';
-import { Form } from "react-bootstrap";
 
-const guestsQuantities = [
-    null, 5, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100
-]
+const marks = [
+    {
+        value: 0,
+        label: '0',
+    },
+    {
+        value: 1,
+        label: '1',
+    },
+    {
+        value: 2,
+        label: '2',
+    },
+    {
+        value: 3,
+        label: '3',
+    },
+    {
+        value: 4,
+        label: '4',
+    },
+    {
+        value: 5,
+        label: '5',
+    },
+];
 
 const SearchBarPanel = (props) => {
     const dispatch = useDispatch();
@@ -20,10 +42,11 @@ const SearchBarPanel = (props) => {
             }
         ))
     }
-    const [eventType, setEventType] = useState('');
+    const [eventType, setEventType] = useState([]);
     const [guestsQuantity, setGuestsQuantity] = useState('');
     const [searchField, setSearchField] = useState('');
     const eventTypes = useSelector(selectEventTypes);
+
     return (
         <>
             <Grid container spacing={2} direction='row' alignItems='center'>
@@ -43,20 +66,35 @@ const SearchBarPanel = (props) => {
                     </Box>
                 </Grid>
                 <Grid item xs={12} md={3} sm={6}>
-                    <InputLabel>Вид мероприятия</InputLabel>
-                    <Form.Select value={eventType} onChange={(event) => setEventType(event.target.value)}>
-                        {
-                            eventTypes?.map((item) => <option key={item.id} value={item.Id}>{item.title}</option>)
-                        }
-                    </Form.Select>
+                    <Autocomplete
+                        noOptionsText='Нет вариантов'
+                        filterSelectedOptions
+                        multiple
+                        options={eventTypes}
+                        defaultValue={eventType}
+                        getOptionLabel={(option) => option.title}
+                        onInputChange={(event) => setEventType(event.target.value?.id)}
+                        renderInput={(params) => <TextField {...params} label="Тип мероприятия" />}
+                    />
                 </Grid>
                 <Grid item xs={12} md={3} sm={6}>
-                    <InputLabel>Количество гостей</InputLabel>
-                    <Form.Select value={guestsQuantity} onChange={(event) => setGuestsQuantity(event.target.value)}>
-                        {
-                            guestsQuantities?.map((item) => <option key={item} value={item}>{item}</option>)
-                        }
-                    </Form.Select>
+                    <TextField
+                        label='Количество гостей'
+                        value={guestsQuantity}
+                        onChange={(event) => setGuestsQuantity(event.target.value)}
+                        fullWidth
+                    />
+                </Grid>
+                <Grid item xs={12} md={3} sm={6} >
+                    <FormControl fullWidth>
+                        <Typography>Минимальный рейтинг</Typography>
+                        <Slider
+                            step={1}
+                            min={0}
+                            max={5}
+                            marks={marks}
+                            valueLabelDisplay="off" />
+                    </FormControl>
                 </Grid>
                 <Grid item xs={12} md={3} sm={6}>
                     <TextField
