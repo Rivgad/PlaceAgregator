@@ -7,6 +7,7 @@ import CssBaseline from '@mui/material/CssBaseline';
 import store from './store';
 
 import './index.css';
+import "react-datepicker/dist/react-datepicker.css";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import App from './App';
 import { Provider } from 'react-redux';
