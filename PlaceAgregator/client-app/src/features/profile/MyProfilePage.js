@@ -68,7 +68,7 @@ const MyProfilePage = (props) => {
                         <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 5 }} >
                             <Grid container gap={2}>
                                 <Grid item xs={12} md={12}>
-                                    <Avatar sx={{ width: 60, height: 60, mx: 'auto' }}>H</Avatar>
+                                    <Avatar sx={{ width: 60, height: 60, mx: 'auto' }}>{values.userName[0]?.toUpperCase()}</Avatar>
                                 </Grid>
                                 <Grid item xs={12} md={12}>
                                     <TextField

@@ -16,11 +16,13 @@ namespace PlaceAgregator.API.Controllers
         }
 
         [HttpPost("[Action]")]
+        [Produces(typeof(Response<LoginResponse>))]
         public async Task<IActionResult> LoginAsync([FromBody] LoginRequest loginRequest)
         {
             var userNameOrEmail = loginRequest.UserNameOrEmail;
+            var password = loginRequest.Password;
 
-            if (string.IsNullOrEmpty(userNameOrEmail))
+            if (string.IsNullOrEmpty(userNameOrEmail) || string.IsNullOrEmpty(password))
                 return BadRequest();
 
             Response<LoginResponse> result = await _authService.LoginAsync(userNameOrEmail, loginRequest.Password);

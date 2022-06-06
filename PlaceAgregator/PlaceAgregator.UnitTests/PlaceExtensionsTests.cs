@@ -8,13 +8,14 @@ namespace PlaceAgregator.UnitTests
     public class PlaceExtensionsTests
     {
         [Theory]
-        [InlineData(232, 3, 10)]
-        [InlineData(300, 1, 1)]
-        [InlineData(500, 10, 10)]
-        public void GetPrice_Discount20Charge20_ReturnsBaseRateMultiplyByHours(decimal baseRate, int hours, int guestsQuantity)
+        [InlineData(3, 5)]
+        [InlineData(1, 1)]
+        [InlineData(10, 10)]
+        public void GetPrice_Discount20Charge20BaseRate400_ReturnsBaseRateMultipliedByHours(int hours, int guestsQuantity)
         {
             Place place = new Place();
-            place.BaseRate = baseRate;
+            place.BaseRate = 400;
+
             place.Discounts = new List<Discount>()
             {
                 new Discount() { FromHoursQuantity=1, Procents=20 }

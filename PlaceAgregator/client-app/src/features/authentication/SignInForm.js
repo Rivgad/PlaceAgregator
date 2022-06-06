@@ -18,8 +18,8 @@ const schema = object({
 })
 
 const SignInForm = (props) => {
-    const dispatch = useDispatch();
     const { openSignUp } = props;
+    const dispatch = useDispatch();
     const status = useSelector(state => state.auth.status);
     const isLoading = status === RequestStatus.Loading;
     const isError = status === RequestStatus.Failed;
@@ -28,7 +28,12 @@ const SignInForm = (props) => {
         dispatch(login({ email, password }));
     }
     return (
-        <>
+        <Box sx={{
+            maxWidth:500,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+        }}>
             <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
                 <LockOutlinedIcon />
             </Avatar>
@@ -49,20 +54,20 @@ const SignInForm = (props) => {
                     values,
                     errors,
                 }) => (
-                    <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
+                    <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 3 }}>
                         <TextField
-                            margin="normal"
-                            required
-                            fullWidth
                             id="email"
-                            label="Логин/Email"
                             name="email"
-                            value={values.email}
                             onChange={handleChange}
-                            autoComplete="email"
-                            autoFocus
+                            value={values.email}
                             error={errors.email != null || isError}
                             helperText={errors.email}
+                            autoComplete="email"
+                            required
+                            label="Логин/Email"
+                            margin="normal"
+                            fullWidth
+                            autoFocus
                         />
                         <TextField
                             margin="normal"
@@ -91,7 +96,6 @@ const SignInForm = (props) => {
                 )}
 
             </Formik>
-
             <Grid container >
                 <Link component='button'
                     onClick={openSignUp}
@@ -101,7 +105,7 @@ const SignInForm = (props) => {
                     {"Ещё нет аккаунта? Регистрация"}
                 </Link>
             </Grid>
-        </>
+        </Box>
     );
 }
 

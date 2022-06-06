@@ -1,13 +1,13 @@
 import { Grid, Typography } from "@mui/material";
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { fetchComments } from "../../../../comments/commentsSlice";
+import { fetchAllComments } from "../../../../comments/commentsSlice";
 import CommentsTable from "./CommentsTable";
 
 const CommentsPage = () => {
     const dispatch = useDispatch();
     useEffect(() => {
-        dispatch(fetchComments({}))
+        dispatch(fetchAllComments({}))
     }, [dispatch]);
 
     return (
