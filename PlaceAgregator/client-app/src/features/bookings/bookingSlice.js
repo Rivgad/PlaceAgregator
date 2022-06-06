@@ -49,7 +49,7 @@ export const rejectBookingRequests = createAsyncThunk(
     "bookings/rejectBookingRequests",
     async ({id}) => {
         let response = await axios.post(
-            `/api/BookingRequests/${id}/Cancel`,
+            `/api/BookingRequests/${id}/Reject`,
             {},
             {
                 headers: authHeader()
