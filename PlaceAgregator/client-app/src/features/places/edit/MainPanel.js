@@ -65,7 +65,11 @@ const MainPanel = () => {
     }
 
     const handleSubmit = (data) => {
-        let res = {...data }
+        let baseRate = data.baseRate === '' ? null : data.baseRate;
+        let capacity = data.capacity === '' ? null : data.capacity;
+        let area = data.area === '' ? null : data.area;
+        let bookingHorizonInDays = data.bookingHorizonInDays === '' ? null : data.bookingHorizonInDays;
+        let res = {...data, baseRate, capacity, area, bookingHorizonInDays }
         let placeId = place.id;
         dispatch(updatePlace({ id:placeId, ...res } ));
     }
