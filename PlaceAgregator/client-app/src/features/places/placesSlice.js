@@ -8,6 +8,8 @@ export const fetchPlaces = createAsyncThunk(
     async (
         {
             search = null,
+            eventId = null,
+            prohibitions = null,
             minCapacity = null,
             minArea = null,
             minRating = null,
@@ -17,10 +19,12 @@ export const fetchPlaces = createAsyncThunk(
             orderBy = null,
             desc = null
         }) => {
-        let response = await axios.get('/api/Places',
+        const prohibitionsStr = prohibitions?.map((n) => `Prohibitions=${n}`).join('&') ?? '';
+        let response = await axios.get(`/api/Places?${prohibitionsStr}`,
             {
                 params: {
                     search,
+                    eventId,
                     minCapacity,
                     minArea,
                     minRating,

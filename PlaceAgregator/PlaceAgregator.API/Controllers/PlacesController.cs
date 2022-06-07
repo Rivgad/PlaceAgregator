@@ -257,7 +257,7 @@ namespace PlaceAgregator.API.Controllers
         public async Task<IEnumerable<PlaceMinimalInfoDTO>> GetInfoAboutBlocked([FromQuery] FilterWithSearchDTO filter)
         {
             var query = _context.Places
-                .Include(item=>item.User)
+                .Include(item => item.User)
                 .AsQueryable();
 
             if (filter.Search != null)
@@ -277,19 +277,31 @@ namespace PlaceAgregator.API.Controllers
         public async Task<IEnumerable<PlaceCardInfo>> GetAllNotBlockedAndActiveAsync([FromQuery] PlaceFilterDTO filter)
         {
             var query = _context.Places
+                .Include(item => item.EventTypes)
+                .Include(item => item.Prohibitions)
                 .Include(item => item.BookingRequests)
                 .AsQueryable();
 
             query = query.Where(item => item.IsBlocked == false && item.IsActive == true);
 
             if (filter.MinCapacity != null)
-                query = query.Where(item => item.Capacity >= filter.MinCapacity);
+                query = query.Where(item => item.Capacity == null || item.Capacity >= filter.MinCapacity);
 
             if (filter.MinArea != null)
                 query = query.Where(item => item.Area >= filter.MinArea);
 
             if (filter.MinRating != null)
                 query = query.Where(item => item.Rating >= filter.MinRating);
+
+            if (filter.EventId != null)
+            {
+                query = query.Where(item => item.EventTypes.Any(item => item.Id == filter.EventId));
+            }
+
+            if (filter.Prohibitions != null)
+            {
+                query = query.Where(item => !item.Prohibitions.Any(item => filter.Prohibitions.Contains(item.Id)));
+            }
 
             if (filter.Search != null)
                 query = query.Where(item => 
@@ -300,6 +312,14 @@ namespace PlaceAgregator.API.Controllers
 
             if (filter.MaxBaseRate != null)
                 query = query.Where(item => item.BaseRate <= filter.MaxBaseRate);
+
+            if (filter.OrderBy != null)
+            {
+                query = query.OrderBy(filter.OrderBy, filter.Desc ?? true);
+            }
+
+            if (filter.Page != null && filter.PageSize != null)
+                query = query.Skip((int)((filter.Page - 1) * filter.PageSize)).Take((int)filter.PageSize);
 
             return await query.Select(item => _mapper.Map<PlaceCardInfo>(item)).ToListAsync();
         }

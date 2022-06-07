@@ -3,7 +3,7 @@ import { useState } from "react";
 import SearchIcon from '@mui/icons-material/Search';
 import { useDispatch, useSelector } from "react-redux";
 import { fetchPlaces } from "../placesSlice";
-import { selectEventTypes } from './../../typesSlice';
+import { selectEventTypes, selectProhibitions } from './../../typesSlice';
 
 const marks = [
     {
@@ -32,20 +32,33 @@ const marks = [
     },
 ];
 
-const SearchBarPanel = (props) => {
+const SearchBarPanel = () => {
     const dispatch = useDispatch();
     const handleSearchClick = () => {
+        let ratingValue = rating === 0 ? null : rating;
+        let capacityValue = guestsQuantity === 0 || guestsQuantity === '' ? null : guestsQuantity;
+        let searchValue =  searchField === '' ? null : searchField;
+
         dispatch(fetchPlaces(
             {
-                search: searchField,
-                minCapacity: guestsQuantity
+                search: searchValue,
+                minCapacity: capacityValue,
+                eventId: eventType?.id,
+                prohibitions: prohibitions.map(item => item.id),
+                minRating: ratingValue
             }
         ))
-    }
-    const [eventType, setEventType] = useState([]);
+    };
+    const [eventType, setEventType] = useState(null);
+    const [inputEventType, setInputEventType] = useState('');
+    const [prohibitions, setProhibitions] = useState([]);
+    const [inputProhibitions, setInputProhibitions] = useState('');
+
+    const [rating, setRating] = useState(null);
     const [guestsQuantity, setGuestsQuantity] = useState('');
     const [searchField, setSearchField] = useState('');
     const eventTypes = useSelector(selectEventTypes);
+    const prohibitionTypes = useSelector(selectProhibitions);
 
     return (
         <>
@@ -67,21 +80,49 @@ const SearchBarPanel = (props) => {
                 </Grid>
                 <Grid item xs={12} md={3} sm={6}>
                     <Autocomplete
+                        options={eventTypes}
+                        value={eventType}
+                        inputValue={inputEventType}
+                        onChange={(_, newValue) => {
+                            setEventType(newValue);
+                        }}
+                        onInputChange={(_, newInputValue) => {
+                            setInputEventType(newInputValue);
+                        }}
+                        getOptionLabel={(option) => option.title}
+                        renderInput={(params) => <TextField {...params} label="Тип мероприятия" />}
+                    />
+                </Grid>
+                <Grid item xs={12} md={3} sm={6}>
+                    <Autocomplete
                         noOptionsText='Нет вариантов'
                         filterSelectedOptions
                         multiple
-                        options={eventTypes}
-                        defaultValue={eventType}
+                        options={prohibitionTypes}
+                        value={prohibitions}
+                        inputValue={inputProhibitions}
                         getOptionLabel={(option) => option.title}
-                        onInputChange={(event) => setEventType(event.target.value?.id)}
-                        renderInput={(params) => <TextField {...params} label="Тип мероприятия" />}
+                        onChange={(event, newValues) => {
+                            setProhibitions(newValues)
+                        }}
+                        onInputChange={(_, newInputValue) => {
+                            setInputProhibitions(newInputValue);
+                        }}
+                        isOptionEqualToValue={(option,value)=> option.id === value.id}
+                        renderInput={(params) => <TextField {...params} label="Что разрешено на площадке" />}
                     />
                 </Grid>
                 <Grid item xs={12} md={3} sm={6}>
                     <TextField
                         label='Количество гостей'
                         value={guestsQuantity}
-                        onChange={(event) => setGuestsQuantity(event.target.value)}
+                        type='number'
+                        onChange={(event) => {
+                            let newValue = event.target.value;
+                            if(newValue <= 0)
+                                newValue = '';
+                            setGuestsQuantity(newValue);
+                        }}
                         fullWidth
                     />
                 </Grid>
@@ -89,6 +130,8 @@ const SearchBarPanel = (props) => {
                     <FormControl fullWidth>
                         <Typography>Минимальный рейтинг</Typography>
                         <Slider
+                            value={rating}
+                            onChange={(event) => setRating(event.target.value)}
                             step={1}
                             min={0}
                             max={5}
@@ -96,32 +139,7 @@ const SearchBarPanel = (props) => {
                             valueLabelDisplay="off" />
                     </FormControl>
                 </Grid>
-                <Grid item xs={12} md={3} sm={6}>
-                    <TextField
-                        id="end-date-field"
-                        type="datetime-local"
-                        placeholder='Дата и время начала'
-                        label='Дата и время начала'
-                        InputLabelProps={{
-                            shrink: true,
-                        }}
-                        fullWidth
-                    />
-                </Grid>
-                <Grid item xs={12} md={3} sm={6}>
-                    <TextField
-                        id="end-date-field"
-                        type="datetime-local"
-                        placeholder='Дата и время конца'
-                        label='Дата и время конца'
-                        InputLabelProps={{
-                            shrink: true,
-                        }}
-                        fullWidth
-                    />
-                </Grid>
             </Grid>
-
         </>
     );
 }
