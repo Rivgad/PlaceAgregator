@@ -13,28 +13,22 @@ import {
 } from '@mui/material';
 import { useSelector } from 'react-redux';
 import { selectPlaceById } from './placesSlice';
-import { Image } from 'react-bootstrap';
 
 const PlaceCard = ({ id }) => {
     const place = useSelector((state) => selectPlaceById(state, id));
     return (
-        <CardActionArea LinkComponent={Link} to={`/places/${id}`}>
-            <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-
-                <CardMedia
-                    height={200}
-                    sx={{ height: 230, alignItems: 'center', alignContent: 'center' }}
-                >
-                    {
-                        place.photo ?
-                            <Image fluid src={`data:image/png;base64,${place?.photo}`} alt="Фото площадки" />
-                            :
-                            <Skeleton variant="rectangular" height={230} />
-                    }
-                </CardMedia>
-
-
-                <CardContent sx={{ paddingBottom: 0, flexGrow: 1, height: 170, py: 4 }}>
+        <CardActionArea LinkComponent={Link} to={`/places/${id}`} >
+            <Card sx={{ height: 450, display: 'flex', flexDirection: 'column' }}>                
+                {
+                    place.photo ?
+                        <CardMedia
+                            sx={{ height: 230, alignItems: 'center', alignContent: 'center' }}
+                            image={`data:image/png;base64,${place?.photo}`} alt="Фото площадки"
+                        />
+                        :
+                        <Skeleton variant="rectangular" height={230} />
+                }
+                <CardContent sx={{ paddingBottom: 0, flexGrow: 1, py: 2 }}>
                     <Typography gutterBottom variant="h5" component="div">
                         {place.title}
                     </Typography>
