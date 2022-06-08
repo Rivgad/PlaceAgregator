@@ -8,7 +8,8 @@ import {
     Stack,
     Checkbox,
     FormGroup,
-    FormControlLabel
+    FormControlLabel,
+    Autocomplete
 } from '@mui/material'
 import { Formik } from 'formik';
 import { Image } from 'react-bootstrap';
@@ -17,6 +18,8 @@ import LoadingButton from '@mui/lab/LoadingButton';
 import { useDispatch, useSelector } from 'react-redux';
 import { onPhotoChanged, selectCurrentPlace, updatePlace } from '../myPlaces/myPlacesSlice';
 import { RequestStatus } from '../../../helpers';
+import { selectEventTypes, selectProhibitions } from '../../typesSlice';
+import { useState } from 'react';
 
 const schema = object({
     title: string().required('Введите название площадки'),
@@ -55,6 +58,14 @@ const MainPanel = () => {
     const status = useSelector(state => state.myPlaces.updateStatus);
     const isLoading = status === RequestStatus.Loading;
 
+    
+    const eventTypes = useSelector(selectEventTypes);
+    const prohibitionTypes = useSelector(selectProhibitions);
+    const [eventType, setEventType] = useState(null);
+    const [inputEventType, setInputEventType] = useState('');
+    const [inputProhibitions, setInputProhibitions] = useState('');
+    const placeProhibitions = place?.prohibitions?.map(item=> prohibitionTypes.find(prohibition=> prohibition.id === item ));
+
     const handlePhotoUpload =  (file)  => {
         const reader = new FileReader()
         reader.onload = () => {
@@ -65,15 +76,16 @@ const MainPanel = () => {
     }
 
     const handleSubmit = (data) => {
-        let baseRate = data.baseRate === '' ? null : data.baseRate;
-        let capacity = data.capacity === '' ? null : data.capacity;
-        let area = data.area === '' ? null : data.area;
-        let bookingHorizonInDays = data.bookingHorizonInDays === '' ? null : data.bookingHorizonInDays;
-        let res = {...data, baseRate, capacity, area, bookingHorizonInDays }
+        const baseRate = data.baseRate === '' ? null : data.baseRate;
+        const capacity = data.capacity === '' ? null : data.capacity;
+        const area = data.area === '' ? null : data.area;
+        const bookingHorizonInDays = data.bookingHorizonInDays === '' ? null : data.bookingHorizonInDays;
+        const prohibitionIds = data.prohibitions?.map(item => item.id);
+        const res = { ...data, baseRate, capacity, area, bookingHorizonInDays, prohibitions: prohibitionIds }
         let placeId = place.id;
-        dispatch(updatePlace({ id:placeId, ...res } ));
+        dispatch(updatePlace({ id: placeId, ...res }));
     }
-
+    console.log(placeProhibitions);
     return (
         <>
             <Formik
@@ -98,13 +110,16 @@ const MainPanel = () => {
                         friday: false,
                         saturday: false,
                         sunday: false
-                    }
+                    },
+                    eventTypes: eventTypes ?? [],
+                    prohibitions: placeProhibitions ?? []
                 }}
 
             >
                 {({
                     handleSubmit,
                     handleChange,
+                    setFieldValue,
                     values,
                     errors,
                 }) => (
@@ -166,7 +181,6 @@ const MainPanel = () => {
                                     helperText={errors.capacity}
                                 />
                             </Grid>
-
                             <Grid item xs={12} md={5}>
                                 <TextField
                                     fullWidth
@@ -262,6 +276,27 @@ const MainPanel = () => {
                                         />
                                     </FormGroup>
                                 </Stack>
+                            </Grid>
+                            <Grid container item xs={12}>
+                                <Autocomplete
+                                    id='prohibitions'
+                                    fullWidth
+                                    noOptionsText='Нет вариантов'
+                                    filterSelectedOptions
+                                    multiple
+                                    options={prohibitionTypes}
+                                    value={values.prohibitions}
+                                    inputValue={inputProhibitions}
+                                    getOptionLabel={(option) => option.title}
+                                    onChange={(event, newValues) => {
+                                        setFieldValue('prohibitions', newValues)
+                                    }}
+                                    onInputChange={(_, newInputValue) => {
+                                        setInputProhibitions(newInputValue);
+                                    }}
+                                    isOptionEqualToValue={(option, value) => option.id === value.id}
+                                    renderInput={(params) => <TextField {...params} label="Что разрешено на площадке" />}
+                                />
                             </Grid>
                             <Grid container item xs={12}>
                                 <label htmlFor="icon-button-file">

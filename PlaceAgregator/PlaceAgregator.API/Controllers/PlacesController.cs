@@ -438,7 +438,11 @@ namespace PlaceAgregator.API.Controllers
         [Produces(typeof(PlaceGetDTO))]
         public async Task<IActionResult> UpdatePlaceAsync(int id, [FromBody] PlaceUpdateDTO placeDTO)
         {
-            var place = await _context.Places.FirstOrDefaultAsync(item => item.Id == id && item.IsBlocked == false);
+            var place = await _context.Places
+                .Include(item => item.Prohibitions)
+                .Include(item => item.EventTypes)
+                .FirstOrDefaultAsync(item => item.Id == id && item.IsBlocked == false);
+            
             if (place == null)
                 return NotFound();
 
@@ -449,14 +453,22 @@ namespace PlaceAgregator.API.Controllers
             if (place.UserId != accountId)
                 return Forbid();
 
+            var prohibitionsToAdd = placeDTO.ProhibitionIds.Where(item=> !place.Prohibitions.Select(j=> j.Id).Contains(item)).ToList();
+            var prohibitionsToRemove = place.Prohibitions.Where(item=> !placeDTO.ProhibitionIds.Contains(item.Id)).ToList();
+
             _mapper.Map(placeDTO, place);
 
-            _context.Places.Update(place);
-            if (place.EventTypes != null)
-                _context.AttachRange(place.EventTypes);
+            foreach(var prohibition in prohibitionsToAdd)
+            {
+                var value = await _context.Prohibitions.FirstOrDefaultAsync(item => item.Id == prohibition);
+                place.Prohibitions.Add(value);
+            }
+            foreach(var prohibition in prohibitionsToRemove)
+            {
+                place.Prohibitions.Remove(prohibition);
+            }
 
-            if (place.Prohibitions != null)
-                _context.AttachRange(place.Prohibitions);
+            _context.Places.Update(place);
 
             await _context.SaveChangesAsync();
 

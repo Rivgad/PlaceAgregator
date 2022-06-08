@@ -67,7 +67,7 @@ export const selectPlaceIds = createSelector(
     (eventType) => eventType.map(item => item.id)
 )
 
-const selectProhibitionEntities = state => state.types.prohibitionTypes;
+export const selectProhibitionEntities = state => state.types.prohibitionTypes;
 
 export const selectProhibitions = createSelector(
     selectProhibitionEntities,
