@@ -16,5 +16,11 @@ namespace PlaceAgregator.Shared.DTOs.Places
 
         [JsonPropertyName("maxBaseRate")]
         public decimal? MaxBaseRate { get; set; }
+
+        [JsonPropertyName("eventId")]
+        public int? EventId { get; set; }
+        
+        [JsonPropertyName("prohibitions")]
+        public IEnumerable<int>? Prohibitions { get; set; }
     }
 }

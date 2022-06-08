@@ -15,11 +15,7 @@ namespace PlaceAgregator.API.AppBuilders
         {
             cfg.CreateMap<Place, PlaceCardInfo>();
             cfg.CreateMap<PlaceCreateDTO, Place>();
-            cfg.CreateMap<PlaceUpdateDTO, Place>()
-                .ForMember(dest => dest.EventTypes,
-                    opt => opt.MapFrom(src => src.EventTypeIds.Select(item => new EventType() { Id = item })))
-                .ForMember(dest => dest.Prohibitions,
-                    opt => opt.MapFrom(src => src.ProhibitionIds.Select(item => new Prohibition() { Id = item })));
+            cfg.CreateMap<PlaceUpdateDTO, Place>();
 
             cfg.CreateMap<Place, PlaceGetDTO>()
                 .ForMember(dest => dest.EventTypeIds,

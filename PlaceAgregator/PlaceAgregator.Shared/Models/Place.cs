@@ -23,8 +23,8 @@ namespace PlaceAgregator.Shared.Models
         public IEnumerable<BookingRequest>? BookingRequests { get; set; }
         public IEnumerable<Comment>? Comments { get; set; }
         public IEnumerable<PlacePhoto>? Photos { get; set; }
-        public IEnumerable<Prohibition>? Prohibitions { get; set; }
-        public IEnumerable<EventType>? EventTypes { get; set; }
+        public ICollection<Prohibition>? Prohibitions { get; set; }
+        public ICollection<EventType>? EventTypes { get; set; }
         public IEnumerable<Discount>? Discounts { get; set; }
         public IEnumerable<Charge>? Charges { get; set; }
 
