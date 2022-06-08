@@ -257,7 +257,7 @@ namespace PlaceAgregator.API.Controllers
         public async Task<IEnumerable<PlaceMinimalInfoDTO>> GetInfoAboutBlocked([FromQuery] FilterWithSearchDTO filter)
         {
             var query = _context.Places
-                .Include(item=>item.User)
+                .Include(item => item.User)
                 .AsQueryable();
 
             if (filter.Search != null)
@@ -277,19 +277,31 @@ namespace PlaceAgregator.API.Controllers
         public async Task<IEnumerable<PlaceCardInfo>> GetAllNotBlockedAndActiveAsync([FromQuery] PlaceFilterDTO filter)
         {
             var query = _context.Places
+                .Include(item => item.EventTypes)
+                .Include(item => item.Prohibitions)
                 .Include(item => item.BookingRequests)
                 .AsQueryable();
 
             query = query.Where(item => item.IsBlocked == false && item.IsActive == true);
 
             if (filter.MinCapacity != null)
-                query = query.Where(item => item.Capacity >= filter.MinCapacity);
+                query = query.Where(item => item.Capacity == null || item.Capacity >= filter.MinCapacity);
 
             if (filter.MinArea != null)
                 query = query.Where(item => item.Area >= filter.MinArea);
 
             if (filter.MinRating != null)
                 query = query.Where(item => item.Rating >= filter.MinRating);
+
+            if (filter.EventId != null)
+            {
+                query = query.Where(item => item.EventTypes.Any(item => item.Id == filter.EventId));
+            }
+
+            if (filter.Prohibitions != null)
+            {
+                query = query.Where(item => !item.Prohibitions.Any(item => filter.Prohibitions.Contains(item.Id)));
+            }
 
             if (filter.Search != null)
                 query = query.Where(item => 
@@ -300,6 +312,14 @@ namespace PlaceAgregator.API.Controllers
 
             if (filter.MaxBaseRate != null)
                 query = query.Where(item => item.BaseRate <= filter.MaxBaseRate);
+
+            if (filter.OrderBy != null)
+            {
+                query = query.OrderBy(filter.OrderBy, filter.Desc ?? true);
+            }
+
+            if (filter.Page != null && filter.PageSize != null)
+                query = query.Skip((int)((filter.Page - 1) * filter.PageSize)).Take((int)filter.PageSize);
 
             return await query.Select(item => _mapper.Map<PlaceCardInfo>(item)).ToListAsync();
         }
@@ -418,7 +438,11 @@ namespace PlaceAgregator.API.Controllers
         [Produces(typeof(PlaceGetDTO))]
         public async Task<IActionResult> UpdatePlaceAsync(int id, [FromBody] PlaceUpdateDTO placeDTO)
         {
-            var place = await _context.Places.FirstOrDefaultAsync(item => item.Id == id && item.IsBlocked == false);
+            var place = await _context.Places
+                .Include(item => item.Prohibitions)
+                .Include(item => item.EventTypes)
+                .FirstOrDefaultAsync(item => item.Id == id && item.IsBlocked == false);
+            
             if (place == null)
                 return NotFound();
 
@@ -429,14 +453,35 @@ namespace PlaceAgregator.API.Controllers
             if (place.UserId != accountId)
                 return Forbid();
 
+            var prohibitionsToAdd = placeDTO.ProhibitionIds.Where(item=> !place.Prohibitions.Select(j=> j.Id).Contains(item)).ToList();
+            var prohibitionsToRemove = place.Prohibitions.Where(item=> !placeDTO.ProhibitionIds.Contains(item.Id)).ToList();
+
+            var eventTypesToAdd = placeDTO.EventTypeIds.Where(item => !place.EventTypes.Select(j => j.Id).Contains(item)).ToList();
+            var eventTypesToRemove = place.EventTypes.Where(item => !placeDTO.EventTypeIds.Contains(item.Id)).ToList();
+
             _mapper.Map(placeDTO, place);
 
-            _context.Places.Update(place);
-            if (place.EventTypes != null)
-                _context.AttachRange(place.EventTypes);
+            foreach(var prohibition in prohibitionsToAdd)
+            {
+                var value = await _context.Prohibitions.FirstOrDefaultAsync(item => item.Id == prohibition);
+                place.Prohibitions.Add(value);
+            }
+            foreach(var prohibition in prohibitionsToRemove)
+            {
+                place.Prohibitions.Remove(prohibition);
+            }
 
-            if (place.Prohibitions != null)
-                _context.AttachRange(place.Prohibitions);
+            foreach(var eventType in eventTypesToAdd)
+            {
+                var value = await _context.EventTypes.FirstOrDefaultAsync(item => item.Id == eventType);
+                place.EventTypes.Add(value);
+            }
+            foreach (var eventType in eventTypesToRemove)
+            {
+                place.EventTypes.Remove(eventType);
+            }
+
+            _context.Places.Update(place);
 
             await _context.SaveChangesAsync();
 
