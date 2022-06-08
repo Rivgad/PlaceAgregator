@@ -456,6 +456,9 @@ namespace PlaceAgregator.API.Controllers
             var prohibitionsToAdd = placeDTO.ProhibitionIds.Where(item=> !place.Prohibitions.Select(j=> j.Id).Contains(item)).ToList();
             var prohibitionsToRemove = place.Prohibitions.Where(item=> !placeDTO.ProhibitionIds.Contains(item.Id)).ToList();
 
+            var eventTypesToAdd = placeDTO.EventTypeIds.Where(item => !place.EventTypes.Select(j => j.Id).Contains(item)).ToList();
+            var eventTypesToRemove = place.EventTypes.Where(item => !placeDTO.EventTypeIds.Contains(item.Id)).ToList();
+
             _mapper.Map(placeDTO, place);
 
             foreach(var prohibition in prohibitionsToAdd)
@@ -466,6 +469,16 @@ namespace PlaceAgregator.API.Controllers
             foreach(var prohibition in prohibitionsToRemove)
             {
                 place.Prohibitions.Remove(prohibition);
+            }
+
+            foreach(var eventType in eventTypesToAdd)
+            {
+                var value = await _context.EventTypes.FirstOrDefaultAsync(item => item.Id == eventType);
+                place.EventTypes.Add(value);
+            }
+            foreach (var eventType in eventTypesToRemove)
+            {
+                place.EventTypes.Remove(eventType);
             }
 
             _context.Places.Update(place);

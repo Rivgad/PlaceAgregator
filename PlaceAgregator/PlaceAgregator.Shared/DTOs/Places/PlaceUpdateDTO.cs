@@ -8,7 +8,7 @@ namespace PlaceAgregator.Shared.DTOs.Places
         [JsonPropertyName("prohibitions")]
         public int[]? ProhibitionIds { get; set; }
 
-        [JsonPropertyName("eventTypeIds")]
+        [JsonPropertyName("eventTypes")]
         public int[]? EventTypeIds { get; set; }
 
         [JsonPropertyName("shedule")]

@@ -32,13 +32,11 @@ const schema = object({
     description: string(),
     prohibitions: array().of(object().shape({
         id: number(),
-        title: string(),
-        checked: boolean()
+        title: string()
     })),
     eventTypes: array().of(object().shape({
         id: number(),
-        title: string(),
-        checked: boolean()
+        title: string()
     })),
     shedule: object().shape({
         monday: boolean(),
@@ -57,13 +55,13 @@ const MainPanel = () => {
     const place = useSelector(selectCurrentPlace);
     const status = useSelector(state => state.myPlaces.updateStatus);
     const isLoading = status === RequestStatus.Loading;
-
     
     const eventTypes = useSelector(selectEventTypes);
     const prohibitionTypes = useSelector(selectProhibitions);
-    const [eventType, setEventType] = useState(null);
+
     const [inputEventType, setInputEventType] = useState('');
     const [inputProhibitions, setInputProhibitions] = useState('');
+    const placeEventTypes = place?.eventTypeIds?.map(item=> eventTypes.find(eventType=> eventType.id === item ));
     const placeProhibitions = place?.prohibitions?.map(item=> prohibitionTypes.find(prohibition=> prohibition.id === item ));
 
     const handlePhotoUpload =  (file)  => {
@@ -81,11 +79,12 @@ const MainPanel = () => {
         const area = data.area === '' ? null : data.area;
         const bookingHorizonInDays = data.bookingHorizonInDays === '' ? null : data.bookingHorizonInDays;
         const prohibitionIds = data.prohibitions?.map(item => item.id);
-        const res = { ...data, baseRate, capacity, area, bookingHorizonInDays, prohibitions: prohibitionIds }
+        const eventTypeIds = data.eventTypes?.map(item => item.id);
+
+        const res = { ...data, baseRate, capacity, area, bookingHorizonInDays, prohibitions: prohibitionIds, eventTypes: eventTypeIds }
         let placeId = place.id;
         dispatch(updatePlace({ id: placeId, ...res }));
     }
-    console.log(placeProhibitions);
     return (
         <>
             <Formik
@@ -111,7 +110,7 @@ const MainPanel = () => {
                         saturday: false,
                         sunday: false
                     },
-                    eventTypes: eventTypes ?? [],
+                    eventTypes: placeEventTypes ?? [],
                     prohibitions: placeProhibitions ?? []
                 }}
 
@@ -295,7 +294,28 @@ const MainPanel = () => {
                                         setInputProhibitions(newInputValue);
                                     }}
                                     isOptionEqualToValue={(option, value) => option.id === value.id}
-                                    renderInput={(params) => <TextField {...params} label="Что разрешено на площадке" />}
+                                    renderInput={(params) => <TextField {...params} label="Что запрещено на площадке" />}
+                                />
+                            </Grid>
+                            <Grid container item xs={12}>
+                                <Autocomplete
+                                    id='eventTypes'
+                                    fullWidth
+                                    noOptionsText='Нет вариантов'
+                                    filterSelectedOptions
+                                    multiple
+                                    options={eventTypes}
+                                    value={values.eventTypes}
+                                    inputValue={inputEventType}
+                                    getOptionLabel={(option) => option.title}
+                                    onChange={(event, newValues) => {
+                                        setFieldValue('eventTypes', newValues)
+                                    }}
+                                    onInputChange={(_, newInputValue) => {
+                                        setInputEventType(newInputValue);
+                                    }}
+                                    isOptionEqualToValue={(option, value) => option.id === value.id}
+                                    renderInput={(params) => <TextField {...params} label="Список возможных мероприятий" />}
                                 />
                             </Grid>
                             <Grid container item xs={12}>
