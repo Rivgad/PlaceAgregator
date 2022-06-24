@@ -66,6 +66,34 @@ export const unblockComment = createAsyncThunk(
     }
 );
 
+export const deleteComment = createAsyncThunk(
+    "comments/deleteComment",
+    async ({ placeId }) => {
+        let response = await axios.delete(`/api/Places/${placeId}/Comments`,
+        {
+            headers: authHeader()
+        });
+
+        return response.data;
+    }
+)
+
+export const createComment = createAsyncThunk(
+    "comments/createComment",
+    async ({ placeId, text, rating }) => {
+        let response = await axios.post(`/api/Places/${placeId}/Comments`,
+        {
+            text,
+            rating
+        },
+        {
+            headers: authHeader()
+        });
+
+        return response.data;
+    }
+)
+
 const initialState = {
     status: RequestStatus.Idle,
     entities: {}
@@ -91,6 +119,16 @@ const commentsSlice = createSlice({
         [fetchAllComments.pending]: (state, action) => {
             state.status = RequestStatus.Loading;
             state.entities = {};
+        },
+        
+        [deleteComment.fulfilled]: (state, action) => {
+            let comment = action.payload;
+            delete state.entities[`${comment.placeId}/${comment.userId}`]
+        },
+
+        [createComment.fulfilled]: (state, action) => {
+            let comment = action.payload;
+            state.entities[`${comment.placeId}/${comment.userId}`] = comment;
         },
 
         [fetchComments.fulfilled]: (state, action) => {
@@ -147,6 +185,10 @@ export const selectComments = createSelector(
     selectCommentEntities,
     (entities) => Object.values(entities ?? {})
 )
+
+export const selectCommentByIds = (state, placeId, userId) => {
+    return selectCommentEntities(state)[`${placeId}/${userId}`];
+}
 
 export const selectCommentById = (state, placeId) => {
     return selectCommentEntities(state)[placeId];
