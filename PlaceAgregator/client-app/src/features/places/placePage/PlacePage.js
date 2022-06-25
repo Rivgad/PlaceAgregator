@@ -14,6 +14,7 @@ import OrderCard from './OrderCard';
 import { selectProhibitionById } from '../../typesSlice';
 import Comments from '../../comments/Comments';
 import PlaceHeader from './PlaceHeader';
+import { fetchComments } from '../../comments/commentsSlice';
 
 const PlaceParams = () => {
     const place = useSelector(selectCurrentPlace);
@@ -72,6 +73,7 @@ const PlacePage = (props) => {
 
     useEffect(() => {
         dispatch(fetchPlace({ id : placeId }))
+        dispatch(fetchComments({ placeId }))
     }, [dispatch, placeId]);
 
     return (
