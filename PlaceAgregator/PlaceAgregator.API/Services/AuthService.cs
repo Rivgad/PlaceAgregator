@@ -89,6 +89,7 @@ namespace PlaceAgregator.API.Services
                     Message = new LoginResponse(
                         userName: user.UserName,
                         accessToken: token,
+                        userId: user.Id,
                         roles: roles.Select(item => item.ToLower()).ToArray()),
                         Succeeded = true
                 };

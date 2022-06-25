@@ -105,7 +105,8 @@ namespace PlaceAgregator.API.Controllers
 
             _context.Comments.Remove(existedComment);
             await _context.SaveChangesAsync();
-            return Ok();
+
+            return Ok(new { userId=existedComment.UserId, placeId=existedComment.PlaceId });
         }
 
         [Authorize(Roles = RoleConstants.Moderator)]
