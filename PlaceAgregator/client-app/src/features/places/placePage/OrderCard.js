@@ -1,4 +1,3 @@
-
 import { Button, Card, CardContent, InputLabel, Stack, TextField, Typography } from "@mui/material";
 import { useState } from "react";
 import { useSelector } from "react-redux";
@@ -60,13 +59,12 @@ const OrderCard = () => {
             setIsError(true);
             return;
         }
-        const formattedStartDate = formatDate(new Date(startDateTime).toLocaleString()) + 'Z';
-        const formattedEndDate = formatDate(new Date(endDateTime).toLocaleString()) + 'Z';
+        const formattedStartDate = formatDate(startDateTime.toLocaleString()) + 'Z';
+        const formattedEndDate = formatDate(endDateTime.toLocaleString()) + 'Z';
         console.log(formattedStartDate)
         console.log(formattedEndDate)
 
-        if(!isLoggedIn)
-        {
+        if (!isLoggedIn) {
             navigate('/login', { state: { from: location }, replace: true });
             return;
         }
@@ -81,12 +79,11 @@ const OrderCard = () => {
             },
             {
                 headers: authHeader()
-            }
-        )
+            })
             .then((result) => {
                 let bookingRequest = result.data;
                 console.log(bookingRequest);
-                enqueueSnackbar('Бронирование площадки упешно создано!', {variant:'success'})
+                enqueueSnackbar('Бронирование площадки упешно создано!', { variant: 'success' })
                 setComment('');
                 setGuestsQuantity('');
                 setEndDateTime('');
@@ -95,18 +92,21 @@ const OrderCard = () => {
             })
             .catch((error) => {
                 var errorMessage = error.response.data;
-                enqueueSnackbar(errorMessage ?? 'Произошла непредвиденная ошибка!', {variant:'error'})
-                
+                enqueueSnackbar(errorMessage ?? 'Произошла непредвиденная ошибка!', { variant: 'error' })
+
                 setIsError(true);
             });
     }
-    const formatDate =(dateTime)=>{
-        let dt = new Date(dateTime);
-        dt.setMinutes(0);
-        let currentDate = dt.toISOString().substring(0,10);
-        let arr = currentDate.split('-');
-        currentDate = `${arr[0]}-${arr[2]}-${arr[1]}`;
-        var currentTime = dt.toLocaleString().substring(12,17);
+
+    const formatDate = (dateTime) => {
+        let dt = dateTime;
+        console.log(dt)
+        let arr = dt.split(', ');
+        let dateArr = arr[0].split('.');
+        let currentDate = `${dateArr[2]}-${dateArr[1]}-${dateArr[0]}`;
+        console.log(currentDate)
+        let currentTime = arr[1];
+
         let str = `${currentDate}T${currentTime}`
         return str;
     }
@@ -126,23 +126,25 @@ const OrderCard = () => {
                     <Stack sx={{ my: 2 }} spacing={2}>
                         <InputLabel>Дата и время начала</InputLabel>
                         <DatePicker
-                        id="end-date-field"
+                            id="start-date-field"
                             selected={startDateTime}
                             onChange={(date) => setStartDateTime(date)}
-                            locale="ru"
+                            locale='ru'
                             timeFormat="p"
                             minDate={new Date()}
                             timeIntervals={60}
                             inline
+                            dateFormat='yyyy/MM/dd'
                             showTimeSelect
                         />
                         <InputLabel>Дата и время окончания</InputLabel>
                         <DatePicker
-                        id="start-date-field"
+                            id="end-date-field"
                             selected={endDateTime}
                             onChange={(date) => setEndDateTime(date)}
-                            locale="ru"
+                            locale='ru'
                             timeFormat="p"
+                            dateFormat='yyyy/MM/dd'
                             minDate={new Date()}
                             timeIntervals={60}
                             inline
